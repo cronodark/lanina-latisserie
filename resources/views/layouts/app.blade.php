@@ -40,7 +40,7 @@
 
 </head>
 
-<body class="h-screen"> 
+<body class="h-screen ">
     @yield('content')
 </body>
 

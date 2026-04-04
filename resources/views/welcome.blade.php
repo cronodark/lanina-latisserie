@@ -169,4 +169,6 @@
             </div>
         </div>
     </body>
+    {{-- <x-navbar /> --}}
+    <x-footer />
 </html>
