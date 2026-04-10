@@ -76,7 +76,7 @@
 
             {{-- About Text --}}
             <div class="scroll-fade">
-                <h2 class="font-display text-6xl font-bold text-brown mb-2">About us</h2>
+                <h2 class="font-display text-6xl font-bold text-brown mb-2">About Us</h2>
                 <p class="italic-script text-lg mb-6 font-bold">— A little bakery with a big heart</p>
                 <div class="space-y-4 text-brown-light leading-relaxed font-serif text-base">
                     <p>LANNA Patisserie lahir dari kecintaan terhadap seni membuat kue. Kami percaya setiap kue bukan
