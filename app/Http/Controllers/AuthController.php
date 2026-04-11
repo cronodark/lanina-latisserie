@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,11 +21,21 @@ class AuthController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
         ]);
 
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
+            $user = $request->user();
+
+            if ($user && $user->hasRole('admin')) {
+                return redirect()->route('dashboard');
+            }
 
             return redirect()->route('beranda');
         }
@@ -39,6 +50,34 @@ class AuthController extends Controller
         return view('pages.auth.register', [
             'title' => 'Register'
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'phone' => 'required|string|max:13',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required',
+        ], [
+            'name.required' => 'Nama lengkap wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'phone.required' => 'Nomor telepon wajib diisi.',
+            'password.required' => 'Password wajib diisi.',
+            'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
+        ]);
+
+        $user = User::create([
+            'name' => $validatedData['name'],
+            'telp' => $validatedData['phone'],
+            'email' => $validatedData['email'],
+            'password' => bcrypt($validatedData['password']),
+        ]);
+
+        $user->assignRole('customer');
+
+        return redirect()->route('login')->with('success', 'Registrasi berhasil. Silakan login dengan akun Anda.');
     }
 
     public function logout()
