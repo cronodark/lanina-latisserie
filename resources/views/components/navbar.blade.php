@@ -15,8 +15,7 @@
 
         {{-- Nav Links --}}
         <div class="hidden md:flex  gap-8">
-            <a href="#about" class="nav-link text-sm text-brown font-medium hover:text-sage transition-colors">About
-                Me</a>
+            <a href="#about" class="nav-link text-sm text-brown font-medium hover:text-sage transition-colors">About Us</a>
             <a href="#bestseller" class="nav-link text-sm text-brown font-medium hover:text-sage transition-colors">Best
                 Seller</a>
             <a href="#product" class="nav-link text-sm text-brown font-medium hover:text-sage transition-colors">Our

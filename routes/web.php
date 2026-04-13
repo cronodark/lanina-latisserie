@@ -14,3 +14,7 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::get('/beranda', function () {
     return view('pages.main.landing');
 });
+
+Route::get('/produk', function () {
+    return view('pages.main.produk');
+});

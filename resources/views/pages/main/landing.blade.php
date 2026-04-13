@@ -399,7 +399,7 @@
     </section>
 
     {{-- ===================== CTA BANNER ===================== --}}
-    <section class="h-full py-20 relative overflow-hidden bg-cover bg-center"
+    <section class="h-auto py-20 relative overflow-hidden bg-cover bg-center"
         style="background-image: url('/images/flirtimage.png');">
 
         <div class="relative max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
