@@ -51,8 +51,8 @@
         </div>
 
         <div class="mt-6 flex gap-3">
-            <a href="{{ route('product.test.index') }}" class="rounded bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200">Kembali ke Index</a>
-            <a href="{{ route('product.test.update-page', $product) }}" class="rounded bg-amber-500 px-4 py-2 text-sm text-white hover:bg-amber-600">Update Data</a>
+            <a href="{{ route('product.index') }}" class="rounded bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200">Kembali ke Index</a>
+            <a href="{{ route('product.edit', $product) }}" class="rounded bg-amber-500 px-4 py-2 text-sm text-white hover:bg-amber-600">Update Data</a>
         </div>
     </main>
 @endsection

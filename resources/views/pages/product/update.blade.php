@@ -5,7 +5,7 @@
         <h1 class="mb-2 text-3xl font-bold">Test CRUD Sederhana - Product Update</h1>
         <p class="mb-6 text-sm text-gray-600">Ubah data produk lalu simpan.</p>
 
-        <form action="{{ route('product.test.update', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-4 rounded border border-gray-200 bg-white p-5">
+        <form action="{{ route('product.update', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-4 rounded border border-gray-200 bg-white p-5">
             @csrf
             @method('PUT')
 
@@ -78,7 +78,7 @@
             @endif
 
             <div class="flex gap-3">
-                <a href="{{ route('product.test.show', $product) }}" class="rounded bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200">Batal</a>
+                <a href="{{ route('product.show', $product) }}" class="rounded bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200">Batal</a>
                 <button type="submit" class="rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">Simpan Update</button>
             </div>
         </form>

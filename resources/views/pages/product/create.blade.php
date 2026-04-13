@@ -5,7 +5,7 @@
         <h1 class="mb-2 text-3xl font-bold">Test CRUD Sederhana - Product Create</h1>
         <p class="mb-6 text-sm text-gray-600">Tambahkan data produk baru.</p>
 
-        <form action="{{ route('product.test.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4 rounded border border-gray-200 bg-white p-5">
+        <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4 rounded border border-gray-200 bg-white p-5">
             @csrf
 
             <div>
@@ -66,7 +66,7 @@
             </div>
 
             <div class="flex gap-3">
-                <a href="{{ route('product.test.index') }}" class="rounded bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200">Batal</a>
+                <a href="{{ route('product.index') }}" class="rounded bg-gray-100 px-4 py-2 text-sm hover:bg-gray-200">Batal</a>
                 <button type="submit" class="rounded bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700">Simpan Product</button>
             </div>
         </form>

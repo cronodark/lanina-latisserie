@@ -32,7 +32,7 @@ class ProductController extends Controller
             ->toMediaCollection(Product::MEDIA_COLLECTION);
 
         return redirect()
-            ->route('product.test.show', $product)
+            ->route('product.show', $product)
             ->with('success', 'Produk berhasil ditambahkan.');
     }
 
@@ -80,7 +80,7 @@ class ProductController extends Controller
         }
 
         return redirect()
-            ->route('product.test.show', $product)
+            ->route('product.show', $product)
             ->with('success', 'Produk berhasil diperbarui.');
     }
 }

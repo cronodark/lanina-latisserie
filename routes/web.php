@@ -28,7 +28,7 @@ Route::group(['middleware' => 'guest'], function () {
 
 Route::get('/', [LandingPageController::class, 'index'])->name('beranda');
 
-Route::prefix('product-test')->name('product.test.')->group(function () {
+Route::prefix('product-test')->name('product.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
     Route::get('/create', [ProductController::class, 'create'])->name('create');
     Route::post('/', [ProductController::class, 'store'])->name('store');

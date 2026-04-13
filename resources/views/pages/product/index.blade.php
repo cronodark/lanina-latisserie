@@ -6,7 +6,7 @@
         <p class="mb-6 text-sm text-gray-600">Halaman ini untuk melihat daftar produk dan masuk ke detail/update.</p>
 
         <div class="mb-6">
-            <a href="{{ route('product.test.create-page') }}" class="inline-block rounded bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700">Add Product</a>
+            <a href="{{ route('product.create') }}" class="inline-block rounded bg-green-600 px-4 py-2 text-sm text-white hover:bg-green-700">Add Product</a>
         </div>
 
         @if (session('success'))
@@ -49,8 +49,8 @@
                                 <td class="px-4 py-3 text-sm">{{ $product->name }}</td>
                                 <td class="px-4 py-3 text-sm">Rp {{ number_format($product->price) }}</td>
                                 <td class="px-4 py-3 text-sm">
-                                    <a href="{{ route('product.test.show', $product) }}" class="mr-3 text-blue-600 hover:underline">Show</a>
-                                    <a href="{{ route('product.test.update-page', $product) }}" class="text-amber-600 hover:underline">Update</a>
+                                    <a href="{{ route('product.show', $product) }}" class="mr-3 text-blue-600 hover:underline">Show</a>
+                                    <a href="{{ route('product.edit', $product) }}" class="text-amber-600 hover:underline">Update</a>
                                 </td>
                             </tr>
                         @endforeach
