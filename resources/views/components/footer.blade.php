@@ -44,7 +44,7 @@
             <div class="border-b border-white/30 w-32 mb-4"></div>
 
             <ul class="space-y-2 text-white/80 text-sm">
-                <li><a href="#" class="hover:text-white transition">Instagram</a></li>
+                <li><a href="https://www.instagram.com/lanina.patisserie?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="hover:text-white transition">Instagram</a></li>
                 <li><a href="#" class="hover:text-white transition">Whatsapp</a></li>
                 <li><a href="#" class="hover:text-white transition">Gmail</a></li>
             </ul>

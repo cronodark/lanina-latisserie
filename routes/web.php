@@ -36,3 +36,7 @@ Route::prefix('product-test')->name('product.')->group(function () {
     Route::get('/{product}/update', [ProductController::class, 'edit'])->name('edit');
     Route::put('/{product}', [ProductController::class, 'update'])->name('update');
 });
+
+Route::get('/produk', function () {
+    return view('pages.main.produk');
+});
