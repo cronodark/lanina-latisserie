@@ -25,15 +25,18 @@
                 </p>
 
                 <!-- FORM -->
-                <form action="#" method="POST" class="mt-8 sm:mt-10 space-y-5 sm:space-y-6">
-
+                <form action="{{ route('register.submit') }}" method="POST" class="mt-8 sm:mt-10 space-y-5 sm:space-y-6">
+                    @csrf
                     <!-- Nama -->
                     <div>
                         <label class="block text-sm sm:text-base font-medium text-white">
                             Nama Lengkap
                         </label>
-                        <input type="text" required
+                        <input type="text" name="name" value="{{ old('name') }}"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
+                        @error('name')
+                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- No Telp -->
@@ -41,8 +44,11 @@
                         <label class="block text-sm sm:text-base font-medium text-white">
                             Nomor Telepon
                         </label>
-                        <input type="text" required
+                        <input type="text" name="phone" value="{{ old('phone') }}"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
+                        @error('phone')
+                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Email -->
@@ -50,8 +56,11 @@
                         <label class="block text-sm sm:text-base font-medium text-white">
                             Email
                         </label>
-                        <input type="email" required
+                        <input type="email" name="email" value="{{ old('email') }}"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
+                        @error('email')
+                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Password -->
@@ -59,8 +68,11 @@
                         <label class="block text-sm sm:text-base font-medium text-white">
                             Password
                         </label>
-                        <input type="password" required
+                        <input type="password" name="password"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
+                        @error('password')
+                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- Konfirmasi -->
@@ -68,8 +80,11 @@
                         <label class="block text-sm sm:text-base font-medium text-white">
                             Konfirmasi Password
                         </label>
-                        <input type="password" required
+                        <input type="password" name="password_confirmation"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
+                        @error('password_confirmation')
+                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <!-- BUTTON -->

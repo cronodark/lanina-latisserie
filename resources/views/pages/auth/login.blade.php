@@ -41,24 +41,36 @@
                     @enderror
                 </div>
 
-                <!-- PASSWORD -->
-                <div>
-                    <div class="flex justify-between items-center">
-                        <label class="text-sm sm:text-base font-medium text-white">
-                            Password
+                <p class="mt-4 text-white text-sm sm:text-base lg:text-lg leading-relaxed">
+                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque,
+                    iste dolor cupiditate blanditiis ratione.
+                </p>
+
+                <!-- FORM -->
+                <form action="{{ route('login.submit') }}" method="POST" class="mt-10 space-y-6 lg:space-y-8">
+                    @csrf
+
+                    <!-- EMAIL -->
+                    <div>
+                        <label class="block text-sm lg:text-base font-medium text-white">
+                            Email address
                         </label>
-                        <a href="#" class="text-sm sm:text-base text-white hover:text-gray-200">
-                            Lupa Password?
-                        </a>
+                        <input type="email" name="email" value="{{ old('email') }}" required
+                            class="mt-2 w-full rounded-md bg-white px-4 py-2 lg:py-3 text-sm lg:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
+                        @error('email')
+                            <p class="mt-2 text-sm text-red-100">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <input type="password" name="password" required
                         class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
 
-                    @error('password')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                        <input type="password" name="password" required
+                            class="mt-2 w-full rounded-md bg-white px-4 py-2 lg:py-3 text-sm lg:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
+                        @error('password')
+                            <p class="mt-2 text-sm text-red-100">{{ $message }}</p>
+                        @enderror
+                    </div>
 
                 <!-- BUTTON -->
                 <button type="submit"
