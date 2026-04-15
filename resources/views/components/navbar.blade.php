@@ -22,13 +22,32 @@
                 Product</a>
         </div>
 
-        {{-- Account Icon --}}
-        <button
-            class="w-9 h-9 rounded-full border border-sage/40 flex items-center justify-center hover:bg-sage/10 transition-colors">
-            <svg class="w-4 h-4 text-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-        </button>
+        {{-- Account Menu --}}
+        <details class="relative group">
+            <summary
+                class="list-none cursor-pointer w-9 h-9 rounded-full border border-sage/40 flex items-center justify-center hover:bg-sage/10 transition-colors">
+                <svg class="w-4 h-4 text-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </summary>
+
+            <div
+                class="absolute right-0 mt-2 w-44 rounded-xl border border-cream-dark bg-warm-white shadow-lg py-2 z-50 bg-white">
+                @guest
+                    <a href="{{ route('login') }}"
+                        class="block px-4 py-2 text-sm text-brown hover:bg-[#f0f0f0] transition-colors">Login</a>
+                    <a href="{{ route('register') }}"
+                        class="block px-4 py-2 text-sm text-brown hover:bg-[#f0f0f0] transition-colors">Register</a>
+                @endguest
+
+                @auth
+                    <a href="#"
+                        class="block px-4 py-2 text-sm text-brown hover:bg-[#f0f0f0] transition-colors">Profile</a>
+                    <a href="{{ route('logout') }}"
+                        class="block px-4 py-2 text-sm text-brown hover:bg-[#f0f0f0] transition-colors">Logout</a>
+                @endauth
+            </div>
+        </details>
     </div>
 </nav>
