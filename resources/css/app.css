@@ -1,1 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+@font-face {
+    font-family: 'Glacial Indifference';
+    src: url('/fonts/GlacialIndifference-Regular.woff2') format('woff2'),
+         url('/fonts/GlacialIndifference-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Glacial Indifference';
+    src: url('/fonts/GlacialIndifference-Bold.woff2') format('woff2'),
+         url('/fonts/GlacialIndifference-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
