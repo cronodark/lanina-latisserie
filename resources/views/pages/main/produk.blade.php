@@ -183,7 +183,7 @@
             <div class="relative flex items-center gap-4">
                 {{-- Cards Container --}}
                 <div class="overflow-hidden flex-1">
-                    <div id="promo-track" class="flex gap-5 transition-transform duration-500 ease-in-out">
+                    <div id="promo-track" class="flex gap-5 justify-center transition-transform duration-500 ease-in-out">
 
                         @php
                             $promos = [
@@ -211,28 +211,28 @@
                                     'orig' => '200.000',
                                     'active' => true,
                                 ],
-                                [
-                                    'image' => '/images/4.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => false,
-                                ],
-                                [
-                                    'image' => '/images/5.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => false,
-                                ],
+                                // [
+                                //     'image' => '/images/4.png',
+                                //     'name' => 'Lorem Ipsum',
+                                //     'desc' => 'Lorem Ipsum is simply dummy text of the printing',
+                                //     'price' => '50.000',
+                                //     'orig' => '200.000',
+                                //     'active' => false,
+                                // ],
+                                // [
+                                //     'image' => '/images/5.png',
+                                //     'name' => 'Lorem Ipsum',
+                                //     'desc' => 'Lorem Ipsum is simply dummy text of the printing',
+                                //     'price' => '50.000',
+                                //     'orig' => '200.000',
+                                //     'active' => false,
+                                // ],
                             ];
                         @endphp
 
                         @foreach ($promos as $promo)
                             <div
-                                class="promo-card shrink-0 w-[calc((100%-40px)/3)] max-w- bg-[#FFF9F2] rounded-[20px] overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative">
+                                class="promo-card shrink-0 w-[calc((100%-200px)/3)] bg-[#FFF9F2] rounded-[20px] overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative">
                                 {{-- Product Image --}}
                                 <div class="p-3">
                                     <div class="h-40 sm:h-44 md:h-48 overflow-hidden rounded-2xl shadow-md">
@@ -251,10 +251,10 @@
                                     </p>
 
                                     {{-- Price Row --}}
-                                    <div class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-6 pr-2.5">
+                                    <div class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3">
                                         {{-- Price box --}}
-                                            <p class="text-white font-bold text-[15px] leading-tight">
-                                                Rp {{ $promo['price'] }}</p>
+                                        <p class="text-white font-bold text-xl">
+                                            Rp {{ $promo['price'] }}</p>
 
                                         {{-- Arrow button --}}
                                         <button
@@ -278,7 +278,7 @@
     {{-- ===================== ALL PRODUCTS ===================== --}}
     <section id="all-products" class="bg-[#FAF6F0] py-16 px-10">
         <div class="max-w-[1100px] mx-auto">
-            <h2 class="font-['Playfair_Display'] text-5xl font-bold text-[#3D2B1F] text-center mb-12">
+            <h2 class="font-['Playfair_Display'] text-7xl font-bold text-[#3D2B1F] text-center mb-12">
                 All Products
             </h2>
 
@@ -286,55 +286,55 @@
                 @php
                     $allProducts = [
                         [
-                            'emoji' => '🍪',
+                            'image' => '/images/1.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#C8A882,#A07850)',
                         ],
                         [
-                            'emoji' => '🥧',
+                            'image' => '/images/2.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#D4A840,#B08820)',
                         ],
                         [
-                            'emoji' => '🫙',
+                            'image' => '/images/3.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#8B6040,#6B4828)',
                         ],
                         [
-                            'emoji' => '🥐',
+                            'image' => '/images/4.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#D4B896,#B09060)',
                         ],
                         [
-                            'emoji' => '🎂',
+                            'image' => '/images/5.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#E8C860,#C0A030)',
                         ],
                         [
-                            'emoji' => '🍩',
+                            'image' => '/images/4.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#A07850,#7A5830)',
                         ],
                         [
-                            'emoji' => '🍮',
+                            'image' => '/images/3.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#7A8C5C,#5C6B44)',
                         ],
                         [
-                            'emoji' => '🍰',
+                            'image' => '/images/3.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#C8A882,#A07850)',
                         ],
                         [
-                            'emoji' => '🫐',
+                            'image' => '/images/3.png',
                             'name' => 'Lorem Ipsum',
                             'desc' => 'Lorem Ipsum is simply dummy text of the printing',
                             'bg' => 'linear-gradient(135deg,#8B7A9C,#6B5A7C)',
@@ -343,26 +343,35 @@
                 @endphp
 
                 @foreach ($allProducts as $i => $product)
-                    <div class="product-card bg-white rounded-[20px] overflow-hidden shadow-[0_3px_16px_rgba(0,0,0,0.07)] opacity-0 translate-y-5"
+                    <div class="product-card bg-[#FFF9F2] rounded-xl overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative opacity-0 translate-y-5"
                         data-index="{{ $i }}">
-                        <div class="h-[165px] flex items-center justify-center text-[5rem]"
-                            style="background: {{ $product['bg'] }};">
-                            {{ $product['emoji'] }}
+
+                        {{-- Product Image --}}
+                        <div class="p-3">
+                            <div class="h-40 sm:h-44 md:h-48 overflow-hidden rounded-2xl shadow-md">
+                                <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}"
+                                    class="w-full h-full object-cover">
+                            </div>
                         </div>
-                        <div class="p-4">
-                            <p class="font-['Playfair_Display'] font-semibold text-[#3D2B1F] text-[15px] mb-1.5">
+
+                        {{-- Card Body --}}
+                        <div class="p-4 pt-3">
+                            <p
+                                class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
                                 {{ $product['name'] }}
                             </p>
-                            <p class="font-['Cormorant_Garamond'] text-[13px] text-[#6B4C3B] leading-relaxed mb-3">
+                            <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4">
                                 {{ $product['desc'] }}
                             </p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-[#7A8C5C] font-bold text-sm font-['DM_Sans']">Rp 50.000</span>
+
+                            {{-- Price Row --}}
+                            <div class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3">
+                                <p class="text-white font-bold text-xl">Rp 50.000</p>
                                 <button
-                                    class="w-[34px] h-[34px] bg-[#7A8C5C] border-none rounded-full cursor-pointer flex items-center justify-center transition-colors duration-200 hover:bg-[#5C6B44]">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="white" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                            d="M9 5l7 7-7 7" />
+                                    class="w-10 h-10 bg-[#FFF9F2] rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200 shadow-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="#7A8C5C" viewBox="0 0 24 24"
+                                        stroke-width="2.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                                     </svg>
                                 </button>
                             </div>

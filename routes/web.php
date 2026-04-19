@@ -27,6 +27,10 @@ Route::group(['middleware' => 'guest'], function () {
 });
 
 Route::get('/', [LandingPageController::class, 'index'])->name('beranda');
+Route::get('/produk', [LandingPageController::class, 'product'])->name('produk');
+Route::get('/detailproduk', [LandingPageController::class, 'detail'])->name('detailproduk');
+Route::get('/keranjang', [LandingPageController::class, 'cart'])->name('keranjang');
+Route::get('/checkout', [LandingPageController::class, 'checkout'])->name('checkout');
 
 Route::prefix('product-test')->name('product.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
@@ -35,8 +39,4 @@ Route::prefix('product-test')->name('product.')->group(function () {
     Route::get('/{product}', [ProductController::class, 'show'])->name('show');
     Route::get('/{product}/update', [ProductController::class, 'edit'])->name('edit');
     Route::put('/{product}', [ProductController::class, 'update'])->name('update');
-});
-
-Route::get('/produk', function () {
-    return view('pages.main.produk');
 });
