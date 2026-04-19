@@ -38,10 +38,10 @@ class ProductController extends Controller
 
     public function index(): View
     {
-        $products = Product::query()->latest()->get();
+        $products = Product::all();
 
         return view('pages.product.index', [
-            'title' => 'Test CRUD Product - Index',
+            'title' => 'Product List',
             'products' => $products,
         ]);
     }
@@ -49,7 +49,7 @@ class ProductController extends Controller
     public function show(Product $product): View
     {
         return view('pages.product.show', [
-            'title' => 'Test CRUD Product - Show',
+            'title' => 'Product ' . $product->name,
             'product' => $product,
         ]);
     }

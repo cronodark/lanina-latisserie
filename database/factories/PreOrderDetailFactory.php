@@ -8,7 +8,7 @@ use App\Models\Promo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\PreOrderDetail>
  */
 class PreOrderDetailFactory extends Factory
 {
@@ -20,12 +20,14 @@ class PreOrderDetailFactory extends Factory
     public function definition(): array
     {
         $isPromoItem = fake()->boolean();
+        $productId = Product::query()->inRandomOrder()->value('id');
+        $promoId = Promo::query()->inRandomOrder()->value('id');
 
         return [
             'quantity' => fake()->numberBetween(1, 10),
             'type' => $isPromoItem ? 'promo' : 'product',
-            'product_id' => $isPromoItem ? null : Product::factory(),
-            'promo_id' => $isPromoItem ? Promo::factory() : null,
+            'product_id' => $isPromoItem ? null : $productId,
+            'promo_id' => $isPromoItem ? ($promoId ?? Promo::factory()) : null,
             'pre_order_id' => PreOrder::factory(),
         ];
     }

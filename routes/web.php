@@ -32,7 +32,7 @@ Route::get('/detailproduk', [LandingPageController::class, 'detail'])->name('det
 Route::get('/keranjang', [LandingPageController::class, 'cart'])->name('keranjang');
 Route::get('/checkout', [LandingPageController::class, 'checkout'])->name('checkout');
 
-Route::prefix('product-test')->name('product.')->group(function () {
+Route::prefix('product')->name('product.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
     Route::get('/create', [ProductController::class, 'create'])->name('create');
     Route::post('/', [ProductController::class, 'store'])->name('store');

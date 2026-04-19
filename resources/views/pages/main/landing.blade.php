@@ -16,12 +16,12 @@
                     untuk Meja Kamu
                 </h1>
 
-                <p class="text-brown-light text-sm leading-relaxed mb-8 max-w-sm font-serif text-base">
-                    LANNA Patisserie menghadirkan kue-kue buatan tangan dengan bahan pilihan premium.
+                <p class="text-brown-light text-sm leading-relaxed mb-8 max-w-sm font-serif text-base text-justify">
+                    Lanina Patisserie menghadirkan kue-kue buatan tangan dengan bahan pilihan premium.
                     Setiap gigitan adalah cerita rasa yang dibuat dengan cinta dan ketelitian.
                 </p>
 
-                <a href="#"
+                <a href="#our-product"
                     class="inline-flex items-center gap-2 bg-[#6A7941] px-8 py-3.5 rounded-full text-white font-medium text-sm hover:bg-[#556433] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
                     Pesan Sekarang!
                 </a>
@@ -76,10 +76,10 @@
 
             {{-- About Text --}}
             <div class="scroll-fade">
-                <h2 class="font-display text-6xl font-bold text-brown mb-2">About Us</h2>
-                <p class="italic-script text-lg mb-6 font-bold">— A little bakery with a big heart</p>
+                <h2 class="font-display text-6xl font-bold text-brown mb-2">Tentang Kami</h2>
+                <p class="italic-script text-lg mb-6 font-bold">— Sebuah toko kue dengan hati yang besar</p>
                 <div class="space-y-4 text-brown-light leading-relaxed font-serif text-base">
-                    <p>LANNA Patisserie lahir dari kecintaan terhadap seni membuat kue. Kami percaya setiap kue bukan
+                    <p>Lanina Patisserie lahir dari kecintaan terhadap seni membuat kue. Kami percaya setiap kue bukan
                         sekadar makanan – ia adalah ekspresi rasa, kenangan, dan momen bahagia yang dibagikan bersama
                         orang-orang tersayang.</p>
                     <p>Dibuat dengan bahan berkualitas tinggi dan teknik patisserie yang telah diasah bertahun-tahun. Tidak
@@ -105,7 +105,7 @@
 
             <!-- HEADER -->
             <div class="text-right mb-10">
-                <h2 class="font-display text-5xl font-bold text-brown">Why us?</h2>
+                <h2 class="font-display text-5xl font-bold text-brown">Kenapa Memilih Kami?</h2>
                 <p class="text-brown-light font-bold mt-2">
                     Lebih dari sekadar kue — sebuah pengalaman yang akan selalu diingat
                 </p>
@@ -169,18 +169,19 @@
             {{-- HEADER --}}
             <div class="text-center mb-10">
                 <h2 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white">
-                    Best Seller
+                    Paling Laris
                 </h2>
-                <p class="text-white/80 mt-3 font-serif text-sm sm:text-base max-w-xl mx-auto">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                <p class="text-white/80 mt-3 font-serif text-sm sm:text-base max-w-xl mx-auto ">
+                    Kue-kue favorit pelanggan kami yang selalu habis terjual. Rasakan kenikmatan yang membuat semua
+                    orang ketagihan!
                 </p>
             </div>
 
-            <div class="relative">
+            <div class="relative carousel">
 
                 {{-- BUTTON LEFT --}}
-                <button id="scrollLeft"
-                    class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-white/80 backdrop-blur rounded-full shadow-lg items-center justify-center hover:bg-white transition">
+                <button
+                    class="carousel-left hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-white/80 backdrop-blur rounded-full shadow-lg items-center justify-center hover:bg-white transition">
                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -188,65 +189,36 @@
 
                 {{-- TRACK --}}
                 <div id="bestsellerTrack"
-                    class="flex justify-center gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing ">
+                    class="track flex justify-start gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing">
 
-                    @php
-                        $bestSellers = [
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/1.png',
-                            ],
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/2.png',
-                            ],
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/3.png',
-                            ],
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/4.png',
-                            ],
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/5.png',
-                            ],
-                        ];
-                    @endphp
-
-                    @foreach ($bestSellers as $item)
-                        <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 bg-[#F5EFE6] rounded-3xl shadow-xl snap-start">
+                    @foreach ($bestsellers as $item)
+                        <div
+                            class="carousel-card flex-shrink-0 basis-[85%] md:basis-[calc((100%-1rem)/2)] lg:basis-[calc((100%-2.5rem)/3)] xl:basis-[calc((100%-3.75rem)/4)] bg-[#F5EFE6] rounded-3xl shadow-xl snap-start flex flex-col">
 
                             {{-- IMAGE (INSIDE CARD) --}}
                             <div class="p-3">
                                 <div class="h-40 sm:h-44 md:h-48 overflow-hidden rounded-2xl shadow-md">
-                                    <img src="{{ $item['img'] }}" class="w-full h-full object-cover">
+                                    <img src="{{ $item->product->image }}" class="w-full h-full object-cover">
                                 </div>
                             </div>
 
                             {{-- CONTENT --}}
-                            <div class="px-4 pb-4">
+                            <div class="px-4 pb-4 flex-1 flex flex-col">
                                 <h3 class="font-serif text-lg font-semibold text-gray-800 mb-1">
-                                    {{ $item['name'] }}
+                                    {{ $item->product->name }}
                                 </h3>
 
                                 <p class="text-sm text-gray-500 mb-4">
-                                    Lorem Ipsum is simply dummy text of the printing
+                                    Terjual {{ number_format($item->total_bought, 0, ',', '.') }} item
                                 </p>
 
-                                <div class="w-full">
+                                <div class="w-full mt-auto">
                                     <div
                                         class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
 
                                         <!-- PRICE -->
                                         <span class="text-sm font-semibold">
-                                            Rp {{ $item['price'] }}
+                                            Rp {{ number_format($item->product->price, 0, ',', '.') }}
                                         </span>
 
                                         <!-- BUTTON -->
@@ -268,8 +240,8 @@
                 </div>
 
                 {{-- BUTTON RIGHT --}}
-                <button id="scrollRight"
-                    class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-white/80 backdrop-blur rounded-full shadow-lg items-center justify-center hover:bg-white transition">
+                <button
+                    class="carousel-right hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-white/80 backdrop-blur rounded-full shadow-lg items-center justify-center hover:bg-white transition">
                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
@@ -279,106 +251,73 @@
     </section>
 
     {{-- ===================== OUR PRODUCT ===================== --}}
-     <section id="bestseller" class="py-16 sm:py-20 bg-[#F0EAD2] overflow-hidden">
+    <section id="our-product" class="py-16 sm:py-20 bg-[#F0EAD2] overflow-hidden">
 
         <div class="w-full px-6 sm:px-8 lg:px-12 xl:px-16">
 
             {{-- HEADER --}}
-           <div class="text-center mb-6 scroll-fade">
-                <h2 class="font-display text-5xl font-bold text-brown">Our Product</h2>
-                <p class="text-brown-light mt-3 font-serif text-base">Lorem Ipsum is simply dummy text of the printing and
-                    typesetting<br>industry. Lorem Ipsum has been the industry's standard dummy</p>
-            </div>
-            <div class="text-center mb-10 scroll-fade">
-                <a href="#"
-                    class="inline-flex items-center gap-2 bg-[#432818] text-white text-warm-white px-7 py-2.5 rounded-full text-sm font-medium hover:bg-brown-light transition-colors">
-                    See More!
-                </a>
+            <div class="text-center mb-6 scroll-fade">
+                <h2 class="font-display text-5xl font-bold text-brown">Produk Kami</h2>
+                <p class="text-brown-light mt-3 font-serif text-base">Temukan berbagai produk lezat dan berkualitas tinggi
+                    dari kami</p>
             </div>
 
-            <div class="relative">
+            <div class="relative carousel">
 
                 {{-- BUTTON LEFT --}}
-                <button id="scrollLeft"
-                    class="hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-white/80 backdrop-blur rounded-full shadow-lg items-center justify-center hover:bg-white transition">
+                <button
+                    class="carousel-left hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-white/80 backdrop-blur rounded-full shadow-lg items-center justify-center hover:bg-white transition">
                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
 
                 {{-- TRACK --}}
-                <div id="bestsellerTrack"
-                    class="flex justify-center gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing ">
+                <div id="ourProductTrack"
+                    class="track flex justify-start gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing">
 
-                    @php
-                        $bestSellers = [
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/1.png',
-                            ],
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/2.png',
-                            ],
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/3.png',
-                            ],
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/4.png',
-                            ],
-                            [
-                                'name' => 'Lorem Ipsum',
-                                'price' => '50.000',
-                                'img' => '/images/5.png',
-                            ],
-                        ];
-                    @endphp
-
-                    @foreach ($bestSellers as $item)
-                        <div class="flex-shrink-0 w-64 sm:w-72 md:w-80 bg-[#FFF9F2] rounded-3xl shadow-xl snap-start my-8">
+                    @foreach ($products as $item)
+                        <div
+                            class="carousel-card flex-shrink-0 basis-[85%] md:basis-[calc((100%-1rem)/2)] lg:basis-[calc((100%-2.5rem)/3)] xl:basis-[calc((100%-3.75rem)/4)] bg-[#FFF9F2] rounded-3xl shadow-xl snap-start my-8 flex flex-col">
 
                             {{-- IMAGE (INSIDE CARD) --}}
                             <div class="p-3">
                                 <div class="h-40 sm:h-44 md:h-48 overflow-hidden rounded-2xl shadow-md">
-                                    <img src="{{ $item['img'] }}" class="w-full h-full object-cover">
+                                    <img src="{{ $item->image }}" class="w-full h-full object-cover">
                                 </div>
                             </div>
 
                             {{-- CONTENT --}}
-                            <div class="px-4 pb-4">
+                            <div class="px-4 pb-4 flex-1 flex flex-col">
                                 <h3 class="font-serif text-lg font-semibold text-gray-800 mb-1">
-                                    {{ $item['name'] }}
+                                    {{ $item->name }}
                                 </h3>
 
-                                <p class="text-sm text-gray-500 mb-4">
-                                    Lorem Ipsum is simply dummy text of the printing
+                                <p class="text-sm text-gray-500 mb-4 min-h-[3rem] overflow-hidden text-ellipsis"
+                                    style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                    {{ $item->description }}
                                 </p>
 
-                                <div class="w-full">
-                                    <div
-                                        class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
+                                <div class="w-full mt-auto cursor-pointer">
+                                    <a href="{{ route('product.show', $item->id) }}">
+                                        <div
+                                            class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
 
-                                        <!-- PRICE -->
-                                        <span class="text-sm font-semibold">
-                                            Rp {{ $item['price'] }}
-                                        </span>
+                                            <!-- PRICE -->
+                                            <span class="text-sm font-semibold">
+                                                Rp {{ number_format($item->price, 0, ',', '.') }}
+                                            </span>
 
-                                        <!-- BUTTON -->
-                                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                                            <svg class="w-4 h-4 text-[#6B7D4F]" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                    d="M9 5l7 7-7 7" />
-                                            </svg>
+                                            <!-- BUTTON -->
+                                            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-[#6B7D4F]" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2.5" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </div>
                                         </div>
-
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
 
@@ -388,12 +327,19 @@
                 </div>
 
                 {{-- BUTTON RIGHT --}}
-                <button id="scrollRight"
-                    class="hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-white/80 backdrop-blur rounded-full shadow-lg items-center justify-center hover:bg-white transition">
+                <button
+                    class="carousel-right hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 z-10 w-11 h-11 bg-white/80 backdrop-blur rounded-full shadow-lg items-center justify-center hover:bg-white transition">
                     <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
+            </div>
+
+            <div class="text-center mb-10 scroll-fade">
+                <a href="{{ route('product.index') }}"
+                    class="inline-flex items-center gap-2 bg-[#432818] text-white text-warm-white px-7 py-2.5 rounded-full text-sm font-medium hover:bg-brown-light transition-colors">
+                    Lihat Semua Produk!
+                </a>
             </div>
         </div>
     </section>
@@ -410,7 +356,7 @@
                     Dinikmati Sepenuh Jiwa
                 </h2>
 
-                <a href="#"
+                <a href="#our-product"
                     class="inline-flex items-center gap-3 bg-[#432818] text-white px-8 py-3.5 rounded-full font-medium text-sm hover:bg-[#6B4F3A] transition-all duration-300 shadow-lg hover:shadow-xl group">
                     Pre-Order Sekarang
                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
@@ -429,23 +375,41 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const track = document.getElementById("bestsellerTrack");
-        const leftBtn = document.getElementById("scrollLeft");
-        const rightBtn = document.getElementById("scrollRight");
+        const carousels = document.querySelectorAll(".carousel");
 
-        const scrollAmount = 300;
+        carousels.forEach((carousel) => {
+            const track = carousel.querySelector(".track");
+            const leftBtn = carousel.querySelector(".carousel-left");
+            const rightBtn = carousel.querySelector(".carousel-right");
 
-        rightBtn.addEventListener("click", () => {
-            track.scrollBy({
-                left: scrollAmount,
-                behavior: "smooth"
+            if (!track || !leftBtn || !rightBtn) {
+                return;
+            }
+
+            const getScrollAmount = () => {
+                const card = track.querySelector(".carousel-card");
+                const trackStyles = window.getComputedStyle(track);
+                const gap = parseFloat(trackStyles.gap || trackStyles.columnGap || "0");
+
+                if (!card) {
+                    return 300;
+                }
+
+                return card.getBoundingClientRect().width + gap;
+            };
+
+            rightBtn.addEventListener("click", () => {
+                track.scrollBy({
+                    left: getScrollAmount(),
+                    behavior: "smooth"
+                });
             });
-        });
 
-        leftBtn.addEventListener("click", () => {
-            track.scrollBy({
-                left: -scrollAmount,
-                behavior: "smooth"
+            leftBtn.addEventListener("click", () => {
+                track.scrollBy({
+                    left: -getScrollAmount(),
+                    behavior: "smooth"
+                });
             });
         });
     });

@@ -1,36 +1,45 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-sm">
 
-    <div class="max-w-[1400px] 2xl:max-w-[1600px] mx-auto
+    <div
+        class="max-w-[1400px] 2xl:max-w-[1600px] mx-auto
                 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-32
                 py-3 flex items-center justify-between gap-6 xl:gap-10">
 
         {{-- Logo --}}
-        <div class="flex items-center gap-2 sm:gap-3">
-            <div class="w-8 h-8 sm:w-9 sm:h-9 xl:w-10 xl:h-10 rounded-full border-2 border-sage flex items-center justify-center text-white">
-                <svg viewBox="0 0 24 24" class="w-4 h-4 xl:w-5 xl:h-5 text-white" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 2C8 2 5 5 5 9c0 2 1 4 2.5 5.5L12 22l4.5-7.5C18 13 19 11 19 9c0-4-3-7-7-7z" />
-                </svg>
+        <a href="{{ route('beranda') }}">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <div
+                    class="w-8 h-8 sm:w-9 sm:h-9 xl:w-10 xl:h-10 rounded-full border-2 border-sage flex items-center justify-center text-white">
+                    <svg viewBox="0 0 24 24" class="w-4 h-4 xl:w-5 xl:h-5 text-white" fill="none" stroke="currentColor"
+                        stroke-width="1.5">
+                        <path d="M12 2C8 2 5 5 5 9c0 2 1 4 2.5 5.5L12 22l4.5-7.5C18 13 19 11 19 9c0-4-3-7-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p
+                        class="font-display font-bold text-white text-base sm:text-lg xl:text-xl leading-none tracking-wide">
+                        LA NNA
+                    </p>
+                    <p
+                        class="text-[8px] sm:text-[9px] xl:text-[10px] text-white tracking-[0.2em] uppercase leading-none">
+                        PATISSERIE
+                    </p>
+                </div>
             </div>
-            <div>
-                <p class="font-display font-bold text-white text-base sm:text-lg xl:text-xl leading-none tracking-wide">
-                    LA NNA
-                </p>
-                <p class="text-[8px] sm:text-[9px] xl:text-[10px] text-white tracking-[0.2em] uppercase leading-none">
-                    PATISSERIE
-                </p>
-            </div>
-        </div>
+        </a>
 
         {{-- Nav Links (Desktop) --}}
         <div class="hidden md:flex items-center gap-6 lg:gap-8 xl:gap-10 text-white">
             <a href="#about" class="text-sm lg:text-base xl:text-lg text-brown font-medium hover:text-sage transition">
-                About Us
+                Tentang Kami
             </a>
-            <a href="#bestseller" class="text-sm lg:text-base xl:text-lg text-brown font-medium hover:text-sage transition">
-                Best Seller
+            <a href="#bestseller"
+                class="text-sm lg:text-base xl:text-lg text-brown font-medium hover:text-sage transition">
+                Paling Laris
             </a>
-            <a href="#product" class="text-sm lg:text-base xl:text-lg text-brown font-medium hover:text-sage transition">
-                Our Product
+            <a href="#product"
+                class="text-sm lg:text-base xl:text-lg text-brown font-medium hover:text-sage transition">
+                Produk Kami
             </a>
         </div>
 
@@ -69,8 +78,7 @@
             <button id="menu-btn"
                 class="md:hidden w-9 h-9 flex items-center justify-center rounded-lg border border-sage/30">
                 <svg class="w-5 h-5 text-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 6h16M4 12h16M4 18h16" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
 
@@ -78,8 +86,7 @@
     </div>
 
     {{-- Mobile Menu --}}
-    <div id="mobile-menu"
-        class="hidden md:hidden px-6 pb-4 bg-warm-white border-t border-cream-dark">
+    <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 bg-warm-white border-t border-cream-dark">
 
         <div class="flex flex-col gap-4 text-sm">
             <a href="#about" class="text-brown hover:text-sage">About Us</a>

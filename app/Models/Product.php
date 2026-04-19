@@ -18,6 +18,16 @@ class Product extends Model implements HasMedia
         'expired_day',
     ];
 
+    protected $appends = [
+        'image'
+    ];
+
+    public function getImageAttribute()
+    {
+        $media = $this->getFirstMedia(self::MEDIA_COLLECTION);
+        return $media ? $media->getUrl() : null;
+    }
+
     public const MEDIA_COLLECTION = 'product-image';
 
     public function registerMediaCollections(): void
