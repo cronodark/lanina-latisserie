@@ -18,6 +18,10 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             ProductSeeder::class,
+            PromoSeeder::class,
+            PromoDetailSeeder::class,
+            PreOrderSeeder::class,
+            PreOrderDetailSeeder::class,
         ]);
     }
 }

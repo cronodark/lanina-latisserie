@@ -15,6 +15,7 @@ class Product extends Model implements HasMedia
         'name',
         'description',
         'price',
+        'expired_day',
     ];
 
     public const MEDIA_COLLECTION = 'product-image';

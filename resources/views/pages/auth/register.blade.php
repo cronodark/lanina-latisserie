@@ -20,12 +20,12 @@
                     </a>
                 </div>
 
-                <p class="mt-3 sm:mt-4 text-white text-sm sm:text-base lg:text-lg leading-relaxed">
+                <p class="lg:mt-1 sm:mt-2 text-white text-sm sm:text-base lg:text-lg leading-relaxed">
                     Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque.
                 </p>
 
                 <!-- FORM -->
-                <form action="{{ route('register.submit') }}" method="POST" class="mt-8 sm:mt-10 space-y-5 sm:space-y-6">
+                <form action="{{ route('register.submit') }}" method="POST" class="lg:mt-4 sm:mt-5 lg:space-y-2 sm:space-y-6">
                     @csrf
                     <!-- Nama -->
                     <div>
@@ -35,7 +35,7 @@
                         <input type="text" name="name" value="{{ old('name') }}"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
                         @error('name')
-                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -47,7 +47,7 @@
                         <input type="text" name="phone" value="{{ old('phone') }}"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
                         @error('phone')
-                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -59,7 +59,7 @@
                         <input type="email" name="email" value="{{ old('email') }}"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
                         @error('email')
-                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -71,7 +71,7 @@
                         <input type="password" name="password"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
                         @error('password')
-                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -83,13 +83,13 @@
                         <input type="password" name="password_confirmation"
                             class="mt-2 w-full rounded-md bg-white px-4 py-2 sm:py-3 text-sm sm:text-base text-gray-900 outline-none focus:ring-2 focus:ring-[#6A7941]" />
                         @error('password_confirmation')
-                            <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
+                            <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- BUTTON -->
                     <button type="submit"
-                        class="mt-10 w-full sm:w-2/3 lg:w-4/5 mx-auto block rounded-lg bg-[#6A7941] py-3 text-sm sm:text-base font-semibold text-white hover:bg-[#5E702A] transition duration-300 shadow-md hover:shadow-lg">
+                        class="mt-6 w-full sm:w-2/3 lg:w-4/5 mx-auto block rounded-lg bg-[#6A7941] py-3 text-sm sm:text-base font-semibold text-white hover:bg-[#5E702A] transition duration-300 shadow-md hover:shadow-lg">
                         Daftar
                     </button>
 
