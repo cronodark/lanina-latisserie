@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Promo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -39,10 +40,14 @@ class ProductController extends Controller
     public function index(): View
     {
         $products = Product::all();
+        $recentProducts = Product::latest()->take(3)->get();
+        $promos = Promo::orderBy('created_at', 'desc')->where('status', '=', 'active')->get();
 
         return view('pages.product.index', [
             'title' => 'Product List',
             'products' => $products,
+            'recentProducts' => $recentProducts,
+            'promos' => $promos,
         ]);
     }
 

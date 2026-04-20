@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Promo;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use RuntimeException;
 
 class PromoSeeder extends Seeder
 {
@@ -13,6 +13,22 @@ class PromoSeeder extends Seeder
      */
     public function run(): void
     {
-        Promo::factory(5)->create();
+        $imagePaths = array_values(
+            glob(public_path('images/*.{jpg,jpeg,png,webp,avif}'), GLOB_BRACE) ?: []
+        );
+
+        if (empty($imagePaths)) {
+            throw new RuntimeException('No seed images found in public/images.');
+        }
+
+        Promo::factory()
+            ->count(5)
+            ->create()
+            ->each(function (Promo $promo, int $index) use ($imagePaths): void {
+                $promo
+                    ->addMedia($imagePaths[$index % count($imagePaths)])
+                    ->preservingOriginal()
+                    ->toMediaCollection(Promo::MEDIA_COLLECTION);
+            });
     }
 }

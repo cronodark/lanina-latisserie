@@ -16,12 +16,16 @@ class PromoFactory extends Factory
      */
     public function definition(): array
     {
+        $price = fake()->numberBetween(10000, 100000);
+        $discountedPrice = fake()->numberBetween(5000, $price - 1);
+
         return [
             'name' => fake()->unique()->sentence(1),
             'description' => fake()->paragraph(),
-            'price' => fake()->numberBetween(10000, 100000),
+            'price' => $discountedPrice,
             'date_until' => fake()->dateTimeBetween('now', '+1 month')->format('Y-m-d'),
             'status' => fake()->randomElement(['active', 'inactive']),
+            'actual_price' => $price,
         ];
     }
 }

@@ -15,14 +15,15 @@
                 style="text-shadow: 0 2px 20px rgba(255,255,255,0.3);">
                 Our Product
             </h1> --}}
-            <p class="font-['Cormorant_Garamond'] text-base text-[rgba(61,43,31,0.75)] max-w-[360px] leading-[1.7] mb-6">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                industry's standard dummy
+            <p
+                class="font-['Cormorant_Garamond'] text-base text-[rgba(61,43,31,0.75)] max-w-[360px] leading-[1.7] mb-6 text-medium">
+                Temukan kelezatan yang tak terlupakan dalam setiap gigitan produk kami, dibuat dengan cinta dan bahan
+                berkualitas tinggi untuk memanjakan lidah Anda.
             </p>
             <a href="#all-products"
                 class="inline-block bg-[#6B3A2A] text-white py-3 px-9 rounded-full font-['Cormorant_Garamond'] text-[15px] font-semibold tracking-wide no-underline transition-all duration-300 hover:bg-[#8B4A38] hover:-translate-y-0.5"
                 style="box-shadow: 0 4px 16px rgba(107,58,42,0.35);">
-                See More!
+                Lihat Lebih Lengkap!
             </a>
         </div>
     </section>
@@ -56,54 +57,9 @@
                 <div class="overflow-hidden flex-1">
                     <div id="promo-track" class="flex gap-5 transition-transform duration-500 ease-in-out">
 
-                        @php
-                            $promos = [
-                                [
-                                    'image' => '/images/1.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => false,
-                                ],
-                                [
-                                    'image' => '/images/2.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => false,
-                                ],
-                                [
-                                    'image' => '/images/3.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => true,
-                                ],
-                                [
-                                    'image' => '/images/4.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => false,
-                                ],
-                                [
-                                    'image' => '/images/5.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => false,
-                                ],
-                            ];
-                        @endphp
-
                         @foreach ($promos as $promo)
                             <div
-                                class="promo-card shrink-0 w-[calc((100%-40px)/3)] bg-white rounded-[20px] overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative">
+                                class="promo-card shrink-0 w-[calc((100%-40px)/3)] bg-white rounded-[20px] overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative flex flex-col">
 
                                 {{-- Badge --}}
                                 <div
@@ -113,45 +69,49 @@
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M7 7h.01M3 3h8l10 10a2 2 0 010 2.83l-5.17 5.17a2 2 0 01-2.83 0L3 11V3z" />
                                     </svg>
-                                    30%
+                                    {{ $promo->percentage }}%
                                 </div>
 
                                 {{-- Product Image --}}
                                 <div class="p-3">
                                     <div class="h-40 sm:h-44 md:h-48 overflow-hidden rounded-2xl shadow-md">
-                                        <img src="{{ $promo['image'] }}" alt="{{ $promo['name'] }}"
+                                        <img src="{{ $promo->image }}" alt="{{ $promo->name }}"
                                             class="w-full h-full object-cover">
                                     </div>
                                 </div>
                                 {{-- Card Body --}}
-                                <div class="p-4 pt-3">
+                                <div class="p-4 pt-3 flex flex-col flex-1">
                                     <p
                                         class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
-                                        {{ $promo['name'] }}
+                                        {{ $promo->name }}
                                     </p>
-                                    <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4">
-                                        {{ $promo['desc'] }}
+                                    <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4"
+                                        style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                        {{ $promo->description }}
                                     </p>
 
                                     {{-- Price Row --}}
-                                    <div class="flex items-center bg-[#7A8C5C] rounded-full p-1.5 pr-2.5 gap-2.5">
-                                        {{-- Price box --}}
+                                    <a href="#" class="cursor-pointer">
                                         <div
-                                            class="flex-1 bg-[#FAF6F0] border-2 border-[#7A8C5C] rounded-full px-4 py-2 text-center">
-                                            <p class="text-[#7A8C5C] font-bold text-[15px] leading-tight">
-                                                Rp {{ $promo['price'] }}</p>
-                                            <p class="text-red-400 text-[11px] line-through leading-tight">
-                                                Rp {{ $promo['orig'] }}</p>
+                                            class="flex items-center bg-[#7A8C5C] rounded-full p-1.5 pr-2.5 gap-2.5 mt-auto">
+                                            {{-- Price box --}}
+                                            <div
+                                                class="flex-1 bg-[#FAF6F0] border-2 border-[#7A8C5C] rounded-full px-4 py-2 text-center">
+                                                <p class="text-[#7A8C5C] font-bold text-[15px] leading-tight">
+                                                    Rp {{ number_format($promo->price, 0, ',', '.') }}</p>
+                                                <p class="text-red-400 text-[11px] line-through leading-tight">
+                                                    Rp {{ number_format($promo->actual_price, 0, ',', '.') }}</p>
+                                            </div>
+                                            {{-- Arrow button --}}
+                                            <button
+                                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200 shadow-sm cursor-pointer">
+                                                <svg class="w-4 h-4" fill="none" stroke="#7A8C5C" viewBox="0 0 24 24"
+                                                    stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
                                         </div>
-                                        {{-- Arrow button --}}
-                                        <button
-                                            class="w-10 h-10 bg-white rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200 shadow-sm">
-                                            <svg class="w-4 h-4" fill="none" stroke="#7A8C5C" viewBox="0 0 24 24"
-                                                stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </button>
-                                    </div>
+                                    </a>
                                 </div>
                             </div>
                         @endforeach
@@ -176,7 +136,7 @@
         <div class="max-w-[1100px] mx-auto relative">
             <h2 class="font-['Playfair_Display'] text-7xl font-bold text-white text-center mb-10"
                 style="text-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                Recently Added
+                Baru Ditambahkan
             </h2>
 
             {{-- Slider wrapper --}}
@@ -185,58 +145,13 @@
                 <div class="overflow-hidden flex-1">
                     <div id="promo-track" class="flex gap-5 justify-center transition-transform duration-500 ease-in-out">
 
-                        @php
-                            $promos = [
-                                [
-                                    'image' => '/images/1.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => false,
-                                ],
-                                [
-                                    'image' => '/images/2.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => false,
-                                ],
-                                [
-                                    'image' => '/images/3.png',
-                                    'name' => 'Lorem Ipsum',
-                                    'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                    'price' => '50.000',
-                                    'orig' => '200.000',
-                                    'active' => true,
-                                ],
-                                // [
-                                //     'image' => '/images/4.png',
-                                //     'name' => 'Lorem Ipsum',
-                                //     'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                //     'price' => '50.000',
-                                //     'orig' => '200.000',
-                                //     'active' => false,
-                                // ],
-                                // [
-                                //     'image' => '/images/5.png',
-                                //     'name' => 'Lorem Ipsum',
-                                //     'desc' => 'Lorem Ipsum is simply dummy text of the printing',
-                                //     'price' => '50.000',
-                                //     'orig' => '200.000',
-                                //     'active' => false,
-                                // ],
-                            ];
-                        @endphp
-
-                        @foreach ($promos as $promo)
+                        @foreach ($recentProducts as $product)
                             <div
                                 class="promo-card shrink-0 w-[calc((100%-200px)/3)] bg-[#FFF9F2] rounded-[20px] overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative">
                                 {{-- Product Image --}}
                                 <div class="p-3">
                                     <div class="h-40 sm:h-44 md:h-48 overflow-hidden rounded-2xl shadow-md">
-                                        <img src="{{ $promo['image'] }}" alt="{{ $promo['name'] }}"
+                                        <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}"
                                             class="w-full h-full object-cover">
                                     </div>
                                 </div>
@@ -244,27 +159,31 @@
                                 <div class="p-4 pt-3">
                                     <p
                                         class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
-                                        {{ $promo['name'] }}
+                                        {{ $product->name }}
                                     </p>
-                                    <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4">
-                                        {{ $promo['desc'] }}
+                                    <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify"
+                                        style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                        {{ $product->description }}
                                     </p>
 
                                     {{-- Price Row --}}
-                                    <div class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3">
-                                        {{-- Price box --}}
-                                        <p class="text-white font-bold text-xl">
-                                            Rp {{ $promo['price'] }}</p>
+                                    <a href="{{ route('product.show', $product->id) }}">
+                                        <div
+                                            class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3">
+                                            {{-- Price box --}}
+                                            <p class="text-white font-bold text-xl">
+                                                Rp {{ number_format($product->price, 0, ',', '.') }}</p>
 
-                                        {{-- Arrow button --}}
-                                        <button
-                                            class="w-10 h-10 bg-[#FFF9F2] rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200 shadow-sm">
-                                            <svg class="w-4 h-4" fill="none" stroke="#7A8C5C" viewBox="0 0 24 24"
-                                                stroke-width="2.5">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </button>
-                                    </div>
+                                            {{-- Arrow button --}}
+                                            <button
+                                                class="w-10 h-10 bg-[#FFF9F2] rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200 shadow-sm cursor-pointer">
+                                                <svg class="w-4 h-4" fill="none" stroke="#7A8C5C" viewBox="0 0 24 24"
+                                                    stroke-width="2.5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
                         @endforeach
@@ -279,7 +198,7 @@
     <section id="all-products" class="bg-[#FAF6F0] py-16 px-10">
         <div class="max-w-[1100px] mx-auto">
             <h2 class="font-['Playfair_Display'] text-7xl font-bold text-[#3D2B1F] text-center mb-12">
-                All Products
+                Semua Produk
             </h2>
 
             <div class="grid grid-cols-3 gap-[22px]">
@@ -290,7 +209,7 @@
                         {{-- Product Image --}}
                         <div class="p-3">
                             <div class="h-40 sm:h-44 md:h-48 overflow-hidden rounded-2xl shadow-md">
-                                <img src="{{ $product['image'] }}" alt="{{ $product['name'] }}"
+                                <img src="{{ $product->image }}" alt="{{ $product->name }}"
                                     class="w-full h-full object-cover">
                             </div>
                         </div>
@@ -299,23 +218,28 @@
                         <div class="p-4 pt-3">
                             <p
                                 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
-                                {{ $product['name'] }}
+                                {{ $product->name }}
                             </p>
-                            <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4">
-                                {{ $product['desc'] }}
+                            <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify"
+                                style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                {{ $product->description }}
                             </p>
 
                             {{-- Price Row --}}
-                            <div class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3">
-                                <p class="text-white font-bold text-xl">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                                <button
-                                    class="w-10 h-10 bg-[#FFF9F2] rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200 shadow-sm">
-                                    <svg class="w-4 h-4" fill="none" stroke="#7A8C5C" viewBox="0 0 24 24"
-                                        stroke-width="2.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </button>
-                            </div>
+                            <a href="{{ route('product.show', $product->id) }}">
+                                <div
+                                    class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3 cursor-pointer">
+                                    <p class="text-white font-bold text-xl">Rp
+                                        {{ number_format($product->price, 0, ',', '.') }}</p>
+                                    <button
+                                        class="w-10 h-10 bg-[#FFF9F2] rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200 shadow-sm">
+                                        <svg class="w-4 h-4" fill="none" stroke="#7A8C5C" viewBox="0 0 24 24"
+                                            stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 @endforeach
@@ -335,7 +259,7 @@
                     Dinikmati Sepenuh Jiwa
                 </h2>
 
-                <a href="#"
+                <a href="#all-products"
                     class="inline-flex items-center gap-3 bg-[#432818] text-white px-8 py-3.5 rounded-full font-medium text-sm hover:bg-[#6B4F3A] transition-all duration-300 shadow-lg hover:shadow-xl group">
                     Pre-Order Sekarang
                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
