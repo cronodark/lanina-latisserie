@@ -49,7 +49,7 @@
             @auth
                 @if (auth()->user()->hasRole('customer'))
                     {{-- Cart Icon --}}
-                    <a href="#"
+                    <a href="{{ route('keranjang') }}"
                         class="relative w-9 h-9 rounded-full border border-sage/40 flex items-center justify-center hover:bg-sage/10 transition-colors">
                         <svg class="w-4 h-4 text-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"

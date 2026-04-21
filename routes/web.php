@@ -26,11 +26,15 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register.submit');
 });
 
+// Landing Page Routes
 Route::get('/', [LandingPageController::class, 'index'])->name('beranda');
 Route::get('/produk', [LandingPageController::class, 'product'])->name('produk');
 Route::get('/detailproduk', [LandingPageController::class, 'detail'])->name('detailproduk');
 Route::get('/keranjang', [LandingPageController::class, 'cart'])->name('keranjang');
 Route::get('/checkout', [LandingPageController::class, 'checkout'])->name('checkout');
+
+// Profile page
+Route::get('/my-profile', [LandingPageController::class, 'myProfile'])->name('myProfile');
 
 Route::prefix('product')->name('product.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
