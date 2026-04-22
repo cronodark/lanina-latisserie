@@ -52,4 +52,10 @@ class LandingPageController extends Controller
             'title' => 'Checkout'
         ]);
     }
+    public function myProfile()
+    {
+        return view('pages.customer.profile', [
+            'title' => 'My Profile'
+        ]);
+    }
 }
