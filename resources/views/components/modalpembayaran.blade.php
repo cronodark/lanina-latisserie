@@ -1,4 +1,4 @@
-{{-- ===== MODAL OVERLAY ===== --}}
+{{-- ===== MODAL  ===== --}}
 <div id="payment-modal"
     class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 opacity-0 pointer-events-none transition-opacity duration-300">
 
@@ -65,45 +65,3 @@
         <div class="px-6 pb-6 pt-2"></div>
     </div>
 </div>
-
-<script>
-    const modal = document.getElementById('payment-modal');
-    const modalBox = document.getElementById('payment-modal-box');
-
-    function openModal() {
-        modal.classList.remove('opacity-0', 'pointer-events-none');
-        modal.classList.add('opacity-100');
-        modalBox.classList.remove('translate-y-4');
-    }
-
-    function closeModal() {
-        modal.classList.add('opacity-0', 'pointer-events-none');
-        modal.classList.remove('opacity-100');
-        modalBox.classList.add('translate-y-4');
-    }
-
-    // Buka modal saat klik baris Bank BCA di checkout
-    document.addEventListener('click', (e) => {
-        if (e.target.closest('#open-payment-modal')) openModal();
-    });
-
-    // Tutup modal
-    document.getElementById('close-payment-modal').addEventListener('click', closeModal);
-
-    // Tutup saat klik overlay
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
-    });
-
-    // Pilih bank
-    document.querySelectorAll('.bank-option').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const bank = btn.dataset.bank;
-            // Ganti label di checkout sesuai pilihan
-            const label = btn.querySelector('span:last-child').textContent;
-            const bankLabel = document.getElementById('selected-bank-label');
-            if (bankLabel) bankLabel.textContent = label;
-            closeModal();
-        });
-    });
-</script>

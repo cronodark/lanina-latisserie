@@ -101,13 +101,12 @@
         <div class="bg-[#F0EFEA] rounded-2xl p-6">
 
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-[#3D2B1F]">Alamat Saya</h3>
+                <h3 class="font-glacial font-bold text-xl text-[#3D2B1F]">Alamat Saya</h3>
 
-                <button class="bg-[#6B7A52] text-white text-sm px-5 py-2 rounded-full">
+                <button class="bg-[#6B7A52]  text-white text-sm px-5 py-2 rounded-full">
                     + Tambah Alamat
                 </button>
             </div>
-
             <div class="flex gap-3">
                 <svg class="w-5 h-5 text-red-500 mt-1" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
@@ -115,12 +114,12 @@
 
                 <div>
                     <p class="font-semibold text-[#3D2B1F]">
-                        Nama User
-                        <span class="text-sm text-gray-500">( +62xxxx )</span>
+                        Maimunah Pasutri Gaje
+                        <span class="text-sm text-gray-500">( +62 083 7439 2934 )</span>
                     </p>
 
                     <p class="text-sm text-gray-600 mt-1">
-                        Alamat lengkap user disini...
+                        Jl. Raya Persawahan No. 12 RT 03/RW 07, Dusun Sumber Rejeki, Desa Mekar Jaya, Kec. Cibeureum, Kab. Tasikmalaya, Jawa Barat 46196
                     </p>
                 </div>
             </div>
@@ -176,5 +175,9 @@
 
     </div>
 </div>
+
+<h1 class=" text-3xl">
+    TEST FONT
+</h1>
 
 @endsection
