@@ -4,8 +4,12 @@
 
 @section('content')
 
-    {{-- Flatpickr CSS --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    @php
+        $price = (int) $promo->price;
+        $actualPrice = (int) ($promo->actual_price ?? 0);
+        $hasDiscount = $actualPrice > $price;
+        $formattedDateUntil = $promo->date_until ? $promo->date_until->format('d M Y') : null;
+    @endphp
 
     <x-navbar />
 
@@ -23,11 +27,28 @@
                     class="rounded-2xl md:rounded-[24px] xl:rounded-[28px] overflow-hidden shadow-lg
                         aspect-[4/5] md:aspect-square">
 
-                    <img src="{{ $product->image }}" class="w-full h-full object-cover">
+                    <img src="{{ $promo->image ?? asset('images/promo-placeholder.jpg') }}" alt="{{ $promo->name }}"
+                        class="w-full h-full object-cover" loading="lazy">
                 </div>
 
                 {{-- ===== RIGHT: Product Info ===== --}}
                 <div class="relative">
+                    <div class="flex flex-wrap items-center gap-3 mb-4">
+                        @if ($hasDiscount)
+                            <span
+                                class="inline-flex items-center rounded-full bg-[#B8402A] px-3 py-1 text-xs sm:text-sm font-semibold text-white">
+                                Hemat {{ $promo->percentage }}%
+                            </span>
+                        @endif
+
+                        @if ($formattedDateUntil)
+                            <span
+                                class="inline-flex items-center rounded-full bg-white/80 border border-[#D8CFC4] px-3 py-1 text-xs sm:text-sm font-semibold text-[#6B4C3B]">
+                                Berlaku sampai {{ $formattedDateUntil }}
+                            </span>
+                        @endif
+                    </div>
+
                     {{-- Product Name --}}
                     <h1
                         class="font-['Playfair_Display']
@@ -35,21 +56,25 @@
                     font-bold text-[#3D2B1F]
                     leading-tight mb-4 md:mb-5 xl:mb-6
                     pr-0 md:pr-16">
-                        {{ $product->name }}
+                        {{ $promo->name }}
                     </h1>
 
                     {{-- Description --}}
                     <p
                         class="font-glacial text-[#6B4C3B] text-sm sm:text-base md:text-lg xl:text-xl leading-relaxed mb-6 md:mb-8 xl:mb-10">
-                        {{ $product->description }}
+                        {{ $promo->description }}
                     </p>
 
-                    <p class="font-glacial text-[#3D2B1F] text-sm sm:text-base mb-6 md:mb-8">
-                        Estimasi pengerjaan:
-                        <span class="font-bold">
-                            {{ $product->production_estimate ? $product->production_estimate . ' hari' : 'Belum ditentukan' }}
-                        </span>
-                    </p>
+                    @if ($hasDiscount)
+                        <div class="flex items-end gap-3 mb-6 md:mb-8 xl:mb-10">
+                            <p class="text-[#8A6D5A] line-through text-sm sm:text-base md:text-lg">
+                                Rp {{ number_format($actualPrice, 0, ',', '.') }}
+                            </p>
+                            <p class="font-bold text-[#3D2B1F] text-lg sm:text-xl md:text-2xl">
+                                Rp {{ number_format($price, 0, ',', '.') }}
+                            </p>
+                        </div>
+                    @endif
 
                     {{-- Controls --}}
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3 xl:gap-4 mb-6 md:mb-8 xl:mb-10">
@@ -72,12 +97,12 @@
                     </div>
 
                     {{-- Price + Checkout --}}
-                    <form action="{{ route('cart.store', $product) }}" method="POST"
+                    <form action="{{ route('cart.store', $promo) }}" method="POST"
                         class="flex flex-col sm:flex-row items-stretch
                         bg-[#7A8C5C] rounded-[14px]
                         p-2 sm:p-2.5 gap-2 sm:gap-3">
                         @csrf
-                        <input type="hidden" name="qty" id="qty-input" value="1">
+                        <input type="hidden" name="qty" id="qty-submit" value="1">
 
                         {{-- Subtotal --}}
                         <div
@@ -85,12 +110,14 @@
                             bg-white rounded-lg
                             px-4 sm:px-6 xl:px-8
                             py-3 sm:py-4 xl:py-5">
-                            <span id="subtotal"
-                                class="font-['Playfair_Display'] font-bold
-                                text-lg sm:text-xl xl:text-2xl 2xl:text-3xl
-                                text-[#3D2B1F]">
-                                Rp {{ number_format($product->price, 0, ',', '.') }}
-                            </span>
+                            <div class="flex flex-col leading-tight">
+                                <span id="subtotal"
+                                    class="font-['Playfair_Display'] font-bold
+                                    text-lg sm:text-xl xl:text-2xl 2xl:text-3xl
+                                    text-[#3D2B1F]">
+                                    Rp {{ number_format($price, 0, ',', '.') }}
+                                </span>
+                            </div>
                         </div>
 
                         {{-- Add to Cart Button --}}
@@ -112,73 +139,36 @@
 
     <x-footer />
 
-    {{-- Flatpickr JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <script>
-        // Quantity
         const minus = document.getElementById('qty-minus');
         const plus = document.getElementById('qty-plus');
-        const val = document.getElementById('qty-value');
-        const qtyInput = document.getElementById('qty-input');
+        const qtyValue = document.getElementById('qty-value');
+        const qtySubmit = document.getElementById('qty-submit');
         const subtotal = document.getElementById('subtotal');
-        const unitPrice = {{ (int) $product->price }};
+        const unitPrice = {{ $price }};
+        const minQty = 1;
+        const maxQty = 99;
         let qty = 1;
 
         const toCurrency = (value) => `Rp ${value.toLocaleString('id-ID')}`;
 
-        const updateSubtotal = () => {
-            subtotal.textContent = toCurrency(qty * unitPrice);
+        const setQty = (nextQty) => {
+            const safeQty = Math.min(maxQty, Math.max(minQty, Number(nextQty) || minQty));
+            qty = safeQty;
+            qtyValue.textContent = safeQty;
+            qtySubmit.value = safeQty;
+            subtotal.textContent = toCurrency(safeQty * unitPrice);
         };
 
         minus.addEventListener('click', () => {
-            if (qty > 1) {
-                qty--;
-                val.textContent = qty;
-                qtyInput.value = qty;
-                updateSubtotal();
-            }
+            setQty(qty - 1);
         });
 
         plus.addEventListener('click', () => {
-            qty++;
-            val.textContent = qty;
-            qtyInput.value = qty;
-            updateSubtotal();
+            setQty(qty + 1);
         });
 
-        qtyInput.value = qty;
-        updateSubtotal();
-
-        // Date Picker
-        flatpickr("#date-picker", {
-            dateFormat: "d/m/Y",
-            minDate: "today"
-        });
+        setQty(qty);
     </script>
-
-    {{-- Custom Style Calendar --}}
-    <style>
-        .flatpickr-calendar {
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            font-family: sans-serif;
-        }
-
-        .flatpickr-day.selected {
-            background: #7A8C5C;
-            border-color: #7A8C5C;
-            color: white;
-        }
-
-        .flatpickr-day:hover {
-            background: #EDEAE3;
-        }
-
-        .flatpickr-months .flatpickr-month {
-            color: #3D2B1F;
-            font-weight: bold;
-        }
-    </style>
 
 @endsection

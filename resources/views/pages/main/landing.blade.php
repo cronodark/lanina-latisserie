@@ -189,7 +189,7 @@
 
                 {{-- TRACK --}}
                 <div id="bestsellerTrack"
-                    class="track flex justify-start gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing">
+                    class="track flex {{ count($bestsellers) <= 2 ? 'justify-center md:justify-center' : 'justify-start' }} gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing">
 
                     @foreach ($bestsellers as $item)
                         <div

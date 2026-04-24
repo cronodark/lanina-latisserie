@@ -6,6 +6,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PromoController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
@@ -63,3 +64,5 @@ Route::prefix('product')->name('product.')->group(function () {
     Route::get('/{product}/update', [ProductController::class, 'edit'])->name('edit');
     Route::put('/{product}', [ProductController::class, 'update'])->name('update');
 });
+
+Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show');
