@@ -22,12 +22,13 @@ class PreOrderDetailFactory extends Factory
         $isPromoItem = fake()->boolean();
         $productId = Product::query()->inRandomOrder()->value('id');
         $promoId = Promo::query()->inRandomOrder()->value('id');
+        $promo = Promo::pluck('id')->toArray();
 
         return [
             'quantity' => fake()->numberBetween(1, 10),
             'type' => $isPromoItem ? 'promo' : 'product',
             'product_id' => $isPromoItem ? null : $productId,
-            'promo_id' => $isPromoItem ? ($promoId ?? Promo::factory()) : null,
+            'promo_id' => $isPromoItem ? ($promoId ?? fake()->randomElement($promo)) : null,
             'pre_order_id' => PreOrder::factory(),
         ];
     }

@@ -3,12 +3,13 @@
 namespace App\Livewire;
 
 use App\Models\Product;
+use App\Models\Promo;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Cart extends Component
 {
-    public array $cart = [];         // ['product_id' => ['qty' => int, 'checked' => bool]]
+    public array $cart = [];         // ['type:id' => ['type' => string, 'item_id' => int, 'qty' => int, 'checked' => bool]]
 
     public array $selected = [];     // product_ids that are checked
 
@@ -17,8 +18,9 @@ class Cart extends Component
     public function mount(): void
     {
         $sessionCart = session()->get($this->sessionKey(), []);
-        $this->cart = $sessionCart;
-        $this->selected = array_keys(array_filter($sessionCart, fn ($i) => $i['checked'] ?? false));
+        $this->cart = $this->normalizeCart($sessionCart);
+        $this->selected = array_keys(array_filter($this->cart, fn ($i) => $i['checked'] ?? false));
+        $this->persist();
     }
 
     private function sessionKey(): string
@@ -33,46 +35,53 @@ class Cart extends Component
 
     public function addItem(int $productId): void
     {
-        if (isset($this->cart[$productId])) {
-            $this->cart[$productId]['qty']++;
+        $cartKey = 'product:'.$productId;
+
+        if (isset($this->cart[$cartKey])) {
+            $this->cart[$cartKey]['qty']++;
         } else {
-            $this->cart[$productId] = ['qty' => 1, 'checked' => false];
+            $this->cart[$cartKey] = [
+                'type' => 'product',
+                'item_id' => $productId,
+                'qty' => 1,
+                'checked' => false,
+            ];
         }
         $this->persist();
     }
 
-    public function increment(int $productId): void
+    public function increment(string $cartKey): void
     {
-        if (isset($this->cart[$productId])) {
-            $this->cart[$productId]['qty']++;
+        if (isset($this->cart[$cartKey])) {
+            $this->cart[$cartKey]['qty']++;
             $this->persist();
         }
     }
 
-    public function decrement(int $productId): void
+    public function decrement(string $cartKey): void
     {
-        if (isset($this->cart[$productId])) {
-            if ($this->cart[$productId]['qty'] > 1) {
-                $this->cart[$productId]['qty']--;
+        if (isset($this->cart[$cartKey])) {
+            if ($this->cart[$cartKey]['qty'] > 1) {
+                $this->cart[$cartKey]['qty']--;
             } else {
-                unset($this->cart[$productId]);
-                $this->selected = array_values(array_filter($this->selected, fn ($id) => $id != $productId));
+                unset($this->cart[$cartKey]);
+                $this->selected = array_values(array_filter($this->selected, fn ($id) => $id !== $cartKey));
             }
             $this->persist();
         }
     }
 
-    public function removeItem(int $productId): void
+    public function removeItem(string $cartKey): void
     {
-        unset($this->cart[$productId]);
-        $this->selected = array_values(array_filter($this->selected, fn ($id) => $id != $productId));
+        unset($this->cart[$cartKey]);
+        $this->selected = array_values(array_filter($this->selected, fn ($id) => $id !== $cartKey));
         $this->persist();
     }
 
-    public function toggleItem(int $productId): void
+    public function toggleItem(string $cartKey): void
     {
-        if (isset($this->cart[$productId])) {
-            $this->cart[$productId]['checked'] = ! ($this->cart[$productId]['checked'] ?? false);
+        if (isset($this->cart[$cartKey])) {
+            $this->cart[$cartKey]['checked'] = ! ($this->cart[$cartKey]['checked'] ?? false);
             $this->persist();
         }
         $this->selected = array_keys(array_filter($this->cart, fn ($i) => $i['checked'] ?? false));
@@ -94,19 +103,49 @@ class Cart extends Component
             return [];
         }
 
-        $products = Product::whereIn('id', array_keys($this->cart))->get()->keyBy('id');
+        $productIds = collect($this->cart)
+            ->filter(fn (array $item) => ($item['type'] ?? 'product') === 'product')
+            ->pluck('item_id')
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        $promoIds = collect($this->cart)
+            ->filter(fn (array $item) => ($item['type'] ?? 'product') === 'promo')
+            ->pluck('item_id')
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values()
+            ->all();
+
+        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+        $promos = Promo::whereIn('id', $promoIds)->get()->keyBy('id');
         $items = [];
 
-        foreach ($this->cart as $productId => $data) {
-            if ($products->has($productId)) {
-                $product = $products[$productId];
+        foreach ($this->cart as $cartKey => $data) {
+            $type = $data['type'] ?? 'product';
+            $itemId = (int) ($data['item_id'] ?? 0);
+
+            if ($type === 'promo') {
+                $model = $promos->get($itemId);
+            } else {
+                $type = 'product';
+                $model = $products->get($itemId);
+            }
+
+            if ($model) {
                 $items[] = [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'desc' => $product->description,
-                    'price' => $product->price,
-                    'image' => $product->image,
-                    'qty' => $data['qty'],
+                    'key' => (string) $cartKey,
+                    'id' => $model->id,
+                    'type' => $type,
+                    'name' => $model->name,
+                    'desc' => $model->description,
+                    'price' => $model->price,
+                    'image' => $model->image,
+                    'qty' => (int) ($data['qty'] ?? 1),
                     'checked' => $data['checked'] ?? false,
                 ];
             }
@@ -145,5 +184,29 @@ class Cart extends Component
     public function render()
     {
         return view('livewire.cart');
+    }
+
+    private function normalizeCart(array $cart): array
+    {
+        $normalized = [];
+
+        foreach ($cart as $key => $item) {
+            $type = $item['type'] ?? (is_numeric($key) ? 'product' : null);
+            $itemId = (int) ($item['item_id'] ?? (is_numeric($key) ? $key : 0));
+
+            if (! in_array($type, ['product', 'promo'], true) || $itemId < 1) {
+                continue;
+            }
+
+            $normalizedKey = $type.':'.$itemId;
+            $normalized[$normalizedKey] = [
+                'type' => $type,
+                'item_id' => $itemId,
+                'qty' => max(1, (int) ($item['qty'] ?? 1)),
+                'checked' => (bool) ($item['checked'] ?? false),
+            ];
+        }
+
+        return $normalized;
     }
 }

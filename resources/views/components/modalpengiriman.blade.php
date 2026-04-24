@@ -20,9 +20,9 @@
         <div class="px-6 py-2 flex flex-col divide-y divide-[#F0EDE6]">
             @php
                 $shippingOptions = [
-                    ['id' => 'ambil-sendiri',      'label' => 'Ambil Sendiri'],
-                    ['id' => 'kurir-ekspedisi',    'label' => 'Kirim Kurir Ekspedisi'],
-                    ['id' => 'kurir-toko',         'label' => 'Kirim Kurir Toko'],
+                    ['id' => 'pickUp',      'label' => 'Ambil Sendiri'],
+                    ['id' => 'kurirEkspedisi',    'label' => 'Kirim Kurir Ekspedisi'],
+                    ['id' => 'kurirToko',         'label' => 'Kirim Kurir Toko'],
                 ];
             @endphp
 

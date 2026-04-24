@@ -23,6 +23,7 @@
                 @endphp
 
                 <div class="address-item border border-[#E8E0D4] rounded-[12px] p-4 cursor-pointer hover:border-[#7A8C5C] transition"
+                    data-address-id="{{ $addr->id }}"
                     data-name="{{ auth()->user()->name }}"
                     data-phone="{{ auth()->user()->telp }}"
                     data-address="{{ $addressText }}">

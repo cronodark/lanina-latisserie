@@ -16,6 +16,7 @@ class PreOrder extends Model
         'send_type',
         'tracking_number',
         'choosen_expedition',
+        'address_id',
         'user_id',
     ];
 
@@ -33,5 +34,10 @@ class PreOrder extends Model
     public function customer()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class, 'address_id');
     }
 }

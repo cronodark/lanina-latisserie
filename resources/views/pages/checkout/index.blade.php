@@ -12,6 +12,7 @@
             <div class="w-full max-w-[520px] flex flex-col gap-3">
                 @php
                     $selectedAddress = collect($addresses)->first();
+                    $selectedAddressId = $selectedAddress?->id;
                     $selectedAddressText = $selectedAddress
                         ? collect([
                             $selectedAddress->street,
@@ -94,73 +95,81 @@
                     </div>
                 </div>
 
-                {{-- ===== SECTION 2: Metode Kirim ===== --}}
-                <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
-                    <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-xl mb-4">
-                        Metode Pengiriman
-                    </h2>
-                    <div id="open-shipping-modal"
-                        class="flex items-center justify-between pb-4 border-b border-[#E8E0D4] cursor-pointer hover:opacity-75 transition-opacity">
-                        <span id="selected-shipping-label" class="font-glacial text-[#3D2B1F] text-sm">Ambil Sendiri</span>
-                        <svg class="w-4 h-4 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </div>
-                </div>
+                <form action="{{ route('checkout.store') }}" method="POST" class="flex flex-col gap-3">
+                    @csrf
+                    <input type="hidden" name="address_id" id="address-id-input" value="{{ $selectedAddressId }}">
+                    <input type="hidden" name="send_type" id="send-type-input" value="pickUp">
+                    <input type="hidden" name="payment_bank" id="payment-bank-input" value="bca">
+                    <input type="hidden" name="actual_periode" value="{{ $pickupDate }}">
 
-                {{-- ===== SECTION 3: Metode Pembayaran ===== --}}
-                <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
-
-                    <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-xl mb-4">
-                        Metode Pembayaran
-                    </h2>
-
-                    <div id="open-payment-modal"
-                        class="flex items-center justify-between pb-4 border-b border-[#E8E0D4] cursor-pointer hover:opacity-75 transition-opacity">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-7 bg-[#005BAA] rounded-[6px] flex items-center justify-center shrink-0">
-                                <span class="text-white font-bold text-[10px] tracking-wide">BCA</span>
-                            </div>
-                            <span id="selected-bank-label" class="font-glacial text-[#3D2B1F] text-sm font-bold">Bank
-                                BCA</span>
+                    {{-- ===== SECTION 2: Metode Kirim ===== --}}
+                    <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
+                        <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-xl mb-4">
+                            Metode Pengiriman
+                        </h2>
+                        <div id="open-shipping-modal"
+                            class="flex items-center justify-between pb-4 border-b border-[#E8E0D4] cursor-pointer hover:opacity-75 transition-opacity">
+                            <span id="selected-shipping-label" class="font-glacial text-[#3D2B1F] text-sm">Ambil Sendiri</span>
+                            <svg class="w-4 h-4 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
                         </div>
-                        <svg class="w-4 h-4 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
                     </div>
 
-                    <div class="pt-4">
-                        <p class="font-glacial text-[#9A8878] text-xs mb-1">Virtual Account</p>
-                        <p class="font-glacial font-bold text-[#3D2B1F] text-lg tracking-widest">
-                            123 9876 0235 3435
-                        </p>
+                    {{-- ===== SECTION 3: Metode Pembayaran ===== --}}
+                    <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
+
+                        <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-xl mb-4">
+                            Metode Pembayaran
+                        </h2>
+
+                        <div id="open-payment-modal"
+                            class="flex items-center justify-between pb-4 border-b border-[#E8E0D4] cursor-pointer hover:opacity-75 transition-opacity">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-7 bg-[#005BAA] rounded-[6px] flex items-center justify-center shrink-0">
+                                    <span class="text-white font-bold text-[10px] tracking-wide">BCA</span>
+                                </div>
+                                <span id="selected-bank-label" class="font-glacial text-[#3D2B1F] text-sm font-bold">Bank
+                                    BCA</span>
+                            </div>
+                            <svg class="w-4 h-4 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                            </svg>
+                        </div>
+
+                        <div class="pt-4">
+                            <p class="font-glacial text-[#9A8878] text-xs mb-1">Virtual Account</p>
+                            <p class="font-glacial font-bold text-[#3D2B1F] text-lg tracking-widest">
+                                123 9876 0235 3435
+                            </p>
+                        </div>
+
                     </div>
 
-                </div>
+                    {{-- ===== SECTION 4: Tanggal + Total + Bayar ===== --}}
+                    <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
 
-                {{-- ===== SECTION 4: Tanggal + Total + Bayar ===== --}}
-                <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
+                        <div class="flex items-center justify-between mb-5">
+                            <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg">Tanggal Pengambilan</p>
+                            <span class="font-glacial font-bold text-[#3D2B1F] text-base">{{ \Illuminate\Support\Carbon::parse($pickupDate)->format('d m y') }}</span>
+                        </div>
 
-                    <div class="flex items-center justify-between mb-5">
-                        <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg">Tanggal Pengambilan</p>
-                        <span class="font-glacial font-bold text-[#3D2B1F] text-base">12 02 26</span>
+                        <div class="flex items-center justify-between mb-7">
+                            <p class="font-glacial font-bold text-[#3D2B1F] text-base tracking-widest uppercase">TOTAL</p>
+                            <span class="font-glacial font-bold text-[#7A8C5C] text-2xl">Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit"
+                                class="bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-glacial font-bold text-sm tracking-widest uppercase px-10 py-3 rounded-full transition-colors duration-200">
+                                BAYAR
+                            </button>
+                        </div>
+
                     </div>
-
-                    <div class="flex items-center justify-between mb-7">
-                        <p class="font-glacial font-bold text-[#3D2B1F] text-base tracking-widest uppercase">TOTAL</p>
-                        <span class="font-glacial font-bold text-[#7A8C5C] text-2xl">Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
-                    </div>
-
-                    <div class="flex justify-end">
-                        <button
-                            class="bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-glacial font-bold text-sm tracking-widest uppercase px-10 py-3 rounded-full transition-colors duration-200">
-                            BAYAR
-                        </button>
-                    </div>
-
-                </div>
+                </form>
 
             </div>
         </div>

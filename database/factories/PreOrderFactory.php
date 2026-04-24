@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Address;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -26,6 +27,7 @@ class PreOrderFactory extends Factory
             'tracking_number' => fake()->uuid(),
             'choosen_expedition' => fake()->randomElement(['jne', 'pos', 'tiki']),
             'user_id' => User::factory(),
+            'address_id' => Address::factory(),
         ];
     }
 }

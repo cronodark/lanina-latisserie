@@ -97,7 +97,7 @@
                     </div>
 
                     {{-- Price + Checkout --}}
-                    <form action="{{ route('cart.store', $promo) }}" method="POST"
+                    <form action="{{ route('cart.store.promo', $promo) }}" method="POST"
                         class="flex flex-col sm:flex-row items-stretch
                         bg-[#7A8C5C] rounded-[14px]
                         p-2 sm:p-2.5 gap-2 sm:gap-3">

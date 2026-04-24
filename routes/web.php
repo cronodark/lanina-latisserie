@@ -32,11 +32,13 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/', [ProductController::class, 'index'])->name('index');
         });
 
-        Route::post('/cart/{product}', [CartController::class, 'store'])->name('cart.store');
+        Route::post('/cart/{product}', [CartController::class, 'storeProduct'])->name('cart.store');
+        Route::post('/cart/promo/{promo}', [CartController::class, 'storePromo'])->name('cart.store.promo');
         Route::get('/cart', function () {
             return view('pages.cart.index');
         })->name('cart.index');
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+        Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     });
 });
 

@@ -21,28 +21,36 @@ if (document.getElementById("payment-modal")) {
     const nameEl = document.getElementById("address-name");
     const detailEl = document.getElementById("address-detail");
 
-    document
-        .getElementById("open-address-modal")
-        .addEventListener("click", () => {
+    const openAddressBtn = document.getElementById("open-address-modal");
+    if (openAddressBtn) {
+        openAddressBtn.addEventListener("click", () => {
             addressModal.classList.remove("opacity-0", "pointer-events-none");
             addressModalBox.classList.remove("scale-95");
             addressModalBox.classList.add("scale-100");
         });
+    }
 
-    closeAddressBtn.addEventListener("click", () => {
-        addressModal.classList.add("opacity-0", "pointer-events-none");
-        addressModalBox.classList.remove("scale-100");
-        addressModalBox.classList.add("scale-95");
-    });
+    if (closeAddressBtn) {
+        closeAddressBtn.addEventListener("click", () => {
+            addressModal.classList.add("opacity-0", "pointer-events-none");
+            addressModalBox.classList.remove("scale-100");
+            addressModalBox.classList.add("scale-95");
+        });
+    }
 
     document.querySelectorAll(".address-item").forEach((item) => {
         item.addEventListener("click", () => {
             const name = item.dataset.name;
             const phone = item.dataset.phone;
             const address = item.dataset.address;
+            const addressId = item.dataset.addressId;
+            const addressIdInput = document.getElementById("address-id-input");
 
             nameEl.innerHTML = `${name} <span class="font-normal text-[#6B4C3B] ml-2">(${phone})</span>`;
             detailEl.textContent = address;
+            if (addressIdInput) {
+                addressIdInput.value = addressId || "";
+            }
 
             addressModal.classList.add("opacity-0", "pointer-events-none");
             addressModalBox.classList.remove("scale-100");
@@ -66,12 +74,15 @@ if (document.getElementById("payment-modal")) {
         paymentModalBox.classList.add("translate-y-4");
     }
 
-    document
-        .getElementById("open-payment-modal")
-        .addEventListener("click", openPaymentModal);
-    document
-        .getElementById("close-payment-modal")
-        .addEventListener("click", closePaymentModal);
+    const openPaymentBtn = document.getElementById("open-payment-modal");
+    const closePaymentBtn = document.getElementById("close-payment-modal");
+
+    if (openPaymentBtn) {
+        openPaymentBtn.addEventListener("click", openPaymentModal);
+    }
+    if (closePaymentBtn) {
+        closePaymentBtn.addEventListener("click", closePaymentModal);
+    }
 
     paymentModal.addEventListener("click", (e) => {
         if (e.target === paymentModal) closePaymentModal();
@@ -81,7 +92,9 @@ if (document.getElementById("payment-modal")) {
         btn.addEventListener("click", () => {
             const label = btn.querySelector("span:last-child").textContent;
             const bankLabel = document.getElementById("selected-bank-label");
+            const paymentBankInput = document.getElementById("payment-bank-input");
             if (bankLabel) bankLabel.textContent = label;
+            if (paymentBankInput) paymentBankInput.value = btn.dataset.bank || "bca";
             closePaymentModal();
         });
     });
@@ -102,12 +115,15 @@ if (document.getElementById("payment-modal")) {
         shippingModalBox.classList.add("translate-y-4");
     }
 
-    document
-        .getElementById("open-shipping-modal")
-        .addEventListener("click", openShippingModal);
-    document
-        .getElementById("close-shipping-modal")
-        .addEventListener("click", closeShippingModal);
+    const openShippingBtn = document.getElementById("open-shipping-modal");
+    const closeShippingBtn = document.getElementById("close-shipping-modal");
+
+    if (openShippingBtn) {
+        openShippingBtn.addEventListener("click", openShippingModal);
+    }
+    if (closeShippingBtn) {
+        closeShippingBtn.addEventListener("click", closeShippingModal);
+    }
 
     shippingModal.addEventListener("click", (e) => {
         if (e.target === shippingModal) closeShippingModal();
@@ -131,7 +147,10 @@ if (document.getElementById("payment-modal")) {
             const shippingLabel = document.getElementById(
                 "selected-shipping-label",
             );
+            const sendTypeInput = document.getElementById("send-type-input");
             if (shippingLabel) shippingLabel.textContent = label;
+            if (sendTypeInput)
+                sendTypeInput.value = btn.dataset.shipping || "pickUp";
 
             setTimeout(closeShippingModal, 200);
         });

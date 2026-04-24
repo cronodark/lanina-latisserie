@@ -42,14 +42,14 @@
                         {{-- Qty --}}
                         <div class="flex items-center gap-2">
                             <div class="flex items-center border border-[#D8CFC4] rounded-lg overflow-hidden bg-[#F5F0E8]">
-                                <button wire:click="decrement({{ $item['id'] }})"
+                                <button wire:click="decrement('{{ $item['key'] }}')"
                                     class="w-8 h-8 flex items-center justify-center text-[#7A8C5C] hover:bg-[#E8E3DB] transition-colors font-bold text-base">
                                     −
                                 </button>
                                 <span class="w-8 text-center font-glacial font-bold text-[#3D2B1F] text-sm select-none">
                                     {{ $item['qty'] }}
                                 </span>
-                                <button wire:click="increment({{ $item['id'] }})"
+                                <button wire:click="increment('{{ $item['key'] }}')"
                                     class="w-8 h-8 flex items-center justify-center text-[#7A8C5C] hover:bg-[#E8E3DB] transition-colors font-bold text-base">
                                     +
                                 </button>
@@ -62,7 +62,7 @@
                         <div class="flex items-center gap-2">
                             <input type="checkbox"
                                 class="w-5 h-5 accent-[#7A8C5C] cursor-pointer rounded-lg"
-                                wire:click="toggleItem({{ $item['id'] }})"
+                                wire:click="toggleItem('{{ $item['key'] }}')"
                                 @checked($item['checked'])>
                         </div>
                         <div class="bg-[#7A8C5C] text-white font-glacial font-bold text-sm px-5 py-2.5 rounded-full">

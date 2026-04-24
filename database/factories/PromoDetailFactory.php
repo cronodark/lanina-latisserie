@@ -18,9 +18,11 @@ class PromoDetailFactory extends Factory
      */
     public function definition(): array
     {
+        $products = Product::pluck('id')->toArray();
+        $promos = Promo::pluck('id')->toArray();
         return [
-            'promo_id' => Promo::factory(),
-            'product_id' => Product::factory(),
+            'promo_id' => fake()->randomElement($promos),
+            'product_id' => fake()->randomElement($products),
         ];
     }
 }
