@@ -61,7 +61,7 @@
 
                     <!-- BUTTON -->
                         <button type="submit"
-                        class="mt-20 w-full sm:w-2/3 lg:w-4/5 mx-auto block rounded-lg bg-[#6A7941] py-3 text-sm sm:text-base font-semibold text-white hover:bg-[#5E702A] transition duration-300 shadow-md hover:shadow-lg">
+                        class="mt-20 w-full sm:w-2/3 lg:w-4/5 mx-auto block rounded-lg bg-[#6A7941] py-3 text-sm sm:text-base font-semibold text-white hover:bg-[#5E702A] transition duration-300 shadow-md hover:shadow-lg cursor-pointer">
                         Masuk
                     </button>
                 </form>

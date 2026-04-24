@@ -16,6 +16,7 @@ class Product extends Model implements HasMedia
         'description',
         'price',
         'expired_day',
+        'production_estimate'
     ];
 
     protected $appends = [

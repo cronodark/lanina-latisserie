@@ -1,14 +1,12 @@
 @props(['active' => 'dashboard'])
 
 {{-- TOGGLE BUTTON --}}
-<button id="sidebarToggle"
-    class="lg:hidden fixed top-4 left-4 z-50 bg-[#ADC178] text-white p-2 rounded-md shadow">
+<button id="sidebarToggle" class="lg:hidden fixed top-4 left-4 z-50 bg-[#ADC178] text-white p-2 rounded-md shadow">
     ☰
 </button>
 
 {{-- OVERLAY --}}
-<div id="sidebarOverlay"
-    class="fixed inset-0 bg-black/30 z-30 hidden lg:hidden"></div>
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-30 hidden lg:hidden"></div>
 
 <aside id="sidebar"
     class="fixed top-0 left-0 z-40 w-[230px] min-h-screen bg-[#A9BC7A]
@@ -22,13 +20,10 @@
     </div>
 
     <nav class="flex flex-col gap-7 text-sm">
-
         {{-- Dashboard --}}
         <a href="#"
             class="font-semibold transition
-            {{ $active === 'dashboard'
-                ? 'text-white'
-                : 'text-white/80 hover:text-white' }}">
+            {{ $active === 'dashboard' ? 'text-white' : 'text-white/80 hover:text-white' }}">
             Dashboard
         </a>
 
@@ -39,17 +34,13 @@
             <div class="flex flex-col gap-2 ml-2">
                 <a href="#"
                     class="transition
-                    {{ $active === 'daftar-alamat'
-                        ? 'text-white font-medium'
-                        : 'text-white/70 hover:text-white' }}">
+                    {{ $active === 'daftar-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Daftar Alamat
                 </a>
 
                 <a href="#"
                     class="transition
-                    {{ $active === 'tambah-alamat'
-                        ? 'text-white font-medium'
-                        : 'text-white/70 hover:text-white' }}">
+                    {{ $active === 'tambah-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Tambah Alamat
                 </a>
             </div>
@@ -61,20 +52,16 @@
 
             <div class="flex flex-col gap-2 ml-2">
                 @foreach ([
-                    'belum-bayar' => 'Belum Bayar',
-                    'dikemas' => 'Dikemas',
-                    'diantar' => 'Diantar',
-                    'selesai' => 'Selesai'
-                ] as $key => $label)
-
-                <a href="#"
-                    class="transition
-                    {{ $active === $key
-                        ? 'text-white font-medium'
-                        : 'text-white/70 hover:text-white' }}">
-                    {{ $label }}
-                </a>
-
+        'belum-bayar' => 'Belum Bayar',
+        'dikemas' => 'Dikemas',
+        'diantar' => 'Diantar',
+        'selesai' => 'Selesai',
+    ] as $key => $label)
+                    <a href="#"
+                        class="transition
+                    {{ $active === $key ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                        {{ $label }}
+                    </a>
                 @endforeach
             </div>
         </div>

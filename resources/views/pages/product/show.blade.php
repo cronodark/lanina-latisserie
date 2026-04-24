@@ -28,19 +28,6 @@
 
                 {{-- ===== RIGHT: Product Info ===== --}}
                 <div class="relative">
-
-                    {{-- Cart Icon --}}
-                    <div class="absolute top-0 right-0">
-                        <button
-                            class="w-10 h-10 sm:w-12 sm:h-12 xl:w-14 xl:h-14 bg-white rounded-full flex items-center justify-center shadow-md hover:scale-105 transition">
-                            <svg class="w-5 h-5 xl:w-6 xl:h-6 text-[#7A8C5C]" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </button>
-                    </div>
-
                     {{-- Product Name --}}
                     <h1
                         class="font-['Playfair_Display']
@@ -57,32 +44,27 @@
                         {{ $product->description }}
                     </p>
 
+                    <p class="font-glacial text-[#3D2B1F] text-sm sm:text-base mb-6 md:mb-8">
+                        Estimasi pengerjaan:
+                        <span class="font-bold">
+                            {{ $product->production_estimate ? $product->production_estimate . ' hari' : 'Belum ditentukan' }}
+                        </span>
+                    </p>
+
                     {{-- Controls --}}
                     <div class="flex flex-wrap items-center gap-2 sm:gap-3 xl:gap-4 mb-6 md:mb-8 xl:mb-10">
-
-                        {{-- Stok --}}
-                        <div
-                            class="flex justify-center items-center gap-2 bg-white border border-[#D8CFC4] rounded-[10px]
-                                px-4 py-2.5 pr-10
-                                text-xs sm:text-sm xl:text-base
-                                text-[#3D2B1F] cursor-pointer
-                                focus:outline-none focus:border-[#7A8C5C]">
-                            <span class="font-bold text-[#3D2B1F]">Stok:</span>
-                            <span class="text-[#3D2B1F]">100</span>
-                        </div>
-
                         {{-- Quantity --}}
                         <div class="flex items-center bg-white border border-[#D8CFC4] rounded-[10px] overflow-hidden">
-                            <button id="qty-minus"
+                            <button id="qty-minus" type="button"
                                 class="w-10 h-10 sm:w-10 sm:h-10 xl:w-12 xl:h-12 flex items-center justify-center bg-[#E1E1E1] hover:bg-[#BDBDBD] font-bold">
                                 −
                             </button>
                             <span id="qty-value"
                                 class="w-9 sm:w-10 xl:w-12 text-center font-bold text-[#3D2B1F]
                                    text-xs sm:text-sm xl:text-base mx-5 select-none">
-                                2
+                                1
                             </span>
-                            <button id="qty-plus"
+                            <button id="qty-plus" type="button"
                                 class="w-10 h-10 sm:w-10 sm:h-10 xl:w-12 xl:h-12 flex items-center justify-center bg-[#E1E1E1] hover:bg-[#BDBDBD] font-bold">
                                 +
                             </button>
@@ -90,10 +72,12 @@
                     </div>
 
                     {{-- Price + Checkout --}}
-                    <div
+                    <form action="{{ route('cart.store', $product) }}" method="POST"
                         class="flex flex-col sm:flex-row items-stretch
                         bg-[#7A8C5C] rounded-[14px]
                         p-2 sm:p-2.5 gap-2 sm:gap-3">
+                        @csrf
+                        <input type="hidden" name="qty" id="qty-input" value="1">
 
                         {{-- Price --}}
                         <div
@@ -109,8 +93,8 @@
                             </span>
                         </div>
 
-                        {{-- Checkout Button --}}
-                        <button
+                        {{-- Add to Cart Button --}}
+                        <button type="submit"
                             class="bg-[#ADC178] hover:bg-[#5C6B44]
                             text-white font-['Playfair_Display'] font-bold
                             text-lg sm:text-xl xl:text-2xl
@@ -118,10 +102,9 @@
                             py-3 sm:py-4 xl:py-5
                             rounded-lg transition
                             w-full sm:w-auto">
-                            Checkout!
+                            Tambah ke Keranjang
                         </button>
-
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -137,19 +120,24 @@
         const minus = document.getElementById('qty-minus');
         const plus = document.getElementById('qty-plus');
         const val = document.getElementById('qty-value');
-        let qty = 2;
+        const qtyInput = document.getElementById('qty-input');
+        let qty = 1;
 
         minus.addEventListener('click', () => {
             if (qty > 1) {
                 qty--;
                 val.textContent = qty;
+                qtyInput.value = qty;
             }
         });
 
         plus.addEventListener('click', () => {
             qty++;
             val.textContent = qty;
+            qtyInput.value = qty;
         });
+
+        qtyInput.value = qty;
 
         // Date Picker
         flatpickr("#date-picker", {

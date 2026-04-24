@@ -9,40 +9,42 @@
             Pilih Alamat
         </h2>
 
-        @php
-            $addresses = [
-                [
-                    'name' => 'Maimunah Pasutri Gaje',
-                    'phone' => '+62 083 7439 2934',
-                    'address' => 'Jl. Raya Persawahan No. 12, Tasikmalaya'
-                ],
-                [
-                    'name' => 'Ario Elnino',
-                    'phone' => '+62 812 9999 1111',
-                    'address' => 'Jl. Melati No. 10, Karawang'
-                ],
-            ];
-        @endphp
-
         <div class="flex flex-col gap-3 max-h-[300px] overflow-y-auto">
-            @foreach ($addresses as $i => $addr)
+            @forelse ($addresses as $addr)
+                @php
+                    $addressText = collect([
+                        $addr->street,
+                        'RT '.$addr->rt.'/RW '.$addr->rw,
+                        $addr->district,
+                        $addr->city,
+                        $addr->state,
+                        $addr->zip_code,
+                    ])->filter()->implode(', ');
+                @endphp
+
                 <div class="address-item border border-[#E8E0D4] rounded-[12px] p-4 cursor-pointer hover:border-[#7A8C5C] transition"
-                    data-name="{{ $addr['name'] }}"
-                    data-phone="{{ $addr['phone'] }}"
-                    data-address="{{ $addr['address'] }}">
+                    data-name="{{ auth()->user()->name }}"
+                    data-phone="{{ auth()->user()->telp }}"
+                    data-address="{{ $addressText }}">
 
                     <p class="font-glacial font-bold text-[#3D2B1F] text-sm">
-                        {{ $addr['name'] }}
+                        {{ auth()->user()->name }}
                         <span class="font-normal text-[#6B4C3B] ml-2">
-                            ({{ $addr['phone'] }})
+                            ({{ auth()->user()->telp }})
                         </span>
                     </p>
 
                     <p class="font-glacial text-[#6B4C3B] text-sm mt-1">
-                        {{ $addr['address'] }}
+                        {{ $addressText }}
                     </p>
                 </div>
-            @endforeach
+            @empty
+                <div class="border border-dashed border-[#E8E0D4] rounded-[12px] p-4 text-center">
+                    <p class="font-glacial text-[#6B4C3B] text-sm">
+                        Belum ada alamat tersimpan.
+                    </p>
+                </div>
+            @endforelse
         </div>
 
         <div class="flex justify-end mt-5">
