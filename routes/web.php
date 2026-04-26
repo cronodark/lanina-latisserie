@@ -34,7 +34,10 @@ Route::get('/keranjang', [LandingPageController::class, 'cart'])->name('keranjan
 Route::get('/checkout', [LandingPageController::class, 'checkout'])->name('checkout');
 
 // Profile page
-Route::get('/my-profile', [LandingPageController::class, 'myProfile'])->name('myProfile');
+Route::get('/profil', [LandingPageController::class, 'profil'])->name('profil');
+Route::get('/profil/alamat', [LandingPageController::class, 'alamat'])->name('alamat');
+Route::get('/profil/tambah-alamat', [LandingPageController::class, 'addAlamat'])->name('tambah-alamat');
+Route::get('/profil/edit-alamat', [LandingPageController::class, 'editAlamat'])->name('edit-alamat');
 
 Route::prefix('product')->name('product.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');

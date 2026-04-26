@@ -1,4 +1,4 @@
-@props(['active' => 'dashboard'])
+@props(['active' => []])
 
 {{-- OVERLAY --}}
 <div id="sidebarOverlay"
@@ -7,7 +7,7 @@
 {{-- SIDEBAR --}}
 <aside id="sidebar"
     class="fixed top-0 left-0 z-40 w-[230px] min-h-screen bg-[#A9BC7A]
-           flex flex-col px-6 py-8
+           flex flex-col px-6 py-8 font-glacial
            transform -translate-x-full lg:translate-x-0
            transition-transform duration-300">
 

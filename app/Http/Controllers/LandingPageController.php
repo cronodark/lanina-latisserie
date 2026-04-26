@@ -52,10 +52,28 @@ class LandingPageController extends Controller
             'title' => 'Checkout'
         ]);
     }
-    public function myProfile()
+    public function profil()
     {
-        return view('pages.customer.profile', [
-            'title' => 'My Profile'
+        return view('pages.customer.profil', [
+            'title' => 'Profil Saya'
+        ]);
+    }
+    public function alamat()
+    {
+        return view('pages.customer.alamat', [
+            'title' => 'Alamat Saya'
+        ]);
+    }
+    public function addAlamat()
+    {
+        return view('pages.customer.tambahAlamat', [
+            'title' => 'Tambah Alamat'
+        ]);
+    }
+    public function editAlamat()
+    {
+        return view('pages.customer.editAlamat', [
+            'title' => 'Edit Alamat'
         ]);
     }
 }
