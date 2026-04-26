@@ -2,182 +2,204 @@
 
 @section('title', 'Dashboard')
 
-<x-sidebar active="dashboard" />
-
 @section('content')
 
-<div class="lg:ml-[230px] min-h-screen bg-[##FCFEF4]">
+<div class="min-h-screen bg-[#F5F0E8]">
 
-    {{-- TOPBAR --}}
-    <div class="px-6 py-4 mb-6">
-        <div class="flex items-center bg-white border border-[#E5E0D8] rounded-full px-4 py-2 max-w-sm shadow-sm">
-            <svg class="w-4 h-4 text-[#6B7A52] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-            </svg>
-            <input type="text" placeholder="Search"
-                class="bg-transparent text-sm text-[#3D2B1F] outline-none w-full">
-        </div>
-    </div>
+    {{-- ===== SIDEBAR ===== --}}
+    <x-sidebar active="dashboard" />
 
-    <div class="px-6 pb-8 flex flex-col gap-6">
+    {{-- ===== MAIN CONTENT ===== --}}
+    <div class="lg:ml-[230px] flex flex-col gap-5 px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
 
-        {{-- PROFILE --}}
-        <div class="bg-[#B9925A] rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-center justify-between text-white">
-
-            <div class="flex items-center gap-4">
-                <img src="{{ auth()->user()->avatar ?? '/images/1.png' }}"
-                    class="w-16 h-16 rounded-full object-cover">
-
-                <div>
-                    <h2 class="text-lg sm:text-xl font-semibold">
-                        {{ auth()->user()->name ?? 'User Name' }}
-                    </h2>
-                    <p class="text-white/80 text-sm">
-                        {{ auth()->user()->role ?? 'User' }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="hidden sm:block h-10 w-px bg-white/40 mx-6"></div>
-
-            <div class="text-sm text-right">
-                <p>{{ auth()->user()->email ?? 'email@gmail.com' }}</p>
-                <p class="text-white/80">{{ auth()->user()->phone ?? '+62xxxx' }}</p>
-            </div>
-
-        </div>
-
-        {{-- PESANAN --}}
-        <div class="bg-[#F0EFEA] rounded-2xl p-6">
-            <h3 class="font-bold text-[#3D2B1F] text-xl mb-6">
-                Pesanan Saya
-            </h3>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 text-center gap-6">
-
-                {{-- Belum Bayar --}}
-                <div class="flex flex-col items-center gap-2">
-                    <svg class="w-8 h-8 text-[#6B7A52]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <rect x="3" y="7" width="18" height="14" rx="2"/>
-                        <path d="M3 10h18"/>
+        {{-- Topbar --}}
+        <div class="flex items-center gap-4 mb-2">
+            <button id="sidebarToggle" class="lg:hidden text-[#3D2B1F]">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <div class="flex-1 max-w-[300px]">
+                <div class="flex items-center gap-2 bg-white rounded-full px-4 py-2 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+                    <svg class="w-4 h-4 text-[#9A8878]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z"/>
                     </svg>
-                    <span class="text-sm font-semibold text-[#3D2B1F]">Belum Bayar</span>
+                    <input type="text" placeholder="Search" class="font-glacial text-sm text-[#3D2B1F] placeholder-[#C4B8AE] outline-none bg-transparent w-full">
                 </div>
-
-                {{-- Dikemas --}}
-                <div class="flex flex-col items-center gap-2">
-                    <svg class="w-8 h-8 text-[#6B7A52]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                        <path d="M3.3 7l8.7 5 8.7-5"/>
-                        <path d="M12 22V12"/>
-                    </svg>
-                    <span class="text-sm font-semibold text-[#3D2B1F]">Dikemas</span>
-                </div>
-
-                {{-- Diantar --}}
-                <div class="flex flex-col items-center gap-2">
-                    <svg class="w-8 h-8 text-[#6B7A52]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <rect x="1" y="3" width="15" height="13"/>
-                        <path d="M16 8h4l3 3v5h-7z"/>
-                        <circle cx="5.5" cy="18.5" r="2.5"/>
-                        <circle cx="18.5" cy="18.5" r="2.5"/>
-                    </svg>
-                    <span class="text-sm font-semibold text-[#3D2B1F]">Diantar</span>
-                </div>
-
-                {{-- Selesai --}}
-                <div class="flex flex-col items-center gap-2">
-                    <svg class="w-8 h-8 text-[#6B7A52]" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/>
-                        <path d="M9 12l2 2 4-4"/>
-                    </svg>
-                    <span class="text-sm font-semibold text-[#3D2B1F]">Selesai</span>
-                </div>
-
             </div>
         </div>
 
-        {{-- ALAMAT --}}
-        <div class="bg-[#F0EFEA] rounded-2xl p-6">
+        {{-- Profile Banner --}}
+        <div class="bg-[#BB9457] rounded-[20px] px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
+            <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/20 overflow-hidden shrink-0 ring-4 ring-white/30">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=maimunah" alt="Avatar" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 text-center sm:text-left">
+                <h2 class="font-['Playfair_Display'] font-bold text-white text-xl sm:text-2xl">Maimunah Pasutri Gaje</h2>
+                <p class="font-glacial text-white/80 text-sm mt-0.5">Admin</p>
+            </div>
+            <div class="text-center sm:text-right mt-2 sm:mt-0">
+                <p class="font-glacial text-white/90 text-sm">maimunah@gmail.com</p>
+                <p class="font-glacial text-white/90 text-sm mt-1">+62 877 4563 4859</p>
+            </div>
+        </div>
 
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-glacial font-bold text-xl text-[#3D2B1F]">Alamat Saya</h3>
+        {{-- Pesanan Saya --}}
+        <div class="bg-white rounded-[20px] px-4 sm:px-6 lg:px-8 py-6 lg:py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
+            <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-xl sm:text-2xl mb-4 sm:mb-6">Pesanan Saya</h2>
+            <div class="flex flex-wrap justify-center sm:justify-around">
 
-                <button class="bg-[#6B7A52]  text-white text-sm px-5 py-2 rounded-full">
+                @php
+                    $orders = [
+                        ['label' => 'Belum Bayar', 'icon' => 'wallet'],
+                        ['label' => 'Dikemas',     'icon' => 'box'],
+                        ['label' => 'Diantar',     'icon' => 'truck'],
+                        ['label' => 'Selesai',     'icon' => 'check'],
+                    ];
+                @endphp
+
+                @foreach ($orders as $order)
+                    <a href="#" class="flex flex-col items-center gap-3 group">
+                        <div class="w-16 h-16 rounded-[16px]  flex items-center justify-center group-hover:bg-[#E8E0D4] transition-colors">
+                            @if ($order['icon'] === 'wallet')
+                                <svg class="w-7 h-7 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h.01M11 15h2M3 6h18a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V7a1 1 0 011-1z"/>
+                                </svg>
+                            @elseif ($order['icon'] === 'box')
+                                <svg class="w-7 h-7 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0v10l-8 4m0-14v14m-8-4l8 4"/>
+                                </svg>
+                            @elseif ($order['icon'] === 'truck')
+                                <svg class="w-7 h-7 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8zM5.5 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18.5 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/>
+                                </svg>
+                            @else
+                                <svg class="w-7 h-7 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            @endif
+                        </div>
+                        <span class="font-glacial font-bold text-[#3D2B1F] text-xs">{{ $order['label'] }}</span>
+                    </a>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Alamat Saya --}}
+        <div class="bg-white rounded-[20px] px-4 sm:px-6 lg:px-8 py-6 lg:py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-4 sm:mb-5">
+                <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-xl sm:text-2xl">Alamat Saya</h2>
+                <button class="bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-glacial text-xs font-bold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full transition-colors self-start sm:self-auto">
                     + Tambah Alamat
                 </button>
             </div>
-            <div class="flex gap-3">
-                <svg class="w-5 h-5 text-red-500 mt-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
+
+            <div class="flex items-start gap-3">
+                <svg class="w-5 h-5 text-red-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.05 8.05a5 5 0 119.9 0c0 3.535-4.95 8.95-4.95 8.95S5.05 11.585 5.05 8.05zM10 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
                 </svg>
-
-                <div>
-                    <p class="font-semibold text-[#3D2B1F]">
-                        Maimunah Pasutri Gaje
-                        <span class="text-sm text-gray-500">( +62 083 7439 2934 )</span>
-                    </p>
-
-                    <p class="text-sm text-gray-600 mt-1">
+                <div class="flex-1">
+                    <div class="flex items-center gap-1">
+                        <p class="font-glacial font-bold text-[#3D2B1F] text-sm">Maimunah Pasutri Gaje</p>
+                        <span class="font-glacial text-[#6B4C3B] text-sm">(+62 083 7439 2934)</span>
+                        <svg class="w-4 h-4 text-[#3D2B1F] ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                    <p class="font-glacial text-[#6B4C3B] text-sm mt-1 leading-relaxed">
                         Jl. Raya Persawahan No. 12 RT 03/RW 07, Dusun Sumber Rejeki, Desa Mekar Jaya, Kec. Cibeureum, Kab. Tasikmalaya, Jawa Barat 46196
                     </p>
                 </div>
             </div>
         </div>
 
-        {{-- FORM --}}
-        <form class="bg-[#F0EFEA] rounded-2xl p-6 flex flex-col gap-6">
+        {{-- Info Personal --}}
+        <div class="bg-white rounded-[20px] px-4 sm:px-6 lg:px-8 py-6 lg:py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
 
-            {{-- Info --}}
-            <div>
-                <h3 class="font-bold text-lg mb-4 text-[#3D2B1F]">Info Personal</h3>
+            <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg sm:text-xl mb-1">Info Personal</h2>
+            <hr class="border-[#E8E0D4] mb-4 sm:mb-6">
 
-                <div class="grid md:grid-cols-3 gap-4">
-                    <input class="input" placeholder="Nama depan">
-                    <input class="input" placeholder="Nama belakang">
-                    <input class="input" placeholder="Nomor Telepon">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 sm:mb-8">
+                <div>
+                    <label class="font-glacial text-[#9A8878] text-xs mb-1.5 block">Nama lengkap</label>
+                    <input type="text" value="Maimunah Pasutri Gaje"
+                        class="w-full font-glacial text-sm text-[#3D2B1F] bg-[#F9F6F2] border border-[#E8E0D4] rounded-[10px] px-4 py-3 outline-none focus:border-[#7A8C5C] transition-colors">
+                </div>
+                <div>
+                    <label class="font-glacial text-[#9A8878] text-xs mb-1.5 block">Nomor Telephone</label>
+                    <input type="text" value="+62 877 4563 4859"
+                        class="w-full font-glacial text-sm text-[#3D2B1F] bg-[#F9F6F2] border border-[#E8E0D4] rounded-[10px] px-4 py-3 outline-none focus:border-[#7A8C5C] transition-colors">
                 </div>
             </div>
 
-            {{-- Auth --}}
-            <div>
-                <h3 class="font-bold text-lg mb-4 text-[#3D2B1F]">Autentifikasi</h3>
+            <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg sm:text-xl mb-1">Autentifikasi</h2>
+            <hr class="border-[#E8E0D4] mb-4 sm:mb-6">
 
-                <div class="grid md:grid-cols-2 gap-4 mb-4">
-                    <input class="input" placeholder="Username">
-                    <input class="input" placeholder="Email">
+            <div class="mb-4">
+                <label class="font-glacial text-[#9A8878] text-xs mb-1.5 block">Email</label>
+                <input type="email" value="maimunah@gmail.com"
+                    class="w-full font-glacial text-sm text-[#3D2B1F] bg-[#F9F6F2] border border-[#E8E0D4] rounded-[10px] px-4 py-3 outline-none focus:border-[#7A8C5C] transition-colors">
+            </div>
+
+            {{-- Password hint --}}
+            <div class="bg-[#EBF4FB] border border-[#B8D9F0] rounded-[10px] px-4 sm:px-5 py-3 sm:py-3.5 mb-4">
+                <p class="font-glacial text-[#3A7EBD] text-sm">Kosongkan jika tidak ingin mengubah password</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 sm:mb-8">
+                <div>
+                    <label class="font-glacial text-[#9A8878] text-xs mb-1.5 block">Password</label>
+                    <input type="password" placeholder="••••••"
+                        class="w-full font-glacial text-sm text-[#3D2B1F] bg-[#F9F6F2] border border-[#E8E0D4] rounded-[10px] px-4 py-3 outline-none focus:border-[#7A8C5C] transition-colors">
                 </div>
-
-                <div class="bg-blue-100 text-blue-600 text-sm px-4 py-3 rounded-lg mb-4">
-                    Kosongkan jika tidak ingin mengubah password
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
-                    <input type="password" class="input" placeholder="Password">
-                    <input type="password" class="input" placeholder="Konfirmasi Password">
+                <div>
+                    <label class="font-glacial text-[#9A8878] text-xs mb-1.5 block">Konfirmasi Password</label>
+                    <input type="password" placeholder="••••••"
+                        class="w-full font-glacial text-sm text-[#3D2B1F] bg-[#F9F6F2] border border-[#E8E0D4] rounded-[10px] px-4 py-3 outline-none focus:border-[#7A8C5C] transition-colors">
                 </div>
             </div>
 
-            {{-- Avatar --}}
-            <div class="flex items-center gap-4">
-                <img id="avatar-preview" src="/images/avatar-default.png"
-                    class="w-16 h-16 rounded-full object-cover">
+            <hr class="border-[#E8E0D4] mb-4 sm:mb-6">
 
-                <input type="file" id="avatar-input" class="text-sm">
+            <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg sm:text-xl mb-3 sm:mb-4">Foto Profile</h2>
+
+            <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-5">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden shrink-0 ring-2 ring-[#E8E0D4]">
+                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=maimunah" alt="Avatar" class="w-full h-full object-cover">
+                </div>
+                <div class="flex-1 bg-[#F9F6F2] border border-[#E8E0D4] rounded-[12px] px-4 sm:px-5 py-3 sm:py-4 w-full">
+                    <div class="flex items-center gap-3 mb-1">
+                        <label class="bg-white border border-[#E8E0D4] font-glacial text-sm text-[#3D2B1F] px-3 sm:px-4 py-1 sm:py-1.5 rounded-[8px] cursor-pointer hover:bg-[#F0EDE6] transition-colors">
+                            Choose File
+                            <input type="file" class="hidden" accept=".jpg,.jpeg,.png">
+                        </label>
+                        <span class="font-glacial text-[#9A8878] text-sm">No file Chosen</span>
+                    </div>
+                    <p class="font-glacial text-[#9A8878] text-xs">Format: JPG, JPEG, PNG. Max: 2MB</p>
+                </div>
             </div>
 
-            {{-- Submit --}}
-            <button class="bg-[#6B7A52] text-white px-6 py-2 rounded-full self-end">
-                Simpan
-            </button>
-
-        </form>
+        </div>
 
     </div>
 </div>
 
-<h1 class=" text-3xl">
-    TEST FONT
-</h1>
+<script>
+{
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.getElementById('sidebarToggle');
+    const overlay = document.getElementById('sidebarOverlay');
+
+    toggle.addEventListener('click', () => {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+    });
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    });
+}
+</script>
 
 @endsection
