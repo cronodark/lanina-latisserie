@@ -121,29 +121,19 @@
                     <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
 
                         <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-xl mb-4">
-                            Metode Pembayaran
+                            Metode Pembayaran Midtrans
                         </h2>
 
-                        <div id="open-payment-modal"
-                            class="flex items-center justify-between pb-4 border-b border-[#E8E0D4] cursor-pointer hover:opacity-75 transition-opacity">
+                        <div class="flex items-center justify-between pb-4 border-b border-[#E8E0D4]">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-7 bg-[#005BAA] rounded-[6px] flex items-center justify-center shrink-0">
-                                    <span class="text-white font-bold text-[10px] tracking-wide">BCA</span>
+                                <div class="w-10 h-10 bg-[#7A8C5C] rounded-[10px] flex items-center justify-center shrink-0">
+                                    <span class="text-white font-bold text-[10px] tracking-[0.3em]">M</span>
                                 </div>
-                                <span id="selected-bank-label" class="font-glacial text-[#3D2B1F] text-sm font-bold">Bank
-                                    BCA</span>
+                                <div>
+                                    <p class="font-glacial text-[#3D2B1F] text-sm font-bold">Snap payment page</p>
+                                    <p class="font-glacial text-[#9A8878] text-xs">Anda akan diarahkan ke halaman pembayaran Midtrans.</p>
+                                </div>
                             </div>
-                            <svg class="w-4 h-4 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-
-                        <div class="pt-4">
-                            <p class="font-glacial text-[#9A8878] text-xs mb-1">Virtual Account</p>
-                            <p class="font-glacial font-bold text-[#3D2B1F] text-lg tracking-widest">
-                                123 9876 0235 3435
-                            </p>
                         </div>
 
                     </div>

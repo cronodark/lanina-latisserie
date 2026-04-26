@@ -21,6 +21,12 @@ class PreOrderFactory extends Factory
         return [
             'actual_periode' => fake()->date(),
             'status' => fake()->randomElement(['pending', 'processing', 'cancelled', 'delivered','finished']),
+            'payment_status' => fake()->randomElement(['unpaid', 'paid', 'expired', 'failed']),
+            'payment_method' => fake()->randomElement(['midtrans', 'transfer', 'cash']),
+            'midtrans_order_id' => fake()->optional()->bothify('PO-####-####'),
+            'midtrans_transaction_id' => fake()->optional()->uuid(),
+            'payment_redirect_url' => fake()->optional()->url(),
+            'paid_at' => fake()->optional()->dateTimeBetween('-7 days', 'now'),
             'start_periode' => fake()->date(),
             'end_periode' => fake()->date(),
             'send_type' => fake()->randomElement(['kurirEkspedisi', 'pickUp', 'kurirToko']),

@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingPageController;
+use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PromoController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,7 @@ Route::group(['middleware' => 'auth'], function () {
         })->name('cart.index');
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
         Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+        Route::get('/checkout/payment/{preOrder}/finish', [CheckoutController::class, 'paymentFinish'])->name('checkout.payment.finish');
     });
 });
 
@@ -54,6 +56,7 @@ Route::group(['middleware' => 'guest'], function () {
 Route::get('/', [LandingPageController::class, 'index'])->name('beranda');
 Route::get('/produk', [LandingPageController::class, 'product'])->name('produk');
 Route::get('/detailproduk', [LandingPageController::class, 'detail'])->name('detailproduk');
+Route::post('/midtrans/notification', [MidtransWebhookController::class, 'handle'])->name('midtrans.notification');
 
 // Profile page
 Route::get('/my-profile', [LandingPageController::class, 'myProfile'])->name('myProfile');

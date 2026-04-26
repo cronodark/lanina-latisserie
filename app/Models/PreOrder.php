@@ -11,6 +11,12 @@ class PreOrder extends Model
     protected $fillable = [
         'actual_periode',
         'status',
+        'payment_status',
+        'payment_method',
+        'midtrans_order_id',
+        'midtrans_transaction_id',
+        'payment_redirect_url',
+        'paid_at',
         'start_periode',
         'end_periode',
         'send_type',
@@ -24,6 +30,7 @@ class PreOrder extends Model
         'actual_periode' => 'date',
         'start_periode' => 'date',
         'end_periode' => 'date',
+        'paid_at' => 'datetime',
     ];
 
     public function detailPreOrders()
