@@ -20,12 +20,14 @@
     {{-- Nav --}}
     <nav class="flex-1 px-4 py-6 overflow-y-auto space-y-1">
 
+        {{-- Dashboard --}}
         <a href="{{ route('dashboard') }}"
             class="block px-3 py-2 rounded-lg text-white font-semibold text-sm hover:bg-white/10 transition
                    {{ request()->routeIs('dashboard') ? 'bg-white/10' : '' }}">
             Dashboard
         </a>
 
+        {{-- Manajemen Pesanan --}}
         <a href="#"
             class="block px-3 py-2 rounded-lg text-white font-semibold text-sm hover:bg-white/10 transition">
             Manajemen Pesanan
@@ -55,13 +57,14 @@
             </div>
         </div>
 
+        {{-- Laporan Penjualan --}}
         <a href="#"
             class="block px-3 py-2 rounded-lg text-white font-semibold text-sm hover:bg-white/10 transition">
             Laporan Penjualan
         </a>
 
         {{-- Manajemen Promosi --}}
-        <div x-data="{ open: false }">
+        <div x-data="{ open: {{ request()->routeIs('promo-admin.*') ? 'true' : 'false' }} }">
             <button @click="open = !open"
                 class="w-full text-left px-3 py-2 rounded-lg text-white font-semibold text-sm hover:bg-white/10 transition flex items-center justify-between">
                 Manajemen Promosi
@@ -71,10 +74,26 @@
                 </svg>
             </button>
             <div x-show="open" x-transition class="ml-3 mt-1 space-y-1 border-l border-white/30 pl-3">
-                <a href="#" class="block py-1.5 text-white/80 text-xs hover:text-white transition">Rekomendasi Produk Promosi</a>
-                <a href="#" class="block py-1.5 text-white/80 text-xs hover:text-white transition">Produk Dalam Promosi</a>
-                <a href="#" class="block py-1.5 text-white/80 text-xs hover:text-white transition">Tambah Promosi Produk</a>
-                <a href="#" class="block py-1.5 text-white/80 text-xs hover:text-white transition">Status Promosi</a>
+                <a href="{{ route('promo-admin.rekomendasi') }}"
+                    class="block py-1.5 text-xs hover:text-white transition
+                           {{ request()->routeIs('promo-admin.rekomendasi') ? 'text-white font-semibold' : 'text-white/80' }}">
+                    Rekomendasi Produk Promosi
+                </a>
+                <a href="{{ route('promo-admin.produkDalamPromosi') }}"
+                    class="block py-1.5 text-xs hover:text-white transition
+                           {{ request()->routeIs('promo-admin.produkDalamPromosi') ? 'text-white font-semibold' : 'text-white/80' }}">
+                    Produk Dalam Promosi
+                </a>
+                <a href="{{ route('promo-admin.create') }}"
+                    class="block py-1.5 text-xs hover:text-white transition
+                           {{ request()->routeIs('promo-admin.create') ? 'text-white font-semibold' : 'text-white/80' }}">
+                    Tambah Promosi Produk
+                </a>
+                <a href="{{ route('promo-admin.status', 'aktif') }}"
+                    class="block py-1.5 text-xs hover:text-white transition
+                           {{ request()->routeIs('promo-admin.status') ? 'text-white font-semibold' : 'text-white/80' }}">
+                    Status Promosi
+                </a>
             </div>
         </div>
 
