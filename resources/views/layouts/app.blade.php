@@ -13,39 +13,10 @@
         href="https://fonts.googleapis.com/css2?family=Gloock&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        glacial: ['Glacial'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        @font-face {
-            font-family: 'Glacial';
-            src: url('/fonts/GlacialIndifference-Regular.otf') format('opentype');
-            font-weight: 400;
-        }
-
-        @font-face {
-            font-family: 'Glacial';
-            src: url('/fonts/GlacialIndifference-Bold.otf') format('opentype');
-            font-weight: 700;
-        }
-    </style>
-    @livewireStyles
-
 </head>
 
 <body class="h-screen">
     @yield('content')
     @livewireScripts
 </body>
-
-
 </html>

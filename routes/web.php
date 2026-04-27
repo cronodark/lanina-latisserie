@@ -59,7 +59,14 @@ Route::get('/detailproduk', [LandingPageController::class, 'detail'])->name('det
 Route::post('/midtrans/notification', [MidtransWebhookController::class, 'handle'])->name('midtrans.notification');
 
 // Profile page
-Route::get('/my-profile', [LandingPageController::class, 'myProfile'])->name('myProfile');
+Route::get('/profil', [LandingPageController::class, 'profil'])->name('profil');
+Route::get('/profil/alamat', [LandingPageController::class, 'alamat'])->name('alamat');
+Route::get('/profil/tambah-alamat', [LandingPageController::class, 'addAlamat'])->name('tambah-alamat');
+Route::get('/profil/edit-alamat', [LandingPageController::class, 'editAlamat'])->name('edit-alamat');
+Route::get('/profil/belum-bayar', [LandingPageController::class, 'belumByr'])->name('belum-bayar');
+Route::get('/profil/diproses', [LandingPageController::class, 'diproses'])->name('diproses');
+Route::get('/profil/diantar', [LandingPageController::class, 'diantar'])->name('diantar');
+Route::get('/profil/selesai', [LandingPageController::class, 'selesai'])->name('selesai');
 
 Route::prefix('product')->name('product.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');

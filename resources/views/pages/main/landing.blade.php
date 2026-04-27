@@ -10,8 +10,8 @@
         <div class="max-w-6xl mx-auto px-6 pt-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             {{-- TEXT --}}
             <div>
-                <h1 class="font-display text-5xl md:text-6xl font-bold text-brown leading-tight mb-6">
-                    Kue <span class="italic-script">Artisanal</span><br>
+                <h1 class="font-gloock font-normal text-5xl md:text-6xl font-bold text-[#432818] leading-tight mb-6">
+                    Kue <span class="font-caramel font-normal text-[#6A7941] text-8xl">Artisanal</span><br>
                     dari Hati,<br>
                     untuk Meja Kamu
                 </h1>
@@ -22,7 +22,7 @@
                 </p>
 
                 <a href="#our-product"
-                    class="inline-flex items-center gap-2 bg-[#6A7941] px-8 py-3.5 rounded-full text-white font-medium text-sm hover:bg-[#556433] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                    class="inline-flex items-center gap-2 bg-[#6A7941] px-8 py-3.5 font-glacial rounded-full text-white font-medium text-sm hover:bg-[#556433] transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5">
                     Pesan Sekarang!
                 </a>
             </div>
@@ -39,7 +39,7 @@
                         <span class="text-xl">🧁</span>
                     </div>
                     <div>
-                        <p class="text-white font-semibold text-lg leading-none">
+                        <p class="font-gloock extralight text-white text-lg leading-none">
                             500+ Happy Customers
                         </p>
                         <p class="text-white/80 text-xs mt-1">
@@ -57,7 +57,7 @@
                         <span class="text-xl">🧾</span>
                     </div>
                     <div>
-                        <p class="text-white font-semibold text-lg leading-none">
+                        <p class="font-gloock extralight text-white text-lg leading-none">
                             Pre-Order Terjamin
                         </p>
                         <p class="text-white/80 text-xs mt-1">

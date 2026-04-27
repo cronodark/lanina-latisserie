@@ -52,10 +52,52 @@ class LandingPageController extends Controller
             'title' => 'Checkout'
         ]);
     }
-    public function myProfile()
+    public function profil()
     {
-        return view('pages.customer.profile', [
-            'title' => 'My Profile'
+        return view('pages.customer.profil', [
+            'title' => 'Profil Saya'
+        ]);
+    }
+    public function alamat()
+    {
+        return view('pages.customer.alamat', [
+            'title' => 'Alamat Saya'
+        ]);
+    }
+    public function addAlamat()
+    {
+        return view('pages.customer.tambahAlamat', [
+            'title' => 'Tambah Alamat'
+        ]);
+    }
+    public function editAlamat()
+    {
+        return view('pages.customer.editAlamat', [
+            'title' => 'Edit Alamat'
+        ]);
+    }
+    public function diproses()
+    {
+        return view('pages.customer.diproses', [
+            'title' => 'Diproses'
+        ]);
+    }
+    public function belumByr()
+    {
+        return view('pages.customer.belumBayar', [
+            'title' => 'Belum Bayar'
+        ]);
+    }
+    public function diantar()
+    {
+        return view('pages.customer.diantar', [
+            'title' => 'Diantar'
+        ]);
+    }
+    public function selesai()
+    {
+        return view('pages.customer.selesai', [
+            'title' => 'selesai'
         ]);
     }
 }
