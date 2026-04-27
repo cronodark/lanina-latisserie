@@ -47,8 +47,8 @@
 
             {{-- Tambah Alamat Button --}}
             <div class="flex justify-end">
-                
-                <a href="#"
+
+                <a href="{{ route('tambah-alamat') }}"
                     class="bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-glacial text-base font-bold px-8 py-3.5 rounded-full transition-colors">
                     Tambah Alamat
                 </a>
@@ -109,7 +109,7 @@
                             {{ $addr['address'] }}
                         </p>
                         <div class="flex items-center gap-3 pl-9">
-                            <a href="#"
+                            <a href="{{ route ('edit-alamat') }}"
                                 class="flex items-center gap-1.5 bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-poppins text-sm font-medium px-4 py-2 rounded-full transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     stroke-width="2">

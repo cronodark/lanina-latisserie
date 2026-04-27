@@ -56,7 +56,7 @@
                 <div class="flex flex-wrap justify-center sm:justify-around gap-8">
 
                     {{-- Belum Bayar --}}
-                    <a href="#" class="flex flex-col items-center gap-3 group">
+                    <a href="{{ route('belum-bayar') }}" class="flex flex-col items-center gap-3 group">
                         <div
                             class="w-20 h-20 rounded-[20px] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                             <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -69,7 +69,7 @@
                     </a>
 
                     {{-- Dikemas --}}
-                    <a href="#" class="flex flex-col items-center gap-3 group">
+                    <a href="{{ route ('diproses') }}" class="flex flex-col items-center gap-3 group">
                         <div
                             class="w-20 h-20 rounded-[20px] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                             <svg class="w-12 h-12" viewBox="0 0 67 71" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +82,7 @@
                     </a>
 
                     {{-- Diantar --}}
-                    <a href="#" class="flex flex-col items-center gap-3 group">
+                    <a href="{{ route('diantar') }}" class="flex flex-col items-center gap-3 group">
                         <div
                             class="w-20 h-20 rounded-[20px] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                             <svg class="w-12 h-12" viewBox="0 0 71 53" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -95,7 +95,7 @@
                     </a>
 
                     {{-- Selesai --}}
-                    <a href="#" class="flex flex-col items-center gap-3 group">
+                    <a href="{{ route('selesai') }}" class="flex flex-col items-center gap-3 group">
                         <div
                             class="w-20 h-20 rounded-[20px] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                             <svg class="w-12 h-12" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">

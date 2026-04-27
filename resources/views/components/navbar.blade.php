@@ -1,7 +1,7 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-sm">
 
     <div
-        class="max-w-[1400px] 2xl:max-w-[1600px] mx-auto
+        class="max-w-[1400px] font-glacial 2xl:max-w-[1600px] mx-auto
                 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-32
                 py-3 flex items-center justify-between gap-6 xl:gap-10">
 

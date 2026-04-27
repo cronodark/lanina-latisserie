@@ -16,10 +16,10 @@
         <img src="{{ asset('images/logo.png') }}" alt="La Nina" class="w-[140px] object-contain">
     </div>
 
-    <nav class="flex flex-col gap-7 text-sm">
+    <nav class="flex flex-col gap-7 text-md ml-2">
 
         {{-- Dashboard --}}
-        <a href="{{ route('dashboard') }}"
+        <a href="{{ route('profil') }}"
             class="font-semibold transition
             {{ $active === 'dashboard' ? 'text-white' : 'text-white/70 hover:text-white' }}">
             Dashboard
@@ -27,14 +27,14 @@
 
         {{-- Alamat --}}
         <div>
-            <p class="text-white/90 font-semibold mb-2">Alamat Saya</p>
+            <p class="text-white font-semibold mb-2">Alamat Saya</p>
             <div class="flex flex-col gap-2 ml-2">
-                <a href="#"
+                <a href="{{ route('alamat') }}"
                     class="transition
                     {{ $active === 'daftar-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Daftar Alamat
                 </a>
-                <a href="#"
+                <a href="{{ route('tambah-alamat') }}"
                     class="transition
                     {{ $active === 'tambah-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Tambah Alamat
@@ -42,24 +42,30 @@
             </div>
         </div>
 
-        {{-- Pesanan --}}
         <div>
-            <p class="text-white/90 font-semibold mb-2">Pesanan Saya</p>
+            <p class="text-white font-semibold mb-2">Pesanan Saya</p>
             <div class="flex flex-col gap-2 ml-2">
-                @foreach ([
-                    'belum-bayar' => 'Belum Bayar',
-                    'dikemas'     => 'Dikemas',
-                    'diantar'     => 'Diantar',
-                    'selesai'     => 'Selesai',
-                ] as $key => $label)
-                    <a href="#"
-                        class="transition
-                        {{ $active === $key ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
-                        {{ $label }}
-                    </a>
-                @endforeach
+                <a href="{{ route('alamat') }}"
+                    class="transition
+                    {{ $active === 'daftar-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                    Belum Bayar
+                </a>
+                <a href="{{ route('diproses') }}"
+                    class="transition
+                    {{ $active === 'diproses' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                    Diproses
+                </a>
+                <a href="{{ route('tambah-alamat') }}"
+                    class="transition
+                    {{ $active === 'tambah-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                    Diantar
+                </a>
+                <a href="{{ route('tambah-alamat') }}"
+                    class="transition
+                    {{ $active === 'tambah-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                    Selesai
+                </a>
             </div>
         </div>
-
     </nav>
 </aside>

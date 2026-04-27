@@ -76,4 +76,28 @@ class LandingPageController extends Controller
             'title' => 'Edit Alamat'
         ]);
     }
+    public function diproses()
+    {
+        return view('pages.customer.diproses', [
+            'title' => 'Diproses'
+        ]);
+    }
+    public function belumByr()
+    {
+        return view('pages.customer.belumBayar', [
+            'title' => 'Belum Bayar'
+        ]);
+    }
+    public function diantar()
+    {
+        return view('pages.customer.diantar', [
+            'title' => 'Diantar'
+        ]);
+    }
+    public function selesai()
+    {
+        return view('pages.customer.selesai', [
+            'title' => 'selesai'
+        ]);
+    }
 }

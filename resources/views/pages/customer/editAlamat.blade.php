@@ -146,7 +146,7 @@
             document.getElementById('btn-tambah-alamat').addEventListener('click', () => {
                 Swal.fire({
                     title: 'Berhasil!',
-                    text: 'Alamat berhasil ditambahkan.',
+                    text: 'Alamat berhasil diupdate.',
                     icon: 'success',
                     confirmButtonText: 'OK',
                     confirmButtonColor: '#7A8C5C',
