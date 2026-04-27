@@ -1,8 +1,7 @@
 @props(['active' => []])
 
 {{-- OVERLAY --}}
-<div id="sidebarOverlay"
-    class="fixed inset-0 bg-black/30 z-30 hidden lg:hidden"></div>
+<div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-30 hidden lg:hidden"></div>
 
 {{-- SIDEBAR --}}
 <aside id="sidebar"

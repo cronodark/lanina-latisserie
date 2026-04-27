@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Navbar')
+@section('title', 'Lanina Patisserie')
 
 @section('content')
     <x-navbar />
@@ -189,7 +189,7 @@
 
                 {{-- TRACK --}}
                 <div id="bestsellerTrack"
-                    class="track flex justify-start gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing">
+                    class="track flex {{ count($bestsellers) <= 2 ? 'justify-center md:justify-center' : 'justify-start' }} gap-4 sm:gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar cursor-grab active:cursor-grabbing">
 
                     @foreach ($bestsellers as $item)
                         <div
@@ -212,26 +212,28 @@
                                     Terjual {{ number_format($item->total_bought, 0, ',', '.') }} item
                                 </p>
 
-                                <div class="w-full mt-auto">
-                                    <div
-                                        class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
+                                <a href="{{ route('product.show', $item->product->id) }}">
+                                    <div class="w-full mt-auto">
+                                        <div
+                                            class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
 
-                                        <!-- PRICE -->
-                                        <span class="text-sm font-semibold">
-                                            Rp {{ number_format($item->product->price, 0, ',', '.') }}
-                                        </span>
+                                            <!-- PRICE -->
+                                            <span class="text-sm font-semibold">
+                                                Rp {{ number_format($item->product->price, 0, ',', '.') }}
+                                            </span>
 
-                                        <!-- BUTTON -->
-                                        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                                            <svg class="w-4 h-4 text-[#6B7D4F]" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                                    d="M9 5l7 7-7 7" />
-                                            </svg>
+                                            <!-- BUTTON -->
+                                            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                                <svg class="w-4 h-4 text-[#6B7D4F]" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                                        d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </div>
+
                                         </div>
-
                                     </div>
-                                </div>
+                                </a>
                             </div>
 
                         </div>

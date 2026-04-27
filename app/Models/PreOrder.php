@@ -11,11 +11,18 @@ class PreOrder extends Model
     protected $fillable = [
         'actual_periode',
         'status',
+        'payment_status',
+        'payment_method',
+        'midtrans_order_id',
+        'midtrans_transaction_id',
+        'payment_redirect_url',
+        'paid_at',
         'start_periode',
         'end_periode',
         'send_type',
         'tracking_number',
         'choosen_expedition',
+        'address_id',
         'user_id',
     ];
 
@@ -23,6 +30,7 @@ class PreOrder extends Model
         'actual_periode' => 'date',
         'start_periode' => 'date',
         'end_periode' => 'date',
+        'paid_at' => 'datetime',
     ];
 
     public function detailPreOrders()
@@ -33,5 +41,10 @@ class PreOrder extends Model
     public function customer()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function address()
+    {
+        return $this->belongsTo(Address::class, 'address_id');
     }
 }
