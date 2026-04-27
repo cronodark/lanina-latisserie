@@ -91,7 +91,7 @@
                                     </p>
 
                                     {{-- Price Row --}}
-                                    <a href="#" class="cursor-pointer">
+                                    <a href="{{ route('promo.show', $promo->id) }}" class="cursor-pointer">
                                         <div
                                             class="flex items-center bg-[#7A8C5C] rounded-full p-1.5 pr-2.5 gap-2.5 mt-auto">
                                             {{-- Price box --}}
@@ -203,7 +203,7 @@
 
             <div class="grid grid-cols-3 gap-[22px]">
                 @foreach ($products as $i => $product)
-                    <div class="product-card bg-[#FFF9F2] rounded-xl overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative opacity-0 translate-y-5"
+                    <div class="product-card bg-[#FFF9F2] rounded-xl overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative opacity-0 translate-y-5 flex flex-col h-full"
                         data-index="{{ $i }}">
 
                         {{-- Product Image --}}
@@ -215,7 +215,7 @@
                         </div>
 
                         {{-- Card Body --}}
-                        <div class="p-4 pt-3">
+                        <div class="p-4 pt-3 flex flex-col flex-1">
                             <p
                                 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
                                 {{ $product->name }}
@@ -226,7 +226,7 @@
                             </p>
 
                             {{-- Price Row --}}
-                            <a href="{{ route('product.show', $product->id) }}">
+                            <a href="{{ route('product.show', $product->id) }}" class="mt-auto block">
                                 <div
                                     class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3 cursor-pointer">
                                     <p class="text-white font-bold text-xl">Rp

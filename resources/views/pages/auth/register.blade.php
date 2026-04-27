@@ -11,24 +11,24 @@
 
                 <!-- HEADER -->
                 <div class="flex justify-between items-center">
-                    <h2 class="font-serif text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
+                    <h2 class="font-gloock text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
                         Register
                     </h2>
                     <a href="{{ route('login') }}"
-                        class="font-serif text-sm sm:text-base lg:text-lg font-bold text-white hover:underline">
+                        class="font-glacial text-sm sm:text-base lg:text-lg font-bold text-white hover:underline">
                         Login
                     </a>
                 </div>
 
-                <p class="lg:mt-1 sm:mt-2 text-white text-sm sm:text-base lg:text-lg leading-relaxed">
+                <p class="lg:mt-1 font-poppins sm:mt-2 text-white text-sm sm:text-base lg:text-lg leading-relaxed">
                     Lorem ipsum, dolor sit amet consectetur adipisicing elit. Maiores impedit perferendis suscipit eaque.
                 </p>
 
                 <!-- FORM -->
-                <form action="{{ route('register.submit') }}" method="POST" class="lg:mt-4 sm:mt-5 lg:space-y-2 sm:space-y-6">
+                <form action="{{ route('register.submit') }}" method="POST" class="font-poppins font-medium lg:mt-4 sm:mt-5 lg:space-y-2 sm:space-y-6">
                     @csrf
                     <!-- Nama -->
-                    <div>
+                    <div >
                         <label class="block text-sm sm:text-base font-medium text-white">
                             Nama Lengkap
                         </label>
@@ -89,7 +89,7 @@
 
                     <!-- BUTTON -->
                     <button type="submit"
-                        class="mt-6 w-full sm:w-2/3 lg:w-4/5 mx-auto block rounded-lg bg-[#6A7941] py-3 text-sm sm:text-base font-semibold text-white hover:bg-[#5E702A] transition duration-300 shadow-md hover:shadow-lg">
+                        class="mt-6 w-full font-nunito font-bold sm:w-2/3 lg:w-4/5 mx-auto block rounded-lg bg-[#6A7941] py-3 text-sm sm:text-base font-semibold text-white hover:bg-[#5E702A] transition duration-300 shadow-md hover:shadow-lg">
                         Daftar
                     </button>
 

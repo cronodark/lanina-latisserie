@@ -1,17 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gloock&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caramel&display=swap');
 
 @font-face {
-    font-family: 'Glacial Indifference';
-    src: url('/fonts/GlacialIndifference-Regular.woff2') format('woff2'),
-         url('/fonts/GlacialIndifference-Regular.woff') format('woff');
-    font-weight: 400;
-    font-style: normal;
+  font-family: 'Glacial Indifference';
+  src: url('/fonts/GlacialIndifference-Regular.otf') format('opentype');
+  font-weight: 400;
 }
 
 @font-face {
-    font-family: 'Glacial Indifference';
-    src: url('/fonts/GlacialIndifference-Bold.woff2') format('woff2'),
-         url('/fonts/GlacialIndifference-Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
+  font-family: 'Glacial Indifference';
+  src: url('/fonts/GlacialIndifference-Bold.otf') format('opentype');
+  font-weight: 700;
+}
+
+.font-nunito {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.font-glacial {
+  font-family: 'Glacial Indifference', sans-serif;
+}
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+.font-gloock {
+  font-family: 'Gloock', serif;
+}
+
+.font-caramel {
+  font-family: 'caramel', cursive;
+}
+
+.card-shadow {
+    box-shadow: 4px 4px 15px rgba(0, 0, 0, 0.10);
 }

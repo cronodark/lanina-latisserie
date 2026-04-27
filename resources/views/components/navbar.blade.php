@@ -1,7 +1,7 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-black/30 backdrop-blur-sm">
 
     <div
-        class="max-w-[1400px] 2xl:max-w-[1600px] mx-auto
+        class="max-w-[1400px] font-glacial 2xl:max-w-[1600px] mx-auto
                 px-4 sm:px-6 md:px-10 lg:px-16 xl:px-24 2xl:px-32
                 py-3 flex items-center justify-between gap-6 xl:gap-10">
 
@@ -49,7 +49,7 @@
             @auth
                 @if (auth()->user()->hasRole('customer'))
                     {{-- Cart Icon --}}
-                    <a href="#"
+                    <a href="{{ route('cart.index') }}"
                         class="relative w-9 h-9 rounded-full border border-sage/40 flex items-center justify-center hover:bg-sage/10 transition-colors">
                         <svg class="w-4 h-4 text-brown" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
