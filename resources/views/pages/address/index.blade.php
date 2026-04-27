@@ -48,38 +48,14 @@
             {{-- Tambah Alamat Button --}}
             <div class="flex justify-end">
 
-                <a href="{{ route('tambah-alamat') }}"
+                <a href="{{ route('profile.address.create') }}"
                     class="bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-glacial text-base font-bold px-8 py-3.5 rounded-full transition-colors">
                     Tambah Alamat
                 </a>
             </div>
 
-            {{-- Daftar Alamat --}}
-            @php
-                $addresses = [
-                    [
-                        'name' => 'Maimunah Pasutri Gaje',
-                        'phone' => '+62 083 7439 2934',
-                        'address' =>
-                            'Jl. Raya Persawahan No. 12 RT 03/RW 07, Dusun Sumber Rejeki, Desa Mekar Jaya, Kec. Cibeureum, Kab. Tasikmalaya, Jawa Barat 46196',
-                    ],
-                    [
-                        'name' => 'Maimunah Pasutri Gaje',
-                        'phone' => '+62 083 7439 2934',
-                        'address' =>
-                            'Jl. Raya Persawahan No. 12 RT 03/RW 07, Dusun Sumber Rejeki, Desa Mekar Jaya, Kec. Cibeureum, Kab. Tasikmalaya, Jawa Barat 46196',
-                    ],
-                    [
-                        'name' => 'Maimunah Pasutri Gaje',
-                        'phone' => '+62 083 7439 2934',
-                        'address' =>
-                            'Jl. Raya Persawahan No. 12 RT 03/RW 07, Dusun Sumber Rejeki, Desa Mekar Jaya, Kec. Cibeureum, Kab. Tasikmalaya, Jawa Barat 46196',
-                    ],
-                ];
-            @endphp
-
             <div class="flex flex-col gap-4">
-                @foreach ($addresses as $addr)
+                @foreach ($addresses as $address)
                     <div class="bg-white rounded-[20px] px-6 sm:px-8 py-8 sm:py-10 card-shadow">
                         <div class="flex items-center gap-3 mb-3">
                             <svg width="19" height="24" viewBox="0 0 25 32" fill="none"
@@ -97,8 +73,8 @@
                             </svg>
 
                             <div class="flex items-center gap-2 flex-1">
-                                <p class="font-poppins font-bold text-[#3D2B1F] text-base">{{ $addr['name'] }}</p>
-                                <span class="font-poppins text-[#3D2B1F] text-base">({{ $addr['phone'] }})</span>
+                                <p class="font-poppins font-bold text-[#3D2B1F] text-base">{{ auth()->user()->name }}</p>
+                                <span class="font-poppins text-[#3D2B1F] text-base">{{ auth()->user()->telp }}</span>
                                 <svg class="w-5 h-5 text-[#3D2B1F] ml-1" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -106,10 +82,10 @@
                             </div>
                         </div>
                         <p class="font-poppins text-[#3D2B1F] text-base leading-relaxed pl-9 mb-6">
-                            {{ $addr['address'] }}
+                            {{ $address->street }}, {{ $address->district }}, {{ $address->city }}, {{ $address->state }} {{ $address->zip_code }}, RT {{ $address->rt }}/RW {{ $address->rw }}@if($address->notes). {{ $address->notes }}@endif
                         </p>
                         <div class="flex items-center gap-3 pl-9">
-                            <a href="{{ route ('edit-alamat') }}"
+                            <a href="{{ route('profile.address.edit', $address->id) }}"
                                 class="flex items-center gap-1.5 bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-poppins text-sm font-medium px-4 py-2 rounded-full transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     stroke-width="2">
@@ -118,7 +94,7 @@
                                 </svg>
                                 Edit
                             </a>
-                            <button onclick="konfirmasiHapus()"
+                            <button type="button" data-delete-form-id="delete-address-form-{{ $address->id }}"
                                 class="flex items-center gap-1.5 bg-red-50 hover:bg-red-100 text-red-500 font-poppins text-sm font-medium px-4 py-2 rounded-full transition-colors border border-red-200">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     stroke-width="2">
@@ -127,6 +103,11 @@
                                 </svg>
                                 Hapus
                             </button>
+                            <form id="delete-address-form-{{ $address->id }}" action="{{ route('profile.address.destroy', $address->id) }}"
+                                method="POST" class="hidden">
+                                @csrf
+                                @method('DELETE')
+                            </form>
                         </div>
                     </div>
                 @endforeach
@@ -153,8 +134,9 @@
         }
 
         {
+            const deleteButtons = document.querySelectorAll('[data-delete-form-id]');
 
-            function konfirmasiHapus() {
+            const konfirmasiHapus = (formId) => {
                 Swal.fire({
                     title: 'Hapus Alamat?',
                     text: 'Alamat ini akan dihapus secara permanen.',
@@ -174,19 +156,19 @@
                     }
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        Swal.fire({
-                            title: 'Terhapus!',
-                            text: 'Alamat berhasil dihapus.',
-                            icon: 'success',
-                            confirmButtonColor: '#7A8C5C',
-                            customClass: {
-                                popup: 'rounded-[20px] font-poppins',
-                                confirmButton: 'rounded-full px-6 py-2 text-sm font-medium',
-                            }
-                        });
+                        const form = document.getElementById(formId);
+                        if (form) {
+                            form.submit();
+                        }
                     }
                 });
-            }
+            };
+
+            deleteButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    konfirmasiHapus(button.dataset.deleteFormId);
+                });
+            });
         }
     </script>
 @endsection

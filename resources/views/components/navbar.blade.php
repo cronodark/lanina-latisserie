@@ -79,7 +79,7 @@
                     @endguest
 
                     @auth
-                        <a href="#"
+                        <a href="{{ route('profile.index') }}"
                             class="block px-4 py-2 text-sm text-black hover:bg-[#f0f0f0] transition-colors">Profile</a>
                         <a href="{{ route('logout') }}"
                             class="block px-4 py-2 text-sm text-black hover:bg-[#f0f0f0] transition-colors">Logout</a>

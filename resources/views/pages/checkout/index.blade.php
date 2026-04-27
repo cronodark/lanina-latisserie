@@ -138,13 +138,13 @@
 
                     </div>
 
-                    {{-- ===== SECTION 4: Tanggal + Total + Bayar ===== --}}
+                    {{-- ===== SECTION 4: Total + Bayar ===== --}}
                     <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
 
-                        <div class="flex items-center justify-between mb-5">
+                        {{-- <div class="flex items-center justify-between mb-5">
                             <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg">Tanggal Pengambilan</p>
                             <span class="font-glacial font-bold text-[#3D2B1F] text-base">{{ \Illuminate\Support\Carbon::parse($pickupDate)->format('d m y') }}</span>
-                        </div>
+                        </div> --}}
 
                         <div class="flex items-center justify-between mb-7">
                             <p class="font-glacial font-bold text-[#3D2B1F] text-base tracking-widest uppercase">TOTAL</p>

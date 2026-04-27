@@ -12,13 +12,15 @@
 
     {{-- Logo --}}
     <div class="mb-10">
-        <img src="{{ asset('images/logo.png') }}" alt="La Nina" class="w-[140px] object-contain">
+        <a href="{{ route('beranda') }}">
+            <img src="{{ asset('images/logo.png') }}" alt="La Nina" class="w-[140px] object-contain">
+        </a>
     </div>
 
     <nav class="flex flex-col gap-7 text-md ml-2">
 
         {{-- Dashboard --}}
-        <a href="{{ route('profil') }}"
+        <a href="{{ route('profile.index') }}"
             class="font-semibold transition
             {{ $active === 'dashboard' ? 'text-white' : 'text-white/70 hover:text-white' }}">
             Dashboard
@@ -28,12 +30,12 @@
         <div>
             <p class="text-white font-semibold mb-2">Alamat Saya</p>
             <div class="flex flex-col gap-2 ml-2">
-                <a href="{{ route('alamat') }}"
+                <a href="{{ route('profile.address.index') }}"
                     class="transition
                     {{ $active === 'daftar-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Daftar Alamat
                 </a>
-                <a href="{{ route('tambah-alamat') }}"
+                <a href="{{ route('profile.address.create') }}"
                     class="transition
                     {{ $active === 'tambah-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Tambah Alamat
@@ -44,24 +46,24 @@
         <div>
             <p class="text-white font-semibold mb-2">Pesanan Saya</p>
             <div class="flex flex-col gap-2 ml-2">
-                <a href="{{ route('alamat') }}"
+                <a href="{{ route('profile.preorder.index', ['tab' => 'belum-bayar']) }}"
                     class="transition
-                    {{ $active === 'daftar-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                    {{ $active === 'belum-bayar' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Belum Bayar
                 </a>
-                <a href="{{ route('diproses') }}"
+                <a href="{{ route('profile.preorder.index', ['tab' => 'diproses']) }}"
                     class="transition
                     {{ $active === 'diproses' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Diproses
                 </a>
-                <a href="{{ route('tambah-alamat') }}"
+                <a href="{{ route('profile.preorder.index', ['tab' => 'diantar']) }}"
                     class="transition
-                    {{ $active === 'tambah-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                    {{ $active === 'diantar' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Diantar
                 </a>
-                <a href="{{ route('tambah-alamat') }}"
+                <a href="{{ route('profile.preorder.index', ['tab' => 'selesai']) }}"
                     class="transition
-                    {{ $active === 'tambah-alamat' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                    {{ $active === 'selesai' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                     Selesai
                 </a>
             </div>
