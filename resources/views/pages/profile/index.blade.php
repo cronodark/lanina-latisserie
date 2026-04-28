@@ -37,16 +37,16 @@
                 class="bg-[#BB9457] rounded-[24px] font-nunito px-6 sm:px-8 lg:px-10 py-6 sm:py-8 flex flex-col sm:flex-row items-center gap-5 sm:gap-8 shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
                 <div
                     class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/20 overflow-hidden shrink-0 ring-4 ring-white/30">
-                    <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=maimunah" alt="Avatar"
+                    <img src="{{ !empty($user->photo) ? $user->photo : asset('images/avatar.svg') }}" alt="photo-profile"
                         class="w-full h-full object-cover">
                 </div>
                 <div class="flex-1 text-center sm:text-left">
-                    <h2 class="font-bold text-white text-2xl sm:text-3xl">Maimunah Pasutri Gaje</h2>
-                    <p class="font-semibold text-white/80 text-base mt-1">Admin</p>
+                    <h2 class="font-bold text-white text-2xl sm:text-3xl">{{ $user->name }}</h2>
+                    <p class="font-semibold text-white/80 text-base mt-1">{{ Str::ucfirst($user->roles[0]->name) }}</p>
                 </div>
                 <div class="text-center sm:text-right mt-2 sm:mt-0">
-                    <p class="font-bold text-white/90 text-base">maimunah@gmail.com</p>
-                    <p class="font-bold text-white/90 text-base mt-1.5">+62 877 4563 4859</p>
+                    <p class="font-bold text-white/90 text-base">{{ $user->email }}</p>
+                    <p class="font-bold text-white/90 text-base mt-1.5">{{ $user->telp }}</p>
                 </div>
             </div>
 
@@ -56,7 +56,7 @@
                 <div class="flex flex-wrap justify-center sm:justify-around gap-8">
 
                     {{-- Belum Bayar --}}
-                    <a href="{{ route('belum-bayar') }}" class="flex flex-col items-center gap-3 group">
+                    <a href="{{ route('profile.preorder.index', ['tab' => 'belum-bayar']) }}" class="flex flex-col items-center gap-3 group">
                         <div
                             class="w-20 h-20 rounded-[20px] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                             <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -69,7 +69,7 @@
                     </a>
 
                     {{-- Dikemas --}}
-                    <a href="{{ route ('diproses') }}" class="flex flex-col items-center gap-3 group">
+                    <a href="{{ route('profile.preorder.index', ['tab' => 'diproses']) }}" class="flex flex-col items-center gap-3 group">
                         <div
                             class="w-20 h-20 rounded-[20px] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                             <svg class="w-12 h-12" viewBox="0 0 67 71" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -82,7 +82,7 @@
                     </a>
 
                     {{-- Diantar --}}
-                    <a href="{{ route('diantar') }}" class="flex flex-col items-center gap-3 group">
+                    <a href="{{ route('profile.preorder.index', ['tab' => 'diantar']) }}" class="flex flex-col items-center gap-3 group">
                         <div
                             class="w-20 h-20 rounded-[20px] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                             <svg class="w-12 h-12" viewBox="0 0 71 53" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -95,7 +95,7 @@
                     </a>
 
                     {{-- Selesai --}}
-                    <a href="{{ route('selesai') }}" class="flex flex-col items-center gap-3 group">
+                    <a href="{{ route('profile.preorder.index', ['tab' => 'selesai']) }}" class="flex flex-col items-center gap-3 group">
                         <div
                             class="w-20 h-20 rounded-[20px] flex items-center justify-center transition-all duration-300 group-hover:scale-105">
                             <svg class="w-12 h-12" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -114,10 +114,12 @@
             <div class="bg-white rounded-[24px] px-6 sm:px-8 lg:px-10 py-8 lg:py-10 card-shadow">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-6 sm:mb-7">
                     <h2 class="font-glacial font-bold text-[#3D2B1F] text-2xl sm:text-3xl">Alamat Saya</h2>
-                    <button
-                        class="bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-glacial text-sm font-bold px-6 py-3 rounded-full transition-colors self-start sm:self-auto">
-                        + Tambah Alamat
-                    </button>
+                    <a href="{{ route('profile.address.create') }}">
+                        <button
+                            class="bg-[#7A8C5C] hover:bg-[#5C6B44] text-white font-glacial text-sm font-bold px-6 py-3 rounded-full transition-colors self-start sm:self-auto">
+                            + Tambah Alamat
+                        </button>
+                    </a>
                 </div>
                 <div class="flex items-start gap-4">
                     <svg class="w-6 h-6 text-red-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -125,19 +127,22 @@
                             d="M5.05 8.05a5 5 0 119.9 0c0 3.535-4.95 8.95-4.95 8.95S5.05 11.585 5.05 8.05zM10 9a1 1 0 100-2 1 1 0 000 2z"
                             clip-rule="evenodd" />
                     </svg>
-                    <div class="flex-1 font-poppins">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <p class="font-bold text-[#3D2B1F] text-base">Maimunah Pasutri Gaje</p>
-                            <span class="text-[#6B4C3B] font-medium text-base">(+62 083 7439 2934)</span>
-                            <svg class="w-5 h-5 text-[#3D2B1F]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </div>
-                        <p class="text-[#6B4C3B] text-base mt-2 leading-relaxed">
-                            Jl. Raya Persawahan No. 12 RT 03/RW 07, Dusun Sumber Rejeki, Desa Mekar Jaya, Kec. Cibeureum,
-                            Kab. Tasikmalaya, Jawa Barat 46196
-                        </p>
+                    <div class="flex-1 font-poppins text-justify">
+                        @if ($address)
+                            <div class="mb-2">
+                                <p class="font-bold text-[#3D2B1F] text-base">{{ $user->name }}</p>
+                                <p class="text-[#6B4C3B] font-medium text-sm">{{ $user->telp }}</p>
+                            </div>
+                            <p class="text-[#6B4C3B] text-sm leading-relaxed">
+                                {{ $address->street }}, {{ $address->district }}, {{ $address->city }},
+                                {{ $address->state }} {{ $address->zip_code }}, RT {{ $address->rt }}/RW
+                                {{ $address->rw }}@if ($address->notes)
+                                    . {{ $address->notes }}
+                                @endif
+                            </p>
+                        @else
+                            <p class="text-[#9A8878] text-base">Belum ada alamat tersimpan</p>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -148,80 +153,89 @@
                 <h2 class="font-bold text-[#3D2B1F] text-xl sm:text-2xl mb-2">Info Personal</h2>
                 <hr class="border-[#979797] mb-6 sm:mb-8">
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8 sm:mb-10">
-                    <div>
-                        <label class="text-base font-medium mb-2 block">Nama lengkap</label>
-                        <input type="text" placeholder="Masukan Nama Anda"
-                            class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
-                    </div>
-                    <div>
-                        <label class="text-base font-medium mb-2 block">Nomor Telepon</label>
-                        <input type="text" placeholder="Masukan Nomor Telepon Anda"
-                            class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
-                    </div>
-                </div>
-
-                <h2 class="font-bold text-[#3D2B1F] text-xl sm:text-2xl mb-2">Autentifikasi</h2>
-                <hr class="border-[#979797] mb-6 sm:mb-8">
-
-                <div class="mb-5">
-                    <label class="text-base font-medium mb-2 block">Email</label>
-                    <input type="email" placeholder="Masukan Email anda"
-                        class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
-                </div>
-
-                {{-- Password hint --}}
-                <div class="bg-[#48B3FF]/20 border border-[#48B3FF] rounded-[12px] px-5 py-4 mb-5">
-                    <p class="text-[#0D80D2] text-base">Kosongkan jika tidak ingin mengubah password</p>
-                </div>
-
-                <div class="grid grid-cols-2 gap-5 mb-10">
-                    <div>
-                        <label class="text-base font-medium mb-2 block">Password</label>
-                        <input type="password" placeholder="••••••"
-                            class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
-                    </div>
-                    <div>
-                        <label class="text-base font-medium mb-2 block">Konfirmasi Password</label>
-                        <input type="password" placeholder="••••••"
-                            class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
-                    </div>
-                </div>
-
-                <hr class="border-[#979797] mb-8">
-
-                {{-- Foto Profile --}}
-                <h2 class="font-bold text-[#3D2B1F] text-xl sm:text-2xl mb-5">Foto Profile</h2>
-                <div class="flex items-center gap-5">
-                    {{-- Avatar --}}
-                    <div class="w-24 h-24 rounded-full overflow-hidden shrink-0 ring-2 ring-[#E8E0D4]">
-                        <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=maimunah" alt="Avatar"
-                            class="w-full h-full object-cover">
-                    </div>
-
-                    {{-- Choose File --}}
-                    <div class="flex-1 bg-[#F5F6F7] border border-[#979797]/20 rounded-[14px] px-6 py-5">
-                        <div class="flex items-center gap-3 mb-2">
-                            <label
-                                class="bg-[#48B3FF]/20 text-base text-[#0D80D2] px-5 py-2 rounded-[10px] cursor-pointer hover:bg-[#48B3FF] hover:text-white transition-colors">
-                                Choose File
-                                <input type="file" class="hidden" accept=".jpg,.jpeg,.png">
-                            </label>
-                            <span class="text-base text-[#6B6B6B]">No file Chosen</span>
+                <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8 sm:mb-10">
+                        <div>
+                            <label class="text-base font-medium mb-2 block">Nama lengkap</label>
+                            <input type="text" placeholder="Masukan Nama Anda" value="{{ $user->name }}"
+                                name="name"
+                                class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
                         </div>
-                        <p class="font-bold text-black/70 text-sm mt-1">Format: JPG, JPEG, PNG. Max: 2MB</p>
+                        <div>
+                            <label class="text-base font-medium mb-2 block">Nomor Telepon</label>
+                            <input type="text" placeholder="Masukan Nomor Telepon Anda" value="{{ $user->telp }}"
+                                name="telp"
+                                class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
+                        </div>
                     </div>
 
-                    {{-- Simpan --}}
-                    <button id="btn-simpan"
-                        class="bg-[#68C0FF] hover:bg-[#48B3FF] text-white font-bold text-base px-8 py-4 rounded-[12px] transition-colors shrink-0">
-                        Simpan
-                    </button>
-                </div>
+                    <h2 class="font-bold text-[#3D2B1F] text-xl sm:text-2xl mb-2">Autentifikasi</h2>
+                    <hr class="border-[#979797] mb-6 sm:mb-8">
+
+                    <div class="mb-5">
+                        <label class="text-base font-medium mb-2 block">Email</label>
+                        <input type="email" placeholder="Masukan Email anda" value="{{ $user->email }}"
+                            name="email"
+                            class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
+                    </div>
+
+                    {{-- Password hint --}}
+                    <div class="bg-[#48B3FF]/20 border border-[#48B3FF] rounded-[12px] px-5 py-4 mb-5">
+                        <p class="text-[#0D80D2] text-base">Kosongkan jika tidak ingin mengubah password</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-5 mb-10">
+                        <div>
+                            <label class="text-base font-medium mb-2 block">Password</label>
+                            <input type="password" placeholder="••••••" name="password"
+                                class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
+                        </div>
+                        <div>
+                            <label class="text-base font-medium mb-2 block">Konfirmasi Password</label>
+                            <input type="password" placeholder="••••••" name="password_confirmation"
+                                class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
+                        </div>
+                    </div>
+
+                    <hr class="border-[#979797] mb-8">
+
+                    {{-- Foto Profile --}}
+                    <h2 class="font-bold text-[#3D2B1F] text-xl sm:text-2xl mb-5">Foto Profile</h2>
+                    <div class="flex items-center gap-5">
+                        {{-- Avatar --}}
+                        <div class="w-24 h-24 rounded-full overflow-hidden shrink-0 ring-2 ring-[#E8E0D4]">
+                            <img id="profile-photo-preview"
+                                src="{{ !empty($user->photo) ? $user->photo : asset('images/avatar.svg') }}"
+                                alt="Avatar" class="w-full h-full object-cover">
+                        </div>
+
+                        {{-- Choose File --}}
+                        <div class="flex-1 bg-[#F5F6F7] border border-[#979797]/20 rounded-[14px] px-6 py-5">
+                            <div class="flex items-center gap-3 mb-2">
+                                <label
+                                    class="bg-[#48B3FF]/20 text-base text-[#0D80D2] px-5 py-2 rounded-[10px] cursor-pointer hover:bg-[#48B3FF] hover:text-white transition-colors">
+                                    Choose File
+                                    <input id="photo-input" type="file" class="hidden" accept=".jpg,.jpeg,.png"
+                                        name="photo">
+                                </label>
+                                <span id="photo-file-name" class="text-base text-[#6B6B6B]">No file Chosen</span>
+                            </div>
+                            <p class="font-bold text-black/70 text-sm mt-1">Format: JPG, JPEG, PNG. Max: 2MB</p>
+                        </div>
+
+                        {{-- Simpan --}}
+                        <button id="btn-simpan" type="submit"
+                            class="bg-[#68C0FF] hover:bg-[#48B3FF] text-white font-bold text-base px-8 py-4 rounded-[12px] transition-colors shrink-0">
+                            Simpan
+                        </button>
+                </form>
 
             </div>
 
         </div>
+
+    </div>
     </div>
 
     <script>
@@ -238,6 +252,31 @@
             overlay.addEventListener('click', () => {
                 sidebar.classList.add('-translate-x-full');
                 overlay.classList.add('hidden');
+            });
+
+            const photoInput = document.getElementById('photo-input');
+            const fileNameText = document.getElementById('photo-file-name');
+            const profilePhotoPreview = document.getElementById('profile-photo-preview');
+
+            photoInput?.addEventListener('change', (event) => {
+                const file = event.target.files?.[0];
+
+                if (!file) {
+                    if (fileNameText) {
+                        fileNameText.textContent = 'No file Chosen';
+                    }
+                    return;
+                }
+
+                if (fileNameText) {
+                    fileNameText.textContent = file.name;
+                }
+
+                const imageUrl = URL.createObjectURL(file);
+
+                if (profilePhotoPreview) {
+                    profilePhotoPreview.src = imageUrl;
+                }
             });
 
             document.getElementById('btn-simpan').addEventListener('click', () => {

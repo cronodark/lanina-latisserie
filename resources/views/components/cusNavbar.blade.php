@@ -3,7 +3,7 @@
 <div class="py-4 flex items-center justify-between gap-3">
 
     {{-- Belum Bayar --}}
-    <a href="{{ route('belum-bayar') }}"
+    <a href="{{ route('profile.preorder.index', ['tab' => 'belum-bayar']) }}"
         class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full border transition-colors
         {{ $active === 'belum-bayar'
             ? 'border-2 border-[#7A8C5C] bg-[#F0F7E6]'
@@ -19,7 +19,7 @@
     </a>
 
     {{-- Diproses --}}
-    <a href="{{ route('diproses') }}"
+    <a href="{{ route('profile.preorder.index', ['tab' => 'diproses']) }}"
         class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full border transition-colors
         {{ $active === 'diproses'
             ? 'border-2 border-[#7A8C5C] bg-[#F0F7E6]'
@@ -35,7 +35,7 @@
     </a>
 
     {{-- Diantar --}}
-    <a href="{{ route('diantar') }}"
+    <a href="{{ route('profile.preorder.index', ['tab' => 'diantar']) }}"
         class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full border transition-colors
         {{ $active === 'diantar'
             ? 'border-2 border-[#7A8C5C] bg-[#F0F7E6]'
@@ -51,7 +51,7 @@
     </a>
 
     {{-- Selesai --}}
-    <a href="{{ route('selesai') }}"
+    <a href="{{ route('profile.preorder.index', ['tab' => 'selesai']) }}"
         class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-full border transition-colors
         {{ $active === 'selesai'
             ? 'border-2 border-[#7A8C5C] bg-[#F0F7E6]'

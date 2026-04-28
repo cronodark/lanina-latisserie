@@ -1,16 +1,15 @@
 @auth
 
-    @if(auth()->user()->hasRole('admin'))
-
+    @if (auth()->user()->hasRole('admin'))
         {{-- ===================== SIDEBAR ADMIN ===================== --}}
-        <aside id="sidebar"
-            class="fixed top-0 left-0 h-screen w-[240px] bg-[#8A9E5B] flex flex-col z-40">
+        <aside id="sidebar" class="fixed top-0 left-0 h-screen w-[240px] bg-[#8A9E5B] flex flex-col z-40">
 
             {{-- Logo --}}
             <div class="px-6 py-5 border-b border-white/20">
                 <a href="{{ route('beranda') }}" class="flex items-center gap-2">
                     <div class="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center">
-                        <svg viewBox="0 0 24 24" class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <svg viewBox="0 0 24 24" class="w-4 h-4 text-white" fill="none" stroke="currentColor"
+                            stroke-width="1.5">
                             <path d="M12 2C8 2 5 5 5 9c0 2 1 4 2.5 5.5L12 22l4.5-7.5C18 13 19 11 19 9c0-4-3-7-7-7z" />
                         </svg>
                     </div>
@@ -111,9 +110,7 @@
             </div>
 
         </aside>
-
     @elseif(auth()->user()->hasRole('customer'))
-
         {{-- ===================== SIDEBAR CUSTOMER ===================== --}}
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-30 hidden lg:hidden"></div>
 
@@ -131,8 +128,7 @@
             <nav class="flex flex-col gap-7 text-md ml-2">
 
                 {{-- Dashboard --}}
-                <a href="{{ route('profil') }}"
-                    class="font-semibold transition text-white/70 hover:text-white">
+                <a href="{{ route('profile.index') }}" class="font-semibold transition text-white/70 hover:text-white">
                     Dashboard
                 </a>
 
@@ -140,11 +136,11 @@
                 <div>
                     <p class="text-white font-semibold mb-2">Alamat Saya</p>
                     <div class="flex flex-col gap-2 ml-2">
-                        <a href="{{ route('alamat') }}"
+                        <a href="{{ route('profile.address.index') }}"
                             class="transition {{ request()->routeIs('alamat') ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                             Daftar Alamat
                         </a>
-                        <a href="{{ route('tambah-alamat') }}"
+                        <a href="{{ route('profile.address.create') }}"
                             class="transition {{ request()->routeIs('tambah-alamat') ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                             Tambah Alamat
                         </a>
@@ -155,20 +151,24 @@
                 <div>
                     <p class="text-white font-semibold mb-2">Pesanan Saya</p>
                     <div class="flex flex-col gap-2 ml-2">
-                        <a href="{{ route('belum-bayar') }}"
-                            class="transition {{ request()->routeIs('belum-bayar') ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                        <a href="{{ route('profile.preorder.index', ['tab' => 'belum-bayar']) }}"
+                            class="transition
+                    {{ $active === 'belum-bayar' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                             Belum Bayar
                         </a>
-                        <a href="{{ route('diproses') }}"
-                            class="transition {{ request()->routeIs('diproses') ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                        <a href="{{ route('profile.preorder.index', ['tab' => 'diproses']) }}"
+                            class="transition
+                    {{ $active === 'diproses' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                             Diproses
                         </a>
-                        <a href="{{ route('diantar') }}"
-                            class="transition {{ request()->routeIs('diantar') ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                        <a href="{{ route('profile.preorder.index', ['tab' => 'diantar']) }}"
+                            class="transition
+                    {{ $active === 'diantar' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                             Diantar
                         </a>
-                        <a href="{{ route('selesai') }}"
-                            class="transition {{ request()->routeIs('selesai') ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                        <a href="{{ route('profile.preorder.index', ['tab' => 'selesai']) }}"
+                            class="transition
+                    {{ $active === 'selesai' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                             Selesai
                         </a>
                     </div>
@@ -189,7 +189,6 @@
             </div>
 
         </aside>
-
     @endif
 
 @endauth
