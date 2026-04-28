@@ -18,7 +18,7 @@
                 <div>
                     <p
                         class="font-display font-bold text-white text-base sm:text-lg xl:text-xl leading-none tracking-wide">
-                        LA NNA
+                        LANINA
                     </p>
                     <p
                         class="text-[8px] sm:text-[9px] xl:text-[10px] text-white tracking-[0.2em] uppercase leading-none">
