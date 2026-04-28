@@ -1,3 +1,6 @@
-<div>
-    <h1>DASHBOARD BELUM DI IMPLEMENTASIKAN</h1>
-</div>
+@extends('layouts.admin')
+@section('title', 'Dashboard')
+
+@section('content')
+    {{-- Dashboard belum diimplementasikan --}}
+@endsection

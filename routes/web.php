@@ -11,6 +11,7 @@ use App\Http\Controllers\PreOrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromoController;
+use App\Http\Controllers\PromoDetailController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
@@ -85,3 +86,24 @@ Route::prefix('product')->name('product.')->group(function () {
 });
 
 Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show');
+
+Route::prefix('admin/product')->name('product-admin.')->group(function () {
+    Route::get('/', [ProductController::class, 'index'])->name('index');
+    Route::get('/create', [ProductController::class, 'create'])->name('create');
+    Route::post('/', [ProductController::class, 'store'])->name('store');
+    Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
+    Route::put('/{product}', [ProductController::class, 'update'])->name('update');
+    Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('admin/promo')->name('promo-admin.')->group(function () {
+    Route::get('/rekomendasi', [PromoController::class, 'rekomendasi'])->name('rekomendasi');
+    Route::get('/status/{tab}', [PromoController::class, 'status'])->name('status');
+    Route::get('/create', [PromoController::class, 'create'])->name('create');
+    Route::post('/', [PromoController::class, 'store'])->name('store');
+    Route::get('/{promo}/edit', [PromoController::class, 'edit'])->name('edit');
+    Route::put('/{promo}', [PromoController::class, 'update'])->name('update');
+    Route::delete('/{promo}', [PromoController::class, 'destroy'])->name('destroy');
+    Route::delete('/product/{product}', [PromoController::class, 'destroyProduct'])->name('destroyProduct');
+    Route::post('/toggle/{product}', [PromoController::class, 'toggleSelect'])->name('toggleSelect');
+});
