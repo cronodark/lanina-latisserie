@@ -14,7 +14,7 @@
                         </svg>
                     </div>
                     <div>
-                        <p class="font-bold text-white text-sm leading-none tracking-wide">LA NINA</p>
+                        <p class="font-bold text-white text-sm leading-none tracking-wide">LANINA</p>
                         <p class="text-[8px] text-white/80 tracking-[0.2em] uppercase leading-none">PATISSERIE</p>
                     </div>
                 </a>
@@ -26,7 +26,7 @@
                 {{-- Dashboard --}}
                 <a href="{{ route('dashboard') }}"
                     class="block px-3 py-2 rounded-lg text-white font-semibold text-sm hover:bg-white/10 transition
-                           {{ request()->routeIs('dashboard') ? 'bg-white/10' : '' }}">
+                            {{ request()->routeIs('dashboard') ? 'bg-white/10' : '' }}">
                     Dashboard
                 </a>
 
@@ -49,12 +49,12 @@
                     <div x-show="open" x-transition class="ml-3 mt-1 space-y-1 border-l border-white/30 pl-3">
                         <a href="{{ route('product-admin.index') }}"
                             class="block py-1.5 text-xs hover:text-white transition
-                                   {{ request()->routeIs('product-admin.index') ? 'text-white font-semibold' : 'text-white/80' }}">
+                                    {{ request()->routeIs('product-admin.index') ? 'text-white font-semibold' : 'text-white/80' }}">
                             Daftar Produk
                         </a>
                         <a href="{{ route('product-admin.create') }}"
                             class="block py-1.5 text-xs hover:text-white transition
-                                   {{ request()->routeIs('product-admin.create') ? 'text-white font-semibold' : 'text-white/80' }}">
+                                    {{ request()->routeIs('product-admin.create') ? 'text-white font-semibold' : 'text-white/80' }}">
                             Tambah Produk
                         </a>
                     </div>
@@ -79,17 +79,17 @@
                     <div x-show="open" x-transition class="ml-3 mt-1 space-y-1 border-l border-white/30 pl-3">
                         <a href="{{ route('promo-admin.rekomendasi') }}"
                             class="block py-1.5 text-xs hover:text-white transition
-                                   {{ request()->routeIs('promo-admin.rekomendasi') ? 'text-white font-semibold' : 'text-white/80' }}">
+                                    {{ request()->routeIs('promo-admin.rekomendasi') ? 'text-white font-semibold' : 'text-white/80' }}">
                             Rekomendasi Produk Promosi
                         </a>
                         <a href="{{ route('promo-admin.create') }}"
                             class="block py-1.5 text-xs hover:text-white transition
-                                   {{ request()->routeIs('promo-admin.create') ? 'text-white font-semibold' : 'text-white/80' }}">
+                                    {{ request()->routeIs('promo-admin.create') ? 'text-white font-semibold' : 'text-white/80' }}">
                             Tambah Promosi Produk
                         </a>
                         <a href="{{ route('promo-admin.status', 'aktif') }}"
                             class="block py-1.5 text-xs hover:text-white transition
-                                   {{ request()->routeIs('promo-admin.status') ? 'text-white font-semibold' : 'text-white/80' }}">
+                                    {{ request()->routeIs('promo-admin.status') ? 'text-white font-semibold' : 'text-white/80' }}">
                             Status Promosi
                         </a>
                     </div>
@@ -115,33 +115,32 @@
         <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 z-30 hidden lg:hidden"></div>
 
         <aside id="sidebar"
-            class="fixed top-0 left-0 z-40 w-[230px] min-h-screen bg-[#A9BC7A]
-                   flex flex-col px-6 py-8 font-glacial
-                   transform -translate-x-full lg:translate-x-0
-                   transition-transform duration-300">
-
+            class="fixed top-0 left-0 z-40 w-[230px] min-h-screen bg-[#A9BC7A] flex flex-col px-6 py-8 font-glacial transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
             {{-- Logo --}}
             <div class="mb-10">
-                <img src="{{ asset('images/logo.png') }}" alt="La Nina" class="w-[140px] object-contain">
+                <a href="{{ route('beranda') }}">
+                    <img src="{{ asset('images/logo.png') }}" alt="La Nina" class="w-[140px] object-contain">
+                </a>
             </div>
 
             <nav class="flex flex-col gap-7 text-md ml-2">
-
                 {{-- Dashboard --}}
-                <a href="{{ route('profile.index') }}" class="font-semibold transition text-white/70 hover:text-white">
-                    Dashboard
+                <a href="{{ route('profile.index') }}"
+                    class="font-semibold transition hover:text-white {{ Route::currentRouteName() == 'profile.index' ? 'text-white' : 'text-white/70' }}">
+                    Profil Saya
                 </a>
 
                 {{-- Alamat --}}
                 <div>
                     <p class="text-white font-semibold mb-2">Alamat Saya</p>
+                    <hr class="text-white mb-2">
                     <div class="flex flex-col gap-2 ml-2">
                         <a href="{{ route('profile.address.index') }}"
-                            class="transition {{ request()->routeIs('alamat') ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                            class="transition {{ Route::currentRouteName() == 'profile.address.index' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                             Daftar Alamat
                         </a>
                         <a href="{{ route('profile.address.create') }}"
-                            class="transition {{ request()->routeIs('tambah-alamat') ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
+                            class="transition {{ Route::currentRouteName() == 'profile.address.create' ? 'text-white font-medium' : 'text-white/70 hover:text-white' }}">
                             Tambah Alamat
                         </a>
                     </div>
@@ -150,6 +149,7 @@
                 {{-- Pesanan --}}
                 <div>
                     <p class="text-white font-semibold mb-2">Pesanan Saya</p>
+                    <hr class="text-white mb-2">
                     <div class="flex flex-col gap-2 ml-2">
                         <a href="{{ route('profile.preorder.index', ['tab' => 'belum-bayar']) }}"
                             class="transition
