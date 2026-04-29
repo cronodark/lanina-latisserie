@@ -27,6 +27,16 @@ class User extends Authenticatable implements HasMedia
         'telp',
     ];
 
+    protected $appends = [
+        'photo'
+    ];
+
+    public function getPhotoAttribute()
+    {
+        $media = $this->getFirstMedia('user-profile');
+        return $media ? $media->getUrl() : null;
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

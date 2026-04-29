@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+
+class ProfileController extends Controller
+{
+    public function index()
+    {
+        $user = auth()->user();
+        $address = $user->address()->latest()->first();
+
+        return view('pages.profile.index', [
+            'title' => 'Profil Saya',
+            'user' => $user,
+            'address' => $address,
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $user = auth()->user();
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'telp' => 'nullable|string|max:20|unique:users,telp,' . $user->id,
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        if ($request->hasFile('photo')) {
+            $user->addMedia($request->file('photo'))->toMediaCollection('user-profile');
+        }
+
+        $user->update($validatedData);
+
+        return redirect()->route('profile.index')->with('success', 'Profil berhasil diperbarui.');
+    }
+}

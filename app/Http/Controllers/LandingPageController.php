@@ -28,54 +28,6 @@ class LandingPageController extends Controller
             'bestsellers' => $bestsellers,
         ]);
     }
-    public function product()
-    {
-        return view('pages.main.produk', [
-            'title' => 'Our Product'
-        ]);
-    }
-    public function detail()
-    {
-        return view('pages.main.detailproduk', [
-            'title' => 'Detail Produk'
-        ]);
-    }
-    public function cart()
-    {
-        return view('pages.main.keranjang', [
-            'title' => 'Keranjang'
-        ]);
-    }
-    public function checkout()
-    {
-        return view('pages.main.checkout', [
-            'title' => 'Checkout'
-        ]);
-    }
-    public function profil()
-    {
-        return view('pages.customer.profil', [
-            'title' => 'Profil Saya'
-        ]);
-    }
-    public function alamat()
-    {
-        return view('pages.customer.alamat', [
-            'title' => 'Alamat Saya'
-        ]);
-    }
-    public function addAlamat()
-    {
-        return view('pages.customer.tambahAlamat', [
-            'title' => 'Tambah Alamat'
-        ]);
-    }
-    public function editAlamat()
-    {
-        return view('pages.customer.editAlamat', [
-            'title' => 'Edit Alamat'
-        ]);
-    }
     public function diproses()
     {
         return view('pages.customer.diproses', [

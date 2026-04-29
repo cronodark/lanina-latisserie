@@ -3,17 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use App\Models\Promo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    public function index(): View
+    {
+        return view('pages.product.index', [
+            'title' => 'Daftar Produk',
+        ]);
+    }
+
+    public function adminIndex(): View
+    {
+        $products = Product::all();
+        return view('pages.product-admin.index', [
+            'title' => 'Daftar Produk',
+            'products' => $products,
+        ]);
+    }
+
     public function create(): View
     {
-        return view('pages.product.create', [
-            'title' => 'Test CRUD Product - Create',
+        return view('pages.product-admin.create', [
+            'title' => 'Add Product',
         ]);
     }
 
@@ -23,46 +38,38 @@ class ProductController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'price' => ['required', 'integer', 'min:0'],
+            'production_estimate' => ['required', 'integer', 'min:1'],
             'image' => ['required', 'image', 'max:2048'],
         ]);
 
-        $product = Product::query()->create($validated);
+        $product = Product::query()->create([
+            'name' => $validated['name'],
+            'description' => $validated['description'],
+            'price' => $validated['price'],
+            'production_estimate' => $validated['production_estimate'],
+        ]);
 
         $product
             ->addMediaFromRequest('image')
             ->toMediaCollection(Product::MEDIA_COLLECTION);
 
         return redirect()
-            ->route('product.show', $product)
+            ->route('product-admin.index')
             ->with('success', 'Produk berhasil ditambahkan.');
-    }
-
-    public function index(): View
-    {
-        $products = Product::all();
-        $recentProducts = Product::latest()->take(3)->get();
-        $promos = Promo::orderBy('created_at', 'desc')->where('status', '=', 'active')->get();
-
-        return view('pages.product.index', [
-            'title' => 'Product List',
-            'products' => $products,
-            'recentProducts' => $recentProducts,
-            'promos' => $promos,
-        ]);
     }
 
     public function show(Product $product): View
     {
-        return view('pages.product.show', [
-            'title' => 'Product ' . $product->name,
+        return view('pages.product-admin.show', [
+            'title'   => 'Product ' . $product->name,
             'product' => $product,
         ]);
     }
 
     public function edit(Product $product): View
     {
-        return view('pages.product.update', [
-            'title' => 'Test CRUD Product - Update',
+        return view('pages.product-admin.edit', [
+            'title'   => 'Edit Product',
             'product' => $product,
         ]);
     }
@@ -70,13 +77,19 @@ class ProductController extends Controller
     public function update(Request $request, Product $product): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'name'        => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'price' => ['required', 'integer', 'min:0'],
-            'image' => ['nullable', 'image', 'max:2048'],
+            'price'       => ['required', 'integer', 'min:0'],
+            'image'       => ['nullable', 'image', 'max:2048'],
+            'production_estimate' => ['required', 'integer', 'min:1'],
         ]);
 
-        $product->update($validated);
+        $product->update([
+            'name'        => $validated['name'],
+            'description' => $validated['description'],
+            'price'       => $validated['price'],
+            'production_estimate' => $validated['production_estimate'],
+        ]);
 
         if ($request->hasFile('image')) {
             $product
@@ -85,7 +98,16 @@ class ProductController extends Controller
         }
 
         return redirect()
-            ->route('product.show', $product)
+            ->route('product-admin.index')
             ->with('success', 'Produk berhasil diperbarui.');
+    }
+
+    public function destroy(Product $product): RedirectResponse
+    {
+        $product->delete();
+
+        return redirect()
+            ->route('product-admin.index')
+            ->with('success', 'Produk berhasil dihapus.');
     }
 }

@@ -156,3 +156,7 @@
   </div>
 </main>
 @endsection
+
+@section('content')
+    {{-- Dashboard belum diimplementasikan --}}
+@endsection

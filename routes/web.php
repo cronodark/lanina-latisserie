@@ -1,13 +1,17 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\MidtransWebhookController;
+use App\Http\Controllers\PreOrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromoController;
+use App\Http\Controllers\PromoDetailController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
@@ -17,13 +21,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['middleware' => 'role:admin'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::prefix('product')->name('product.')->group(function () {
-            Route::get('/', [ProductController::class, 'indexAdmin'])->name('index');
+        Route::prefix('admin/product')->name('product-admin.')->group(function () {
+            Route::get('/', [ProductController::class, 'adminIndex'])->name('index');
             Route::get('/create', [ProductController::class, 'create'])->name('create');
             Route::post('/', [ProductController::class, 'store'])->name('store');
-            Route::get('/{product}', [ProductController::class, 'show'])->name('show');
-            Route::get('/{product}/update', [ProductController::class, 'edit'])->name('edit');
+            Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
             Route::put('/{product}', [ProductController::class, 'update'])->name('update');
+            Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
         });
     });
 
@@ -31,6 +35,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['middleware' => 'role:customer'], function () {
         Route::prefix('product')->name('product.')->group(function () {
             Route::get('/', [ProductController::class, 'index'])->name('index');
+        });
+
+        Route::prefix('profile')->name('profile.')->group(function () {
+            Route::get('/', [ProfileController::class, 'index'])->name('index');
+            Route::post('/', [ProfileController::class, 'update'])->name('update');
+            Route::get('/preorder', [PreOrderController::class, 'index'])->name('preorder.index');
+
+            // Address Routes
+            Route::prefix('address')->name('address.')->group(function () {
+                Route::post('/create', [AddressController::class, 'store'])->name('store');
+                Route::get('/create', [AddressController::class, 'create'])->name('create');
+                Route::get('/', [AddressController::class, 'index'])->name('index');
+                Route::get('/{id}/edit', [AddressController::class, 'edit'])->name('edit');
+                Route::put('/{id}', [AddressController::class, 'update'])->name('update');
+                Route::delete('/{id}', [AddressController::class, 'destroy'])->name('destroy');
+            });
         });
 
         Route::post('/cart/{product}', [CartController::class, 'storeProduct'])->name('cart.store');
@@ -54,19 +74,7 @@ Route::group(['middleware' => 'guest'], function () {
 
 // Landing Page Routes
 Route::get('/', [LandingPageController::class, 'index'])->name('beranda');
-Route::get('/produk', [LandingPageController::class, 'product'])->name('produk');
-Route::get('/detailproduk', [LandingPageController::class, 'detail'])->name('detailproduk');
 Route::post('/midtrans/notification', [MidtransWebhookController::class, 'handle'])->name('midtrans.notification');
-
-// Profile page
-Route::get('/profil', [LandingPageController::class, 'profil'])->name('profil');
-Route::get('/profil/alamat', [LandingPageController::class, 'alamat'])->name('alamat');
-Route::get('/profil/tambah-alamat', [LandingPageController::class, 'addAlamat'])->name('tambah-alamat');
-Route::get('/profil/edit-alamat', [LandingPageController::class, 'editAlamat'])->name('edit-alamat');
-Route::get('/profil/belum-bayar', [LandingPageController::class, 'belumByr'])->name('belum-bayar');
-Route::get('/profil/diproses', [LandingPageController::class, 'diproses'])->name('diproses');
-Route::get('/profil/diantar', [LandingPageController::class, 'diantar'])->name('diantar');
-Route::get('/profil/selesai', [LandingPageController::class, 'selesai'])->name('selesai');
 
 Route::prefix('product')->name('product.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
@@ -79,6 +87,16 @@ Route::prefix('product')->name('product.')->group(function () {
 
 Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show');
 
-// dashboard 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+
+Route::prefix('admin/promo')->name('promo-admin.')->group(function () {
+    Route::get('/rekomendasi', [PromoController::class, 'rekomendasi'])->name('rekomendasi');
+    Route::get('/status/{tab}', [PromoController::class, 'status'])->name('status');
+    Route::get('/create', [PromoController::class, 'create'])->name('create');
+    Route::post('/', [PromoController::class, 'store'])->name('store');
+    Route::get('/{promo}/edit', [PromoController::class, 'edit'])->name('edit');
+    Route::put('/{promo}', [PromoController::class, 'update'])->name('update');
+    Route::delete('/{promo}', [PromoController::class, 'destroy'])->name('destroy');
+    Route::delete('/product/{product}', [PromoController::class, 'destroyProduct'])->name('destroyProduct');
+    Route::post('/toggle/{product}', [PromoController::class, 'toggleSelect'])->name('toggleSelect');
+});

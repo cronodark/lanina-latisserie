@@ -18,6 +18,8 @@ class Promo extends Model implements HasMedia
         'description',
         'price',
         'date_until',
+        'date_start',
+        'stok',
         'status',
         'actual_price',
     ];
