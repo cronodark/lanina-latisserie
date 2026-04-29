@@ -16,6 +16,15 @@ class ProductController extends Controller
         ]);
     }
 
+    public function adminIndex(): View
+    {
+        $products = Product::all();
+        return view('pages.product-admin.index', [
+            'title' => 'Daftar Produk',
+            'products' => $products,
+        ]);
+    }
+
     public function create(): View
     {
         return view('pages.product-admin.create', [
@@ -26,18 +35,18 @@ class ProductController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name'         => ['required', 'string', 'max:255'],
-            'description'  => ['required', 'string'],
-            'harga'        => ['required', 'integer', 'min:0'],
-            'expired_day'  => ['required', 'integer', 'min:1'],
-            'image'        => ['required', 'image', 'max:2048'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'price' => ['required', 'integer', 'min:0'],
+            'production_estimate' => ['required', 'integer', 'min:1'],
+            'image' => ['required', 'image', 'max:2048'],
         ]);
 
         $product = Product::query()->create([
-            'name'        => $validated['name'],
+            'name' => $validated['name'],
             'description' => $validated['description'],
-            'harga'       => $validated['harga'],
-            'expired_day' => $validated['expired_day'],
+            'price' => $validated['price'],
+            'production_estimate' => $validated['production_estimate'],
         ]);
 
         $product
@@ -46,7 +55,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('product-admin.index')
-            ->with('success', 'Product added successfully.');
+            ->with('success', 'Produk berhasil ditambahkan.');
     }
 
     public function show(Product $product): View
@@ -70,16 +79,16 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name'        => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'harga'       => ['required', 'integer', 'min:0'],
-            'expired_day' => ['required', 'integer', 'min:1'],
+            'price'       => ['required', 'integer', 'min:0'],
             'image'       => ['nullable', 'image', 'max:2048'],
+            'production_estimate' => ['required', 'integer', 'min:1'],
         ]);
 
         $product->update([
             'name'        => $validated['name'],
             'description' => $validated['description'],
-            'harga'       => $validated['harga'],
-            'expired_day' => $validated['expired_day'],
+            'price'       => $validated['price'],
+            'production_estimate' => $validated['production_estimate'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -90,7 +99,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('product-admin.index')
-            ->with('success', 'Product updated successfully.');
+            ->with('success', 'Produk berhasil diperbarui.');
     }
 
     public function destroy(Product $product): RedirectResponse
@@ -99,6 +108,6 @@ class ProductController extends Controller
 
         return redirect()
             ->route('product-admin.index')
-            ->with('success', 'Product deleted successfully.');
+            ->with('success', 'Produk berhasil dihapus.');
     }
 }

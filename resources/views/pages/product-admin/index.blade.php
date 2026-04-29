@@ -7,7 +7,7 @@
     {{-- Judul halaman --}}
     <h1 class="text-2xl font-bold text-gray-800 mb-6">Manajemen Produk</h1>
 
-    {{-- 
+    {{--
         Alert sukses: hanya tampil jika ada session 'success'.
         Biasanya di-set oleh controller setelah berhasil tambah/edit/hapus produk.
     --}}
@@ -36,7 +36,7 @@
         </a>
     </div>
 
-    {{-- 
+    {{--
         Kondisi: jika tidak ada produk sama sekali tampilkan empty state,
         jika ada tampilkan grid kartu produk.
     --}}
@@ -63,11 +63,11 @@
 
             {{-- Iterasi setiap produk dari koleksi $products --}}
             @foreach($products as $product)
-                <div class="bg-white rounded-3xl overflow-hidden hover:shadow-lg transition-shadow duration-300 group">
+                <div x-data="{ showDetail: false }" class="bg-white rounded-3xl overflow-hidden hover:shadow-lg transition-shadow duration-300 group h-full flex flex-col">
 
                     {{-- SECTION FOTO PRODUK --}}
                     <div class="mx-3 mt-3 h-48 rounded-2xl overflow-hidden">
-                        {{-- 
+                        {{--
                             Cek apakah produk punya media di MEDIA_COLLECTION.
                             Jika ada: tampilkan foto dengan efek zoom saat hover (group-hover:scale-105).
                             Jika tidak: tampilkan placeholder ikon gambar abu-abu.
@@ -88,18 +88,32 @@
                     </div>
 
                     {{-- SECTION INFO & AKSI PRODUK --}}
-                    <div class="px-4 pt-4 pb-4">
+                    <div class="px-4 pt-4 pb-4 flex-1 flex flex-col">
                         {{-- Nama produk --}}
                         <h3 class="font-bold text-gray-800 text-lg leading-tight mb-1">{{ $product->name }}</h3>
                         {{-- Deskripsi: dibatasi 2 baris dengan line-clamp-2 agar kartu seragam --}}
                         <p class="text-gray-400 text-sm leading-relaxed line-clamp-2 mb-3">{{ $product->description }}</p>
                         {{-- Harga: diformat dengan pemisah ribuan (titik) --}}
-                        <p class="text-[#8A9E5B] font-bold text-xl">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
+                        <p class="text-[#8A9E5B] font-bold text-xl">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
 
                         {{-- SECTION TOMBOL AKSI (Edit & Hapus) --}}
-                        <div class="flex items-center justify-end gap-3 mt-3">
+                        <div class="flex items-center justify-between gap-3 mt-auto pt-3">
 
-                            {{-- 
+                            <button type="button"
+                                @click="showDetail = true"
+                                class="flex items-center gap-2 text-sm font-semibold text-[#4A5E2F] hover:text-[#3a4c23] transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                Detail
+                            </button>
+
+                            <div class="flex items-center gap-3">
+
+                            {{--
                                 Tombol Hapus: menggunakan form POST + @method('DELETE') karena
                                 HTML tidak mendukung method DELETE secara langsung.
                                 onsubmit: memunculkan konfirmasi browser sebelum menghapus.
@@ -128,6 +142,75 @@
                                 </svg>
                             </a>
 
+                            </div>
+
+                        </div>
+
+                        {{-- Modal detail produk --}}
+                        <div x-show="showDetail" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6"
+                            @keydown.escape.window="showDetail = false">
+                            <div class="absolute inset-0 bg-black/50" @click="showDetail = false"></div>
+
+                            <div class="relative z-10 w-full max-w-2xl rounded-3xl bg-white shadow-2xl overflow-hidden">
+                                <div class="flex items-start justify-between gap-4 px-6 py-5 border-b border-gray-100">
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-[#8A9E5B]">Detail Produk</p>
+                                        <h3 class="mt-1 text-2xl font-bold text-gray-800">{{ $product->name }}</h3>
+                                    </div>
+                                    <button type="button" @click="showDetail = false"
+                                        class="text-gray-400 hover:text-gray-700 transition">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div class="grid gap-0 md:grid-cols-[1.1fr_0.9fr]">
+                                    <div class="bg-gray-50 p-5">
+                                        @if($product->hasMedia(App\Models\Product::MEDIA_COLLECTION))
+                                            <img src="{{ $product->getFirstMediaUrl(App\Models\Product::MEDIA_COLLECTION) }}"
+                                                alt="{{ $product->name }}"
+                                                class="h-64 w-full rounded-2xl object-cover">
+                                        @else
+                                            <div class="h-64 w-full rounded-2xl bg-gray-100 flex items-center justify-center">
+                                                <svg class="w-14 h-14 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <div class="p-6 space-y-5">
+                                        <div>
+                                            <p class="text-sm text-gray-400">Harga</p>
+                                            <p class="text-2xl font-bold text-[#8A9E5B]">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                        </div>
+
+                                        <div>
+                                            <p class="text-sm text-gray-400 mb-1">Deskripsi</p>
+                                            <p class="text-sm leading-6 text-gray-700">
+                                                {{ $product->description }}
+                                            </p>
+                                        </div>
+
+                                        @if(!empty($product->production_estimate))
+                                            <div>
+                                                <p class="text-sm text-gray-400">Estimasi Pengerjaan</p>
+                                                <p class="text-sm font-semibold text-gray-800">{{ $product->production_estimate }} hari</p>
+                                            </div>
+                                        @endif
+
+                                        <div class="flex justify-end pt-2">
+                                            <button type="button" @click="showDetail = false"
+                                                class="rounded-xl bg-[#4A5E2F] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#3a4c23] transition">
+                                                Tutup
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

@@ -21,13 +21,13 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['middleware' => 'role:admin'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::prefix('product')->name('product.')->group(function () {
-            Route::get('/', [ProductController::class, 'indexAdmin'])->name('index');
+        Route::prefix('admin/product')->name('product-admin.')->group(function () {
+            Route::get('/', [ProductController::class, 'adminIndex'])->name('index');
             Route::get('/create', [ProductController::class, 'create'])->name('create');
             Route::post('/', [ProductController::class, 'store'])->name('store');
-            Route::get('/{product}', [ProductController::class, 'show'])->name('show');
-            Route::get('/{product}/update', [ProductController::class, 'edit'])->name('edit');
+            Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
             Route::put('/{product}', [ProductController::class, 'update'])->name('update');
+            Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
         });
     });
 
@@ -87,14 +87,7 @@ Route::prefix('product')->name('product.')->group(function () {
 
 Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show');
 
-Route::prefix('admin/product')->name('product-admin.')->group(function () {
-    Route::get('/', [ProductController::class, 'index'])->name('index');
-    Route::get('/create', [ProductController::class, 'create'])->name('create');
-    Route::post('/', [ProductController::class, 'store'])->name('store');
-    Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
-    Route::put('/{product}', [ProductController::class, 'update'])->name('update');
-    Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
-});
+
 
 Route::prefix('admin/promo')->name('promo-admin.')->group(function () {
     Route::get('/rekomendasi', [PromoController::class, 'rekomendasi'])->name('rekomendasi');
