@@ -78,3 +78,7 @@ Route::prefix('product')->name('product.')->group(function () {
 });
 
 Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show');
+
+// dashboard 
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
