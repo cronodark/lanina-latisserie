@@ -153,13 +153,12 @@ class CheckoutController extends Controller
 
         $preOrder->refresh();
 
-        if ($preOrder->payment_status === 'paid') {
-            return redirect()->route('cart.index')
-                ->with('success', 'Pembayaran terverifikasi. Pesanan Anda sedang diproses.');
-        }
+        $message = $preOrder->payment_status === 'paid'
+            ? 'Pembayaran terverifikasi. Pesanan Anda sedang diproses.'
+            : 'Pesanan berhasil dibuat. Pembayaran belum terverifikasi, silakan selesaikan pembayaran dari halaman pesanan.';
 
-        return redirect()->route('cart.index')
-            ->with('error', 'Pembayaran belum terverifikasi. Coba cek kembali beberapa saat lagi.');
+        return redirect()->route('profile.preorder.index')
+            ->with('success', $message);
     }
 
     private function sessionKey(): string

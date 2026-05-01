@@ -10,6 +10,14 @@ use Illuminate\View\View;
 
 class PromoController extends Controller
 {
+    public function show(Promo $promo): View
+    {
+        return view('pages.promo.show', [
+            'title' => 'Detail Promosi',
+            'promo' => $promo,
+        ]);
+    }
+
     public function rekomendasi(Request $request): View
     {
         $products = Product::all();

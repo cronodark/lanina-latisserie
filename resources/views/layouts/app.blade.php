@@ -16,6 +16,7 @@
 </head>
 
 <body class="h-screen">
+    <x-swal />
     @yield('content')
     @livewireScripts
 </body>

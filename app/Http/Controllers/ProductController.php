@@ -60,7 +60,7 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
-        return view('pages.product-admin.show', [
+        return view('pages.product.show', [
             'title'   => 'Product ' . $product->name,
             'product' => $product,
         ]);

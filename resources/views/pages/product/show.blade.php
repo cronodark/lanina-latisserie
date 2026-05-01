@@ -109,6 +109,7 @@
             </div>
         </div>
     </main>
+    <x-swal/>
 
     <x-footer />
 

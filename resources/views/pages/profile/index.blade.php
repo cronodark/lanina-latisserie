@@ -18,18 +18,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
-                <div class="flex-1 max-w-[360px]">
-                    <div
-                        class="flex items-center gap-2 bg-[#F5F6FA] border border-[#D5D5D5] rounded-full px-5 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
-                        <svg class="w-5 h-5 text-[#9A8878]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
-                        </svg>
-                        <input type="text" placeholder="Search"
-                            class="font-nunito text-sm text-[#3D2B1F] placeholder-[#C4B8AE] outline-none bg-transparent w-full">
-                    </div>
-                </div>
             </div>
 
             {{-- Profile Banner --}}
@@ -225,8 +213,8 @@
                         </div>
 
                         {{-- Simpan --}}
-                        <button id="btn-simpan" type="submit"
-                            class="bg-[#68C0FF] hover:bg-[#48B3FF] text-white font-bold text-base px-8 py-4 rounded-[12px] transition-colors shrink-0">
+                        <button id="btn-simpan" type="submit" disabled
+                            class="bg-[#68C0FF] hover:bg-[#48B3FF] text-white font-bold text-base px-8 py-4 rounded-[12px] transition-colors shrink-0 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#68C0FF]">
                             Simpan
                         </button>
                 </form>
@@ -243,6 +231,38 @@
             const sidebar = document.getElementById('sidebar');
             const toggle = document.getElementById('sidebarToggle');
             const overlay = document.getElementById('sidebarOverlay');
+            const form = document.querySelector('form[action="{{ route('profile.update') }}"]');
+            const saveButton = document.getElementById('btn-simpan');
+            const photoInput = document.getElementById('photo-input');
+            const fileNameText = document.getElementById('photo-file-name');
+            const profilePhotoPreview = document.getElementById('profile-photo-preview');
+
+            const initialState = {
+                name: form?.querySelector('input[name="name"]')?.value ?? '',
+                telp: form?.querySelector('input[name="telp"]')?.value ?? '',
+                email: form?.querySelector('input[name="email"]')?.value ?? '',
+                password: '',
+                passwordConfirmation: '',
+                photoName: '',
+            };
+
+            const setSaveButtonState = () => {
+                if (!form || !saveButton) {
+                    return;
+                }
+
+                const currentState = {
+                    name: form.querySelector('input[name="name"]')?.value ?? '',
+                    telp: form.querySelector('input[name="telp"]')?.value ?? '',
+                    email: form.querySelector('input[name="email"]')?.value ?? '',
+                    password: form.querySelector('input[name="password"]')?.value ?? '',
+                    passwordConfirmation: form.querySelector('input[name="password_confirmation"]')?.value ?? '',
+                    photoName: photoInput?.files?.[0]?.name ?? '',
+                };
+
+                const hasChanges = Object.keys(initialState).some((key) => currentState[key] !== initialState[key]);
+                saveButton.disabled = !hasChanges;
+            };
 
             toggle.addEventListener('click', () => {
                 sidebar.classList.remove('-translate-x-full');
@@ -253,10 +273,6 @@
                 sidebar.classList.add('-translate-x-full');
                 overlay.classList.add('hidden');
             });
-
-            const photoInput = document.getElementById('photo-input');
-            const fileNameText = document.getElementById('photo-file-name');
-            const profilePhotoPreview = document.getElementById('profile-photo-preview');
 
             photoInput?.addEventListener('change', (event) => {
                 const file = event.target.files?.[0];
@@ -277,21 +293,16 @@
                 if (profilePhotoPreview) {
                     profilePhotoPreview.src = imageUrl;
                 }
+
+                setSaveButtonState();
             });
 
-            document.getElementById('btn-simpan').addEventListener('click', () => {
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: 'Perubahan berhasil disimpan.',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    confirmButtonColor: '#7A8C5C',
-                    customClass: {
-                        popup: 'rounded-[20px] font-poppins',
-                        confirmButton: 'rounded-full px-6 py-2 text-sm font-medium',
-                    }
-                });
+            form?.querySelectorAll('input, textarea, select').forEach((input) => {
+                input.addEventListener('input', setSaveButtonState);
+                input.addEventListener('change', setSaveButtonState);
             });
+
+            setSaveButtonState();
         }
     </script>
 
