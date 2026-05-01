@@ -68,6 +68,7 @@
         }
         #sidebar.collapsed svg { width: 20px; height: 20px; }
     </style>
+     @stack('styles')
 </head>
 
 <body class="bg-[#F5F5F0] min-h-screen">
@@ -131,5 +132,6 @@
             }
         });
     </script>
+    @stack('scripts')
 </body>
 </html>

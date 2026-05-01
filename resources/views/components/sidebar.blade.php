@@ -24,14 +24,14 @@
             <nav class="flex-1 px-4 py-6 overflow-y-auto space-y-1">
 
                 {{-- Dashboard --}}
-                <a href="{{ route('dashboard') }}"
+                <a href="/dashboard"
                     class="block px-3 py-2 rounded-lg text-white font-semibold text-sm hover:bg-white/10 transition
                             {{ request()->routeIs('dashboard') ? 'bg-white/10' : '' }}">
                     <span class="hide-text">Dashboard</span>
                 </a>
 
                 {{-- Manajemen Pesanan --}}
-                <a href="#"
+                <a href="/pesanan"
                     class="block px-3 py-2 rounded-lg text-white font-semibold text-sm hover:bg-white/10 transition">
                     <span class="hide-text">Manajemen Pesanan</span>
                 </a>
