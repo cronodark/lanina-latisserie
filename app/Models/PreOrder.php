@@ -24,6 +24,7 @@ class PreOrder extends Model
         'choosen_expedition',
         'address_id',
         'user_id',
+        'total'
     ];
 
     protected $casts = [
@@ -31,6 +32,7 @@ class PreOrder extends Model
         'start_periode' => 'date',
         'end_periode' => 'date',
         'paid_at' => 'datetime',
+        'total' => 'integer',
     ];
 
     public function detailPreOrders()

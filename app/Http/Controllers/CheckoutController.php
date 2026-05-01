@@ -56,7 +56,7 @@ class CheckoutController extends Controller
                 ->with('error', 'Pilih minimal 1 item untuk checkout.');
         }
 
-        [$items] = $this->buildCheckoutItems($checkedCart);
+        [$items, $total] = $this->buildCheckoutItems($checkedCart);
 
         if (empty($items)) {
             return redirect()->route('cart.index')
@@ -75,13 +75,14 @@ class CheckoutController extends Controller
 
         $preOrder = null;
 
-        DB::transaction(function () use ($items, $validated, &$preOrder) {
+        DB::transaction(function () use ($items, $total, $validated, &$preOrder) {
             $preOrder = PreOrder::create([
                 'actual_periode' => $validated['actual_periode'] ?? now()->addDays(2)->toDateString(),
                 'status' => 'pending',
                 'payment_status' => 'unpaid',
                 'start_periode' => now()->toDateString(),
                 'end_periode' => null,
+                'total' => $total,
                 'send_type' => $validated['send_type'] ?? 'pickUp',
                 'tracking_number' => null,
                 'choosen_expedition' => null,

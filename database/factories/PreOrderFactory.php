@@ -34,6 +34,7 @@ class PreOrderFactory extends Factory
             'choosen_expedition' => fake()->randomElement(['jne', 'pos', 'tiki']),
             'user_id' => User::factory(),
             'address_id' => Address::factory(),
+            'total' => fake()->numberBetween(10000, 1000000)
         ];
     }
 }
