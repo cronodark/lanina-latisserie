@@ -12,6 +12,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromoController;
 use App\Http\Controllers\PromoDetailController;
+use App\Http\Controllers\PesananController;
+use App\Http\Controllers\laporanController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
@@ -100,3 +102,8 @@ Route::prefix('admin/promo')->name('promo-admin.')->group(function () {
     Route::delete('/product/{product}', [PromoController::class, 'destroyProduct'])->name('destroyProduct');
     Route::post('/toggle/{product}', [PromoController::class, 'toggleSelect'])->name('toggleSelect');
 });
+
+Route::resource('pesanan', PesananController::class);
+Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
+
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
