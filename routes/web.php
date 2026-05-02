@@ -22,6 +22,7 @@ Route::group(['middleware' => 'auth'], function () {
     // Admin Routes
     Route::group(['middleware' => 'role:admin'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/grafik', [DashboardController::class, 'grafikData'])->name('dashboard.grafik');
 
         Route::prefix('admin/product')->name('product-admin.')->group(function () {
             Route::get('/', [ProductController::class, 'adminIndex'])->name('index');
