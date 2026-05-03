@@ -54,20 +54,13 @@ class PreorderTabs extends Component
     {
         return $this->baseOrderQuery()
             ->when($this->tab === 'belum-bayar', function ($query) {
-                $query->where(function ($inner) {
-                    $inner->where('payment_status', 'unpaid')
-                        ->orWhereIn('status', ['pending', 'unpaid']);
-                });
+                $query->whereIn('status', ['unpaid', 'expired', 'failed']);
             })
             ->when($this->tab === 'diproses', function ($query) {
                 $query->where('status', 'processing');
             })
             ->when($this->tab === 'diantar', function ($query) {
-                $query->whereIn('status', ['shipping', 'diantar', 'delivering', 'siap_diambil', 'ready_pickup'])
-                    ->orWhere(function ($inner) {
-                        $inner->where('send_type', 'pickUp')
-                            ->whereIn('status', ['siap_diambil', 'ready_pickup']);
-                    });
+                $query->whereIn('status', ['shipping', 'diantar', 'delivering', 'siap_diambil', 'ready_pickup']);
             })
             ->when($this->tab === 'selesai', function ($query) {
                 $query->whereIn('status', ['completed', 'selesai', 'done']);
@@ -110,7 +103,6 @@ class PreorderTabs extends Component
 
         $order->update([
             'status' => 'cancelled',
-            'payment_status' => 'cancelled',
         ]);
 
         session()->flash('success', 'Pesanan berhasil dibatalkan.');
@@ -146,10 +138,10 @@ class PreorderTabs extends Component
 
         $orders = PreOrder::query()
             ->where('user_id', Auth::id())
-            ->get(['status', 'payment_status', 'send_type']);
+            ->get(['status', 'send_type']);
 
         foreach ($orders as $order) {
-            if ($order->payment_status === 'unpaid' || in_array($order->status, ['pending', 'unpaid'], true)) {
+            if (in_array($order->status, ['unpaid', 'expired', 'failed'], true)) {
                 $counts['belum-bayar']++;
                 continue;
             }
@@ -277,7 +269,7 @@ class PreorderTabs extends Component
         return $this->baseOrderQuery()
             ->where('id', $preOrderId)
             ->when($unpaidOnly, function ($query) {
-                $query->where('payment_status', 'unpaid');
+                $query->whereIn('status', ['unpaid', 'expired', 'failed']);
             })
             ->first();
     }

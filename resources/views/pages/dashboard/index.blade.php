@@ -66,7 +66,7 @@
         <div class="bg-white rounded-2xl p-5 shadow flex items-start justify-between">
             <div>
                 <p class="text-sm text-gray-500">Dikirim</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-2">{{ $preOrders->where('status', 'delivered')->count() }}</h3>
+                <h3 class="text-2xl font-bold text-gray-900 mt-2">{{ $preOrders->where('status', 'shipping')->count() }}</h3>
             </div>
             <div class="bg-blue-100 p-3 rounded-xl">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,8 +90,8 @@
 
         <div class="bg-white rounded-2xl p-5 shadow flex items-start justify-between">
             <div>
-                <p class="text-sm text-gray-500">Belum</p>
-                <h3 class="text-2xl font-bold text-gray-900 mt-2">{{ $preOrders->where('status', 'pending')->count() }}</h3>
+                <p class="text-sm text-gray-500">Belum Bayar</p>
+                <h3 class="text-2xl font-bold text-gray-900 mt-2">{{ $preOrders->where('status', 'unpaid')->count() }}</h3>
             </div>
             <div class="bg-red-100 p-3 rounded-xl">
                 <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,17 +178,18 @@
 
     </div>
 
-    <!-- Pesanan Mendekati Deadline -->
+    <!-- Semua Pesanan Preorder -->
     <div class="bg-white rounded-2xl p-6 shadow">
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-semibold text-gray-800">Pesanan Mendekati Deadline</h3>
+            <h3 class="text-xl font-semibold text-gray-800">Semua Pesanan Preorder</h3>
             <select id="filterStatus"
                 class="px-4 py-2 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:ring-2 focus:ring-[#BB9457] outline-none cursor-pointer">
                 <option value="">Semua Status</option>
-                <option value="selesai">Selesai</option>
-                <option value="dikirim">Dikirim</option>
-                <option value="dikerjakan">Dikerjakan</option>
-                <option value="belum">Belum</option>
+                <option value="unpaid">Belum Bayar</option>
+                <option value="processing">Dikerjakan</option>
+                <option value="shipping">Dikirim</option>
+                <option value="completed">Selesai</option>
+                <option value="cancelled">Dibatalkan</option>
             </select>
         </div>
 
@@ -200,7 +201,6 @@
                         <th class="py-3 px-4 text-left">Nama Pelanggan</th>
                         <th class="py-3 px-4 text-left">Nama Produk</th>
                         <th class="py-3 px-4 text-left">Tanggal Pembelian</th>
-                        <th class="py-3 px-4 text-left">Tanggal Pengantaran</th>
                         <th class="py-3 px-4 text-left">Total Harga</th>
                         <th class="py-3 px-4 text-left">Status</th>
                     </tr>
@@ -210,7 +210,7 @@
         </div>
 
         <div id="emptyState" class="hidden text-center py-10 text-gray-400 text-sm">
-            Tidak ada pesanan dengan status ini.
+            Tidak ada data preorder dengan status ini.
         </div>
     </div>
 @endsection
@@ -223,7 +223,7 @@
             // ==============================
             // DATA BACKEND
             // ==============================
-            window.pesananData = @json($pesanan ?? []);
+            window.pesananData = @json($pesanan);
             const pesananData  = window.pesananData || [];
 
             const initialGrafik = @json($grafikData);
@@ -257,7 +257,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function (context) {
-                                    const val = context.parsed.y || 0;
+                                    const val = context.parsed.y || 0
                                     return ' Rp ' + val.toLocaleString('id-ID');
                                 }
                             }
@@ -380,35 +380,41 @@
             }
 
             function formatStatus(status) {
-                return status.charAt(0).toUpperCase() + status.slice(1);
+                const statusLabel = {
+                    unpaid: 'Belum Bayar',
+                    processing: 'Diproses',
+                    shipping: 'Dikirim',
+                    completed: 'Selesai',
+                    cancelled: 'Dibatalkan',
+                };
+
+                return statusLabel[status] || status.charAt(0).toUpperCase() + status.slice(1);
             }
 
             const statusColor = {
-                belum:     'bg-red-500 text-white',
-                dikerjakan:'bg-yellow-500 text-white',
-                dikirim:   'bg-blue-500 text-white',
-                selesai:   'bg-green-500 text-white'
+                unpaid:     'bg-red-500 text-white',
+                processing: 'bg-yellow-500 text-white',
+                shipping:   'bg-blue-500 text-white',
+                completed:  'bg-green-500 text-white',
+                cancelled:  'bg-gray-500 text-white',
+                expired:    'bg-orange-500 text-white',
+                failed:     'bg-rose-500 text-white'
             };
 
-            function getDeadlineData() {
-                const now = new Date();
-                now.setHours(0, 0, 0, 0);
-                const limit = new Date();
-                limit.setDate(now.getDate() + 3);
-                limit.setHours(23, 59, 59, 999);
-
-                return pesananData.filter(p => {
-                    if (!p.tanggal_pengantaran) return false;
-                    const tgl = new Date(p.tanggal_pengantaran);
-                    return tgl >= now && tgl <= limit;
-                });
+            function escapeHtml(value) {
+                return String(value ?? '-')
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#039;');
             }
 
             function renderTabel(filter = '') {
                 const tbody = document.getElementById('tbodyDeadline');
                 const empty = document.getElementById('emptyState');
 
-                let data = getDeadlineData();
+                let data = pesananData;
                 if (filter) data = data.filter(p => p.status.toLowerCase() === filter.toLowerCase());
 
                 if (!data.length) {
@@ -420,14 +426,13 @@
                 empty.classList.add('hidden');
                 tbody.innerHTML = data.map(p => `
                     <tr class="hover:bg-gray-50 transition">
-                        <td class="px-4 py-3">${p.id || '-'}</td>
-                        <td class="px-4 py-3">${p.nama_pelanggan || '-'}</td>
-                        <td class="px-4 py-3">${p.nama_produk || '-'}</td>
-                        <td class="px-4 py-3">${formatDate(p.tanggal_pembelian)}</td>
-                        <td class="px-4 py-3">${formatDate(p.tanggal_pengantaran)}</td>
-                        <td class="px-4 py-3">Rp ${(p.total_harga || 0).toLocaleString('id-ID')}</td>
-                        <td class="px-4 py-3">
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full ${statusColor[p.status] || 'bg-gray-200 text-gray-700'}">
+                        <td class="px-3 py-3">${escapeHtml(p.id)}</td>
+                        <td class="px-3 py-3">${escapeHtml(p.nama_pelanggan)}</td>
+                        <td class="px-3 py-3">${escapeHtml(p.nama_produk)}</td>
+                        <td class="px-3 py-3">${formatDate(p.tanggal_pembelian)}</td>
+                        <td class="px-3 py-3">Rp ${(p.total_harga || 0).toLocaleString('id-ID')}</td>
+                        <td class="">
+                            <span class="inline-flex items-center whitespace-nowrap px-2 py-0.5 text-[11px] font-semibold rounded-full ${statusColor[p.status] || 'bg-gray-200 text-gray-700'}">
                                 ${formatStatus(p.status)}
                             </span>
                         </td>

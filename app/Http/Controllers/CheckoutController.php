@@ -78,8 +78,7 @@ class CheckoutController extends Controller
         DB::transaction(function () use ($items, $total, $validated, &$preOrder) {
             $preOrder = PreOrder::create([
                 'actual_periode' => $validated['actual_periode'] ?? now()->addDays(2)->toDateString(),
-                'status' => 'pending',
-                'payment_status' => 'unpaid',
+                'status' => 'unpaid',
                 'start_periode' => now()->toDateString(),
                 'end_periode' => null,
                 'total' => $total,
@@ -154,7 +153,7 @@ class CheckoutController extends Controller
 
         $preOrder->refresh();
 
-        $message = $preOrder->payment_status === 'paid'
+        $message = $preOrder->status === 'processing'
             ? 'Pembayaran terverifikasi. Pesanan Anda sedang diproses.'
             : 'Pesanan berhasil dibuat. Pembayaran belum terverifikasi, silakan selesaikan pembayaran dari halaman pesanan.';
 
@@ -304,17 +303,19 @@ class CheckoutController extends Controller
             (string) ($statusData['fraud_status'] ?? '')
         );
 
+        $mappedStatus = $this->mapMidtransStatus(
+            (string) ($statusData['transaction_status'] ?? ''),
+            (string) ($statusData['fraud_status'] ?? '')
+        );
+
         $updates = [
-            'payment_status' => $mappedStatus,
+            'status' => $mappedStatus,
             'payment_method' => $statusData['payment_type'] ?? $preOrder->payment_method,
             'midtrans_transaction_id' => $statusData['transaction_id'] ?? $preOrder->midtrans_transaction_id,
         ];
 
-        if ($mappedStatus === 'paid') {
-            $updates['status'] = 'processing';
+        if ($mappedStatus === 'processing') {
             $updates['paid_at'] = $preOrder->paid_at ?? now();
-        } elseif (in_array($mappedStatus, ['expired', 'failed', 'cancelled', 'refunded'], true)) {
-            $updates['status'] = 'cancelled';
         }
 
         $preOrder->update($updates);
@@ -323,8 +324,8 @@ class CheckoutController extends Controller
     private function mapMidtransStatus(string $transactionStatus, string $fraudStatus): string
     {
         return match ($transactionStatus) {
-            'settlement' => 'paid',
-            'capture' => $fraudStatus === 'accept' ? 'paid' : 'unpaid',
+            'settlement' => 'processing',
+            'capture' => $fraudStatus === 'accept' ? 'processing' : 'unpaid',
             'pending' => 'unpaid',
             'expire' => 'expired',
             'deny' => 'failed',

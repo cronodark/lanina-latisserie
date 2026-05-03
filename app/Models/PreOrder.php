@@ -11,7 +11,6 @@ class PreOrder extends Model
     protected $fillable = [
         'actual_periode',
         'status',
-        'payment_status',
         'payment_method',
         'midtrans_order_id',
         'midtrans_transaction_id',

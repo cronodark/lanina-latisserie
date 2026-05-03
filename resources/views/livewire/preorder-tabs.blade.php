@@ -196,13 +196,7 @@
 
                 <div class="px-6 sm:px-8 py-6 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="rounded-2xl bg-[#F8F4EC] p-4 border border-[#E7DDCF]">
-                            <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold">Status Pembayaran</p>
-                            <p class="mt-2 font-poppins font-bold text-[#3D2B1F] text-lg">
-                                {{ str_replace('_', ' ', $selectedOrder->payment_status ?? '-') }}
-                            </p>
-                        </div>
-                        <div class="rounded-2xl bg-[#F8F4EC] p-4 border border-[#E7DDCF]">
+                        <div class="rounded-2xl bg-[#F8F4EC] p-4 border border-[#E7DDCF] md:col-span-2">
                             <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold">Status Pesanan</p>
                             <p class="mt-2 font-poppins font-bold text-[#3D2B1F] text-lg">
                                 {{ str_replace('_', ' ', $selectedOrder->status ?? '-') }}

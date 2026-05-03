@@ -4,22 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Models\PreOrder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        // Hanya transaksi yang sudah dibayar
-        $preOrders = PreOrder::where('payment_status', 'paid')->get();
+        $preOrders = PreOrder::query()
+            ->with([
+                'customer:id,name',
+                'detailPreOrders.product:id,name,price',
+                'detailPreOrders.promo:id,name,price',
+            ])
+            ->latest()
+            ->get();
+
+        $pesanan = $preOrders->map(function (PreOrder $preOrder) {
+            return [
+                'id' => $preOrder->id,
+                'nama_pelanggan' => $preOrder->customer?->name,
+                'nama_produk' => $preOrder->detailPreOrders
+                    ->map(function ($detail) {
+                        $item = $detail->type === 'promo' ? $detail->promo : $detail->product;
+
+                        return $item?->name;
+                    })
+                    ->filter()
+                    ->values()
+                    ->implode(', '),
+                'tanggal_pembelian' => $preOrder->created_at?->toDateString(),
+                'tanggal_pengantaran' => $preOrder->actual_periode?->toDateString()
+                    ?? $preOrder->end_periode?->toDateString(),
+                'total_harga' => (int) $preOrder->total,
+                'status' => $preOrder->status,
+            ];
+        })
+            ->sortByDesc('tanggal_pembelian') // or 'id'
+            ->take(5)
+            ->values(); // re-index keys after take
 
         $currentYear  = now()->year;
         $currentMonth = now()->month;
 
-        // Data grafik default: per hari dalam bulan berjalan (hanya yang sudah dibayar)
         $grafikData = $this->getGrafikPerHari($currentYear, $currentMonth);
 
-        return view('pages.dashboard.index', compact('preOrders', 'grafikData', 'currentYear', 'currentMonth'));
+        return view('pages.dashboard.index', compact('preOrders', 'pesanan', 'grafikData', 'currentYear', 'currentMonth'));
     }
 
     /**

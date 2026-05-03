@@ -20,8 +20,7 @@ class PreOrderFactory extends Factory
     {
         return [
             'actual_periode' => fake()->date(),
-            'status' => fake()->randomElement(['pending', 'processing', 'cancelled', 'delivered', 'completed']),
-            'payment_status' => fake()->randomElement(['unpaid', 'paid', 'expired', 'failed']),
+            'status' => fake()->randomElement(['unpaid', 'processing', 'cancelled', 'shipping', 'completed']),
             'payment_method' => fake()->randomElement(['midtrans', 'transfer', 'cash']),
             'midtrans_order_id' => fake()->optional()->bothify('PO-####-####'),
             'midtrans_transaction_id' => fake()->optional()->uuid(),
