@@ -38,9 +38,9 @@ class DashboardController extends Controller
                 'status' => $preOrder->status,
             ];
         })
-            ->sortByDesc('tanggal_pembelian') // or 'id'
+            ->sortByDesc('tanggal_pembelian')
             ->take(5)
-            ->values(); // re-index keys after take
+            ->values();
 
         $currentYear  = now()->year;
         $currentMonth = now()->month;
