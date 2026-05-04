@@ -16,7 +16,7 @@
                     untuk Meja Kamu
                 </h1>
 
-                <p class="text-brown-light text-sm leading-relaxed mb-8 max-w-sm font-serif text-base text-justify">
+                <p class="text-brown-light text-sm leading-relaxed mb-8 max-w-sm font-glacial text-base text-justify">
                     Lanina Patisserie menghadirkan kue-kue buatan tangan dengan bahan pilihan premium.
                     Setiap gigitan adalah cerita rasa yang dibuat dengan cinta dan ketelitian.
                 </p>
@@ -31,7 +31,7 @@
         {{-- FLOATING STATS (FIXED) --}}
         <div class="absolute bottom-[-50px] left-1/2 -translate-x-1/2 w-full max-w-4xl px-6 z-30">
             <div
-                class="bg-[#A8B97A] rounded-3xl shadow-2xl px-6 py-10  flex flex-col md:flex-row items-center justify-between gap-6">
+                class="bg-[#A8B97A] rounded-3xl shadow-2xl px-6 py-10 flex flex-col md:flex-row items-center justify-between gap-6">
 
                 {{-- ITEM 1 --}}
                 <div class="flex items-center gap-4">
@@ -42,7 +42,7 @@
                         <p class="font-gloock extralight text-white text-lg leading-none">
                             500+ Happy Customers
                         </p>
-                        <p class="text-white/80 text-xs mt-1">
+                        <p class="font-gloock text-white/80 text-xs mt-1">
                             Ribuan kue terkirim, belum pernah ada yang kecewa
                         </p>
                     </div>
@@ -60,7 +60,7 @@
                         <p class="font-gloock extralight text-white text-lg leading-none">
                             Pre-Order Terjamin
                         </p>
-                        <p class="text-white/80 text-xs mt-1">
+                        <p class="font-gloock text-white/80 text-xs mt-1">
                             Slot terbatas — kue selalu fresh dan datang tepat waktu
                         </p>
                     </div>
@@ -76,9 +76,9 @@
 
             {{-- About Text --}}
             <div class="scroll-fade">
-                <h2 class="font-display text-6xl font-bold text-brown mb-2">Tentang Kami</h2>
-                <p class="italic-script text-lg mb-6 font-bold">— Sebuah toko kue dengan hati yang besar</p>
-                <div class="space-y-4 text-brown-light leading-relaxed font-serif text-base">
+                <h2 class="font-gloock text-6xl text-brown mb-2">Tentang Kami</h2>
+                <p class="font-glacial text-lg mb-6 font-bold">— Sebuah toko kue dengan hati yang besar</p>
+                <div class="space-y-4 font-glacial text-brown-light leading-relaxed font-serif text-base">
                     <p>Lanina Patisserie lahir dari kecintaan terhadap seni membuat kue. Kami percaya setiap kue bukan
                         sekadar makanan – ia adalah ekspresi rasa, kenangan, dan momen bahagia yang dibagikan bersama
                         orang-orang tersayang.</p>
@@ -105,25 +105,25 @@
 
             <!-- HEADER -->
             <div class="text-right mb-10">
-                <h2 class="font-display text-5xl font-bold text-brown">Kenapa Memilih Kami?</h2>
-                <p class="text-brown-light font-bold mt-2">
+                <h2 class="font-gloock text-5xl text-brown">Kenapa Memilih Kami?</h2>
+                <p class="text-brown-light font-glacial mt-2">
                     Lebih dari sekadar kue — sebuah pengalaman yang akan selalu diingat
                 </p>
             </div>
 
             <!-- CARDS -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch ">
 
                 <!-- CARD 1 -->
                 <div class="text-center flex flex-col">
                     <div class="bg-[#EDE4CF] rounded-3xl py-10 px-6 flex-1 flex flex-col justify-center">
                         <div class="text-5xl mb-4">⭐</div>
-                        <h3 class="font-display text-lg font-semibold text-brown leading-snug">
+                        <h3 class="font-gloock text-lg text-brown leading-snug">
                             Dibuat dengan Bahan Premium
                         </h3>
                     </div>
 
-                    <p class="text-brown-light text-sm mt-4 max-w-xs mx-auto">
+                    <p class="font-glacial text-brown-light text-sm mt-4 max-w-xs mx-auto">
                         Hanya bahan-bahan terbaik yang masuk ke setiap kue kami.
                     </p>
                 </div>
@@ -133,12 +133,12 @@
                     <div
                         class="bg-[#EDE4CF] rounded-3xl py-10 px-6 border-2 border-blue-400 shadow-md flex-1 flex flex-col justify-center">
                         <div class="text-5xl mb-4">❤️</div>
-                        <h3 class="font-display text-lg font-semibold text-brown">
+                        <h3 class="font-gloock text-lg text-brown">
                             Dibuat dengan Cinta
                         </h3>
                     </div>
 
-                    <p class="text-brown-light text-sm mt-4 max-w-xs mx-auto">
+                    <p class="font-glacial text-brown-light text-sm mt-4 max-w-xs mx-auto">
                         Diracik dan dipanggang manual, satu per satu, dengan sepenuh hati.
                     </p>
                 </div>
@@ -147,12 +147,12 @@
                 <div class="text-center flex flex-col">
                     <div class="bg-[#EDE4CF] rounded-3xl py-10 px-6 flex-1 flex flex-col justify-center">
                         <div class="text-5xl mb-4">🎁</div>
-                        <h3 class="font-display text-lg font-semibold text-brown leading-snug">
+                        <h3 class="font-gloock text-lg text-brown leading-snug">
                             Kemasan Eksklusif dan Siap Hampers
                         </h3>
                     </div>
 
-                    <p class="text-brown-light text-sm mt-4 max-w-xs mx-auto">
+                    <p class="font-glacial text-brown-light text-sm mt-4 max-w-xs mx-auto">
                         Box premium yang cantik — cocok untuk hadiah atau self-reward spesial.
                     </p>
                 </div>
@@ -168,10 +168,10 @@
 
             {{-- HEADER --}}
             <div class="text-center mb-10">
-                <h2 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-white">
+                <h2 class="font-gloock text-4xl sm:text-5xl md:text-6xl text-white">
                     Paling Laris
                 </h2>
-                <p class="text-white/80 mt-3 font-serif text-sm sm:text-base max-w-xl mx-auto ">
+                <p class="font-glacial text-white/80 mt-3 font-serif text-sm sm:text-base max-w-xl mx-auto ">
                     Kue-kue favorit pelanggan kami yang selalu habis terjual. Rasakan kenikmatan yang membuat semua
                     orang ketagihan!
                 </p>
@@ -204,11 +204,11 @@
 
                             {{-- CONTENT --}}
                             <div class="px-4 pb-4 flex-1 flex flex-col">
-                                <h3 class="font-serif text-lg font-semibold text-gray-800 mb-1">
+                                <h3 class="font-gloock text-lg text-gray-800 mb-1">
                                     {{ $item->product->name }}
                                 </h3>
 
-                                <p class="text-sm text-gray-500 mb-4">
+                                <p class="font-glacial text-sm text-gray-500 mb-4">
                                     Terjual {{ number_format($item->total_bought, 0, ',', '.') }} item
                                 </p>
 
@@ -218,7 +218,7 @@
                                             class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
 
                                             <!-- PRICE -->
-                                            <span class="text-sm font-semibold">
+                                            <span class="text-sm font-glacial">
                                                 Rp {{ number_format($item->product->price, 0, ',', '.') }}
                                             </span>
 
@@ -259,8 +259,8 @@
 
             {{-- HEADER --}}
             <div class="text-center mb-6 scroll-fade">
-                <h2 class="font-display text-5xl font-bold text-brown">Produk Kami</h2>
-                <p class="text-brown-light mt-3 font-serif text-base">Temukan berbagai produk lezat dan berkualitas tinggi
+                <h2 class="font-gloock text-5xl text-brown">Produk Kami</h2>
+                <p class="text-brown-light mt-3 font-glacial text-base">Temukan berbagai produk lezat dan berkualitas tinggi
                     dari kami</p>
             </div>
 
@@ -291,11 +291,11 @@
 
                             {{-- CONTENT --}}
                             <div class="px-4 pb-4 flex-1 flex flex-col">
-                                <h3 class="font-serif text-lg font-semibold text-gray-800 mb-1">
+                                <h3 class="font-gloock text-lg text-gray-800 mb-1">
                                     {{ $item->name }}
                                 </h3>
 
-                                <p class="text-sm text-gray-500 mb-4 min-h-[3rem] overflow-hidden text-ellipsis"
+                                <p class="font-glacial text-sm text-gray-500 mb-4 min-h-[3rem] overflow-hidden text-ellipsis"
                                     style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
                                     {{ $item->description }}
                                 </p>
@@ -306,7 +306,7 @@
                                             class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
 
                                             <!-- PRICE -->
-                                            <span class="text-sm font-semibold">
+                                            <span class="text-sm font-glacial">
                                                 Rp {{ number_format($item->price, 0, ',', '.') }}
                                             </span>
 
@@ -339,7 +339,7 @@
 
             <div class="text-center mb-10 scroll-fade">
                 <a href="{{ route('product.index') }}"
-                    class="inline-flex items-center gap-2 bg-[#432818] text-white text-warm-white px-7 py-2.5 rounded-full text-sm font-medium hover:bg-brown-light transition-colors">
+                    class="inline-flex items-center gap-2 bg-[#432818] text-white text-warm-white px-7 py-2.5 rounded-full text-sm font-glacial hover:bg-brown-light transition-colors">
                     Lihat Semua Produk!
                 </a>
             </div>
@@ -353,13 +353,13 @@
         <div class="relative max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
 
             <div class="scroll-fade">
-                <h2 class="font-display text-4xl md:text-5xl font-bold text-white leading-tight mb-8">
+                <h2 class="font-gloock text-4xl md:text-5xl text-white leading-tight mb-8">
                     Dibuat dengan Hati,<br>
                     Dinikmati Sepenuh Jiwa
                 </h2>
 
                 <a href="#our-product"
-                    class="inline-flex items-center gap-3 bg-[#432818] text-white px-8 py-3.5 rounded-full font-medium text-sm hover:bg-[#6B4F3A] transition-all duration-300 shadow-lg hover:shadow-xl group">
+                    class="inline-flex items-center gap-3 bg-[#432818] text-white px-8 py-3.5 rounded-full font-glacial text-sm hover:bg-[#6B4F3A] transition-all duration-300 shadow-lg hover:shadow-xl group">
                     Pre-Order Sekarang
                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">

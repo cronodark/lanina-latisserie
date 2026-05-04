@@ -4,17 +4,17 @@
         style="background-image: url('/images/produk.png'); background-size: cover; background-position: center;">
 
         <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-10 mt-10">
-            <h1 class="font-['Playfair_Display'] text-[clamp(2.5rem,5vw,3.8rem)] font-bold text-[#3D2B1F] leading-tight mb-3.5"
+            <h1 class="font-gloock text-[clamp(2.5rem,5vw,3.8rem)] text-[#3D2B1F] leading-tight mb-3.5"
                 style="text-shadow: 0 2px 20px rgba(255,255,255,0.3);">
                 Produk Kami
             </h1>
             <p
-                class="font-['Cormorant_Garamond'] text-base text-[rgba(61,43,31,0.75)] max-w-[360px] leading-[1.7] mb-6 text-medium">
+                class="font-glacial text-base text-[rgba(61,43,31,0.75)] max-w-[360px] leading-[1.7] mb-6 text-medium">
                 Temukan kelezatan yang tak terlupakan dalam setiap gigitan produk kami, dibuat dengan cinta dan bahan
                 berkualitas tinggi untuk memanjakan lidah Anda.
             </p>
             <a href="#all-products"
-                class="inline-block bg-[#6B3A2A] text-white py-3 px-9 rounded-full font-['Cormorant_Garamond'] text-[15px] font-semibold tracking-wide no-underline transition-all duration-300 hover:bg-[#8B4A38] hover:-translate-y-0.5"
+                class="inline-block bg-[#6B3A2A] text-white py-3 px-9 rounded-full font-glacial text-[15px] font-semibold tracking-wide no-underline transition-all duration-300 hover:bg-[#8B4A38] hover:-translate-y-0.5"
                 style="box-shadow: 0 4px 16px rgba(107,58,42,0.35);">
                 Lihat Lebih Lengkap!
             </a>
@@ -30,7 +30,7 @@
         <div class="absolute top-[30px] right-[180px] w-[120px] h-[120px] rounded-full bg-[#ffffff]/40"></div>
 
         <div class="max-w-[1100px] mx-auto relative">
-            <h2 class="font-['Playfair_Display'] text-8xl font-bold text-white text-center mb-10"
+            <h2 class="font-gloock text-8xl text-white text-center mb-10"
                 style="text-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 Promo!
             </h2>
@@ -127,7 +127,7 @@
     {{-- ===================== RECENT PRODUCTS ===================== --}}
     <section class="relative overflow-hidden  py-14 px-10 bg-[#ADC178]">
         <div class="max-w-[1100px] mx-auto relative">
-            <h2 class="font-['Playfair_Display'] text-7xl font-bold text-white text-center mb-10"
+            <h2 class="font-gloock text-7xl text-white text-center mb-10"
                 style="text-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                 Baru Ditambahkan
             </h2>
@@ -151,10 +151,10 @@
                                 {{-- Card Body --}}
                                 <div class="p-4 pt-3">
                                     <p
-                                        class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
+                                        class="font-gloock text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
                                         {{ $product->name }}
                                     </p>
-                                    <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify"
+                                    <p class="font-glacial text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify"
                                         style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                         {{ $product->description }}
                                     </p>
@@ -190,7 +190,7 @@
     {{-- ===================== ALL PRODUCTS ===================== --}}
     <section id="all-products" class="bg-[#FAF6F0] py-16 px-10">
         <div class="max-w-[1100px] mx-auto">
-            <h2 class="font-['Playfair_Display'] text-7xl font-bold text-[#3D2B1F] text-center mb-12">
+            <h2 class="font-gloock text-7xl text-[#3D2B1F] text-center mb-12">
                 Semua Produk
             </h2>
 
@@ -211,10 +211,10 @@
                         {{-- Card Body --}}
                         <div class="p-4 pt-3 flex flex-col flex-1">
                             <p
-                                class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
+                                class="font-gloock text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
                                 {{ $product->name }}
                             </p>
-                            <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify"
+                            <p class="font-glacial text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify"
                                 style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                                 {{ $product->description }}
                             </p>
@@ -238,7 +238,7 @@
                     </div>
                 @empty
                     <div class="col-span-3 text-center py-12">
-                        <p class="text-gray-500 font-['Cormorant_Garamond'] text-lg">Tidak ada produk tersedia</p>
+                        <p class="text-gray-500 font-glacial text-lg">Tidak ada produk tersedia</p>
                     </div>
                 @endforelse
             </div>
@@ -257,13 +257,13 @@
         <div class="relative max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
 
             <div class="scroll-fade">
-                <h2 class="font-display text-4xl md:text-5xl font-bold text-white leading-tight mb-8">
+                <h2 class="font-gloock text-4xl md:text-5xl font-bold text-white leading-tight mb-8">
                     Dibuat dengan Hati,<br>
                     Dinikmati Sepenuh Jiwa
                 </h2>
 
                 <a href="#all-products"
-                    class="inline-flex items-center gap-3 bg-[#432818] text-white px-8 py-3.5 rounded-full font-medium text-sm hover:bg-[#6B4F3A] transition-all duration-300 shadow-lg hover:shadow-xl group">
+                    class="inline-flex items-center gap-3 bg-[#432818] text-white px-8 py-3.5 rounded-full font-glacial text-sm hover:bg-[#6B4F3A] transition-all duration-300 shadow-lg hover:shadow-xl group">
                     Pre-Order Sekarang
                     <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
