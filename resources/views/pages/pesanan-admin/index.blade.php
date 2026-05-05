@@ -69,11 +69,15 @@
                             data-nama-produk="{{ $item->nama_produk }}"
                             data-detail-produk='@json($item->detail_produk)'
                             data-tanggal-pembelian="{{ $item->tanggal_pembelian ? \Carbon\Carbon::parse($item->tanggal_pembelian)->format('d/m/Y') : '-' }}"
-                            data-tanggal-pengantaran="{{ $item->tanggal_pengantaran ? \Carbon\Carbon::parse($item->tanggal_pengantaran)->format('d/m/Y') : '-' }}"
+                            data-tanggal-pengantaran="{{ $item->tanggal_pengantaran ?? '-' }}"
+                            data-start-periode="{{ $item->start_periode ?? '' }}"
+                            data-end-periode="{{ $item->end_periode ?? '' }}"
                             data-total-harga="Rp {{ number_format($item->total_harga, 0, ',', '.') }}"
                             data-nomor-telepon="{{ $item->nomor_telepon ?? '-' }}" data-email="{{ $item->email ?? '-' }}"
+                            data-nomor-resi="{{ $item->nomor_resi ?? '' }}"
                             data-metode-pengiriman="{{ $item->metode_pengiriman ?? '-' }}"
-                            data-send-type="{{ $item->send_type ?? '-' }}"
+                                data-send-type="{{ $item->send_type ?? '-' }}"
+                                data-choosen-expedition="{{ $item->choosen_expedition ?? '' }}"
                             data-alamat="{{ $item->alamat ?? '-' }}"
                             data-catatan-alamat="{{ $item->catatan_alamat ?? '-' }}"
                             data-metode-pembayaran="{{ $item->metode_pembayaran ?? '-' }}"
@@ -85,7 +89,7 @@
                             <td class="px-4 py-3 w-32 truncate">{{ $item->nama_produk }}</td>
                             <td class="px-4 py-3 w-24 text-sm text-center">{{ $item->tanggal_pembelian ? \Carbon\Carbon::parse($item->tanggal_pembelian)->format('d/m/y') : '-' }}
                             </td>
-                            <td class="px-4 py-3 w-24 text-sm text-center">{{ $item->tanggal_pengantaran ? \Carbon\Carbon::parse($item->tanggal_pengantaran)->format('d/m/y') : '-' }}
+                            <td class="px-4 py-3 w-24 text-sm text-center">{{ $item->tanggal_pengantaran ?? '-' }}
                             </td>
                             <td class="px-4 py-3 w-20 text-sm font-semibold text-right">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</td>
 
@@ -100,7 +104,7 @@
                             <td class="px-4 py-3 w-24">
                                 <div class="flex items-center justify-center gap-2">
                                     <form action="{{ route('pesanan.destroy', $item->id) }}" method="POST"
-                                        onsubmit="return confirm('Yakin hapus?')">
+                                        onsubmit="return openDeleteConfirmModal(this, '{{ $item->id_pesanan }}')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-500 hover:text-red-700 hover:scale-110 transition" title="Hapus">
@@ -168,28 +172,25 @@
                     </div>
                 </div>
 
-                <!-- Tipe Pengiriman: Dropdown -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                        Tipe Pengiriman <span class="text-red-500">*</span>
-                    </label>
-                    <select id="sendTypeSelect" onchange="handleSendTypeChange()"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BB9457] outline-none">
-                        <option value="">-- Pilih Tipe Pengiriman --</option>
-                        <option value="pickUp">Ambil Sendiri</option>
-                        <option value="kurirToko">Kurir Toko</option>
-                        <option value="kurirEkspedisi">Kurir Ekspedisi</option>
-                    </select>
+                <div class="space-y-2 bg-gray-50 p-3 rounded-lg">
+                    <div class="flex gap-2 text-sm text-gray-700">
+                        <span class="w-40 text-gray-500">Metode Kirim</span>
+                        <span>: <span id="modalSendTypeLabel">-</span></span>
+                    </div>
+                    <div id="modalExpeditionDisplay" class="flex gap-2 text-sm text-gray-700 hidden">
+                        <span class="w-40 text-gray-500">Ekspedisi</span>
+                        <span>: <span id="modalExpeditionLabel">-</span></span>
+                    </div>
                 </div>
 
-                <!-- Input Resi - Hanya tampil jika send_type = kurirEkspedisi -->
+                <!-- Input Resi -->
                 <div id="resiInputContainer" class="hidden space-y-2 bg-gray-50 p-3 rounded-lg">
                     <label class="block text-sm font-medium text-gray-700">
                         Nomor Resi <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="nomorResi" placeholder="Masukkan nomor resi pengiriman"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BB9457] outline-none">
-                    <p class="text-xs text-gray-500">Masukkan nomor resi dari kurir ekspedisi</p>
+                    <p class="text-xs text-gray-500">Masukkan nomor resi dari kurir ekspedisi jika sudah tersedia.</p>
                 </div>
             </div>
 
@@ -270,6 +271,14 @@
                                 <span class="w-44 text-gray-500">Metode</span>
                                 <span>: <span id="view_metode_pengiriman">-</span></span>
                             </div>
+                            <div id="viewExpeditionDisplay" class="flex gap-2 hidden">
+                                <span class="w-44 text-gray-500">Ekspedisi</span>
+                                <span>: <span id="view_choosen_expedition">-</span></span>
+                            </div>
+                            <div id="viewResiDisplay" class="flex gap-2 hidden">
+                                <span class="w-44 text-gray-500">Nomor Resi</span>
+                                <span>: <span id="view_nomor_resi">-</span></span>
+                            </div>
                             <div class="flex gap-2">
                                 <span class="w-44 text-gray-500">Alamat</span>
                                 <span>: <span id="view_alamat">-</span></span>
@@ -311,29 +320,26 @@
 
                         <input type="hidden" id="viewModalPesananId">
 
-                        <!-- Tipe Pengiriman: Dropdown -->
                         <div class="space-y-3">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">
-                                    Tipe Pengiriman <span class="text-red-500">*</span>
-                                </label>
-                                <select id="viewSendTypeSelect" onchange="handleViewSendTypeChange()"
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BB9457] outline-none">
-                                    <option value="">-- Pilih Tipe Pengiriman --</option>
-                                    <option value="pickUp">Ambil Sendiri</option>
-                                    <option value="kurirToko">Kurir Toko</option>
-                                    <option value="kurirEkspedisi">Kurir Ekspedisi</option>
-                                </select>
+                            <div class="bg-white p-3 rounded-lg space-y-2">
+                                <div class="flex gap-2 text-sm text-gray-700">
+                                    <span class="w-40 text-gray-500">Metode Kirim</span>
+                                    <span>: <span id="viewCurrentSendTypeLabel">-</span></span>
+                                </div>
+                                <div id="viewCurrentExpeditionDisplay" class="flex gap-2 text-sm text-gray-700 hidden">
+                                    <span class="w-40 text-gray-500">Ekspedisi</span>
+                                    <span>: <span id="viewCurrentExpeditionLabel">-</span></span>
+                                </div>
                             </div>
 
-                            <!-- Input Resi - Hanya tampil jika send_type = kurirEkspedisi -->
+                            <!-- Input Resi -->
                             <div id="viewResiInputContainer" class="hidden space-y-2 bg-white p-3 rounded-lg">
                                 <label class="block text-sm font-medium text-gray-700">
                                     Nomor Resi <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="viewNomorResi" placeholder="Masukkan nomor resi"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#BB9457] outline-none">
-                                <p class="text-xs text-gray-500">Masukkan nomor resi dari kurir ekspedisi</p>
+                                <p class="text-xs text-gray-500">Masukkan nomor resi dari kurir ekspedisi jika sudah tersedia.</p>
                             </div>
 
                             <!-- Save Button -->
@@ -359,8 +365,43 @@
         </div>
     </div>
 
+    {{-- ✅ MODAL HAPUS --}}
+    <div id="deleteModal" class="hidden fixed inset-0 bg-black/55 backdrop-blur-sm items-center justify-center z-50">
+        <div class="w-[420px] max-w-[92vw] rounded-3xl bg-white shadow-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5 text-white">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15">
+                        <i class="fas fa-triangle-exclamation text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold leading-tight">Hapus Pesanan?</h3>
+                        <p class="text-sm text-white/85">Tindakan ini tidak bisa dibatalkan.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-5">
+                <p class="text-sm text-gray-600 leading-6">
+                    Pesanan <span id="deleteOrderNumber" class="font-semibold text-gray-800">-</span> akan dihapus permanen dari sistem.
+                </p>
+
+                <div class="mt-5 flex justify-end gap-3">
+                    <button type="button" onclick="closeDeleteConfirmModal()"
+                        class="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+                        Batal
+                    </button>
+                    <button type="button" onclick="confirmDeleteOrder()"
+                        class="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 transition">
+                        Ya, Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let currentButton = null;
+        let deleteTargetForm = null;
 
         // Status label mapping untuk 5 status yang tersedia:
         // - unpaid: Belum (Pembayaran belum diterima)
@@ -374,6 +415,12 @@
             processing: 'Dikerjakan',
             unpaid: 'Belum',
             canceled: 'Dibatalkan'
+        };
+
+        const sendTypeLabelMap = {
+            pickUp: 'Ambil Sendiri',
+            kurirToko: 'Kurir Toko',
+            kurirEkspedisi: 'Kurir Ekspedisi'
         };
 
         // FILTER — dihapus karena sekarang menggunakan backend filtering via query parameter
@@ -398,57 +445,41 @@
 
             currentButton = btn;
             const sendType = row?.dataset.sendType || '';
+            const expedition = row?.dataset.choosenExpedition || '';
+            const nomorResi = row?.dataset.nomorResi || '';
 
             document.getElementById('modalPesananId').value = id;
             document.getElementById('modalCurrentStatus').value = 'processing';
 
-            // Set dropdown dengan send_type saat ini
-            document.getElementById('sendTypeSelect').value = sendType;
+            document.getElementById('modalSendTypeLabel').textContent = sendTypeLabelMap[sendType] || '-';
+            const modalExpeditionDisplay = document.getElementById('modalExpeditionDisplay');
+            const modalExpeditionLabel = document.getElementById('modalExpeditionLabel');
+            const resiInputContainer = document.getElementById('resiInputContainer');
+            const nomorResiInput = document.getElementById('nomorResi');
 
-            // Reset resi
-            document.getElementById('nomorResi').value = '';
-
-            // Tampilkan resi jika send_type = kurirEkspedisi
             if (sendType === 'kurirEkspedisi') {
-                document.getElementById('resiInputContainer').classList.remove('hidden');
+                modalExpeditionLabel.textContent = expedition || '-';
+                modalExpeditionDisplay.classList.remove('hidden');
+                resiInputContainer.classList.remove('hidden');
+                nomorResiInput.value = nomorResi === '-' ? '' : nomorResi;
             } else {
-                document.getElementById('resiInputContainer').classList.add('hidden');
+                modalExpeditionDisplay.classList.add('hidden');
+                resiInputContainer.classList.add('hidden');
+                nomorResiInput.value = '';
             }
 
             document.getElementById('statusModal').style.display = 'flex';
-        }
-
-        // Handle send type change
-        function handleSendTypeChange() {
-            const sendType = document.getElementById('sendTypeSelect').value;
-            const resiContainer = document.getElementById('resiInputContainer');
-            const nomorResiInput = document.getElementById('nomorResi');
-
-            // Tampilkan resi hanya jika send_type = kurirEkspedisi
-            if (sendType === 'kurirEkspedisi') {
-                resiContainer.classList.remove('hidden');
-                nomorResiInput.focus();
-            } else {
-                resiContainer.classList.add('hidden');
-                nomorResiInput.value = '';
-            }
         }
 
         // APPLY STATUS
         function applyStatus() {
             const status = 'shipping'; // Status selalu shipping
             const id = document.getElementById('modalPesananId').value;
-            const sendType = document.getElementById('sendTypeSelect').value;
             const nomorResi = document.getElementById('nomorResi').value.trim();
+            const row = currentButton?.closest('tr') || document.querySelector(`tr[data-id="${id}"]`);
+            const sendType = row?.dataset.sendType || '';
 
-            // Validasi tipe pengiriman harus dipilih
-            if (!sendType) {
-                alert('Tipe pengiriman wajib dipilih!');
-                document.getElementById('sendTypeSelect').focus();
-                return;
-            }
-
-            // Validasi resi hanya jika send_type = kurirEkspedisi
+            // Resi hanya wajib jika memang ekspedisi
             if (sendType === 'kurirEkspedisi' && !nomorResi) {
                 alert('Nomor resi wajib diisi untuk kurir ekspedisi!');
                 document.getElementById('nomorResi').focus();
@@ -457,7 +488,6 @@
 
             const payload = {
                 status: status,
-                send_type: sendType,
                 nomor_resi: (sendType === 'kurirEkspedisi' && nomorResi) ? nomorResi : undefined
             };
 
@@ -486,6 +516,11 @@
                     currentButton.className =
                         `px-3 py-1 text-xs font-semibold rounded-full text-white ${colorMap[status] || 'bg-red-500'}`;
                     currentButton.closest('tr').dataset.status = data.status || status;
+                    // update resi on table row when applied from status modal
+                    const rowForModal = currentButton.closest('tr');
+                    if (rowForModal) {
+                        rowForModal.dataset.nomorResi = data.tracking_number || document.getElementById('nomorResi')?.value || '';
+                    }
 
                     closeStatusModal();
                     alert('Status berhasil diupdate ke "Dikirim"' + (nomorResi ? ' dan resi tersimpan' : ''));
@@ -496,9 +531,11 @@
         // CLOSE STATUS MODAL
         function closeStatusModal() {
             document.getElementById('statusModal').style.display = 'none';
-            document.getElementById('sendTypeSelect').value = '';
             document.getElementById('nomorResi').value = '';
             document.getElementById('resiInputContainer').classList.add('hidden');
+            document.getElementById('modalExpeditionDisplay').classList.add('hidden');
+            document.getElementById('modalSendTypeLabel').textContent = '-';
+            document.getElementById('modalExpeditionLabel').textContent = '-';
         }
 
         // OPEN 'CANNOT CHANGE' INFO MODAL
@@ -508,6 +545,28 @@
             msgEl.textContent = message;
             modal.classList.remove('hidden');
             modal.style.display = 'flex';
+        }
+
+        function openDeleteConfirmModal(form, orderNumber) {
+            deleteTargetForm = form;
+            const modal = document.getElementById('deleteModal');
+            const label = document.getElementById('deleteOrderNumber');
+            if (label) label.textContent = orderNumber || '-';
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+            return false;
+        }
+
+        function closeDeleteConfirmModal() {
+            const modal = document.getElementById('deleteModal');
+            modal.classList.add('hidden');
+            modal.style.display = 'none';
+            deleteTargetForm = null;
+        }
+
+        function confirmDeleteOrder() {
+            if (!deleteTargetForm) return;
+            deleteTargetForm.submit();
         }
 
         // CLOSE 'CANNOT CHANGE' INFO MODAL
@@ -532,9 +591,23 @@
             document.getElementById('view_email').textContent = row.dataset.email || '-';
             document.getElementById('view_metode_pengiriman').textContent = row.dataset.metodePengiriman || '-';
             document.getElementById('view_alamat').textContent = row.dataset.alamat || '-';
+            // show expedition and resi only if send_type = kurirEkspedisi
+            const currentSendType = row.dataset.sendType || '';
+            if (currentSendType === 'kurirEkspedisi') {
+                const chosenExp = row.dataset.choosenExpedition || '';
+                const nomorResi = row.dataset.nomorResi || '';
+                document.getElementById('view_choosen_expedition').textContent = chosenExp || '-';
+                document.getElementById('view_nomor_resi').textContent = nomorResi || '-';
+                document.getElementById('viewExpeditionDisplay').classList.remove('hidden');
+                document.getElementById('viewResiDisplay').classList.remove('hidden');
+            } else {
+                document.getElementById('viewExpeditionDisplay').classList.add('hidden');
+                document.getElementById('viewResiDisplay').classList.add('hidden');
+            }
             document.getElementById('view_catatan_alamat').textContent = row.dataset.catatanAlamat || '-';
             document.getElementById('view_metode_pembayaran').textContent = row.dataset.metodePembayaran || '-';
             document.getElementById('view_status_pembayaran').textContent = row.dataset.statusPembayaran || '-';
+            document.getElementById('viewCurrentSendTypeLabel').textContent = sendTypeLabelMap[row.dataset.sendType || ''] || '-';
 
             let details = [];
             try {
@@ -571,15 +644,16 @@
             if (currentStatus === 'processing') {
                 editStatusSection.classList.remove('hidden');
                 document.getElementById('viewModalPesananId').value = id;
-                document.getElementById('viewSendTypeSelect').value = sendType;
-
-                // Handle resi visibility
                 if (sendType === 'kurirEkspedisi') {
+                    document.getElementById('viewCurrentExpeditionDisplay').classList.remove('hidden');
+                    document.getElementById('viewCurrentExpeditionLabel').textContent = row.dataset.choosenExpedition || '-';
                     document.getElementById('viewResiInputContainer').classList.remove('hidden');
+                    document.getElementById('viewNomorResi').value = row.dataset.nomorResi || '';
                 } else {
+                    document.getElementById('viewCurrentExpeditionDisplay').classList.add('hidden');
                     document.getElementById('viewResiInputContainer').classList.add('hidden');
+                    document.getElementById('viewNomorResi').value = '';
                 }
-                document.getElementById('viewNomorResi').value = '';
             } else {
                 editStatusSection.classList.add('hidden');
             }
@@ -589,34 +663,17 @@
 
         // Handle view send type change
         function handleViewSendTypeChange() {
-            const sendType = document.getElementById('viewSendTypeSelect').value;
-            const resiContainer = document.getElementById('viewResiInputContainer');
-            const nomorResiInput = document.getElementById('viewNomorResi');
-
-            if (sendType === 'kurirEkspedisi') {
-                resiContainer.classList.remove('hidden');
-                nomorResiInput.focus();
-            } else {
-                resiContainer.classList.add('hidden');
-                nomorResiInput.value = '';
-            }
+            return;
         }
 
         // Apply status from view modal
         function applyStatusFromView() {
             const status = 'shipping'; // Status selalu shipping
             const id = document.getElementById('viewModalPesananId').value;
-            const sendType = document.getElementById('viewSendTypeSelect').value;
             const nomorResi = document.getElementById('viewNomorResi').value.trim();
+            const row = document.querySelector(`tr[data-id="${id}"]`);
+            const sendType = row?.dataset.sendType || '';
 
-            // Validasi tipe pengiriman harus dipilih
-            if (!sendType) {
-                alert('Tipe pengiriman wajib dipilih!');
-                document.getElementById('viewSendTypeSelect').focus();
-                return;
-            }
-
-            // Validasi resi hanya jika send_type = kurirEkspedisi
             if (sendType === 'kurirEkspedisi' && !nomorResi) {
                 alert('Nomor resi wajib diisi untuk kurir ekspedisi!');
                 document.getElementById('viewNomorResi').focus();
@@ -625,7 +682,6 @@
 
             const payload = {
                 status: status,
-                send_type: sendType,
                 nomor_resi: (sendType === 'kurirEkspedisi' && nomorResi) ? nomorResi : undefined
             };
 
@@ -644,10 +700,10 @@
                     // Update row data di table
                     const row = document.querySelector(`tr[data-id="${id}"]`);
                     if (row) {
-                        row.dataset.status = data.status || status;
-                        row.dataset.sendType = sendType;
-
-                        // Update status badge
+                            row.dataset.status = data.status || status;
+                            // update resi value in row dataset when applied from view modal
+                            row.dataset.nomorResi = data.tracking_number || document.getElementById('viewNomorResi')?.value || '';
+                            // Update status badge
                         const statusBtn = row.querySelector('button[data-status-label]');
                         if (statusBtn) {
                             const colorMap = {
@@ -683,10 +739,12 @@
         // CLOSE VIEW MODAL
         function closeViewModal() {
             document.getElementById('viewModal').style.display = 'none';
-            document.getElementById('viewSendTypeSelect').value = '';
             document.getElementById('viewNomorResi').value = '';
             document.getElementById('viewResiInputContainer').classList.add('hidden');
             document.getElementById('editStatusSection').classList.add('hidden');
+            document.getElementById('viewCurrentExpeditionDisplay').classList.add('hidden');
+            document.getElementById('viewCurrentSendTypeLabel').textContent = '-';
+            document.getElementById('viewCurrentExpeditionLabel').textContent = '-';
         }
 
         // Klik luar modal status
@@ -702,6 +760,10 @@
         // Klik luar modal cannotChange
         document.getElementById('cannotChangeModal').addEventListener('click', function(e) {
             if (e.target === this) closeCannotChangeModal();
+        });
+
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteConfirmModal();
         });
     </script>
 

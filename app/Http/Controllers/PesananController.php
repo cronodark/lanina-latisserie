@@ -54,8 +54,12 @@ class PesananController extends Controller
                     ->all();
 
                 $tanggalPembelian = $this->formatDateString($order->created_at);
-                $tanggalPengantaran = $this->formatDateString($order->actual_periode)
-                    ?? $this->formatDateString($order->end_periode);
+                $pickupStart = $this->formatDateString($order->start_periode);
+                $pickupEnd = $this->formatDateString($order->end_periode);
+                $tanggalPengantaran = $order->send_type === 'pickUp'
+                    ? trim(($pickupStart ?: '-') . ' s/d ' . ($pickupEnd ?: '-'))
+                    : ($this->formatDateString($order->actual_periode)
+                        ?? $this->formatDateString($order->end_periode));
 
                 return (object) [
                     'id' => $order->id,
@@ -72,6 +76,9 @@ class PesananController extends Controller
                     'email' => $order->customer?->email ?? '-',
                     'metode_pengiriman' => $this->sendTypeLabel($order->send_type),
                     'send_type' => $order->send_type,
+                    'start_periode' => $pickupStart,
+                    'end_periode' => $pickupEnd,
+                    'choosen_expedition' => $order->choosen_expedition ?? '',
                     'alamat' => $this->formatAddress($order),
                     'catatan_alamat' => $order->address?->notes ?? '-',
                     'metode_pembayaran' => $this->paymentMethodLabel($order->payment_method),
@@ -91,24 +98,17 @@ class PesananController extends Controller
     {
         $validated = $request->validate([
             'status' => ['required', 'string'],
-            'send_type' => ['required', 'string'],
+            'start_periode' => ['nullable', 'date'],
+            'end_periode' => ['nullable', 'date'],
             'nomor_resi' => ['nullable', 'string', 'max:50'],
         ]);
 
         $status = $this->normalizeStatus($validated['status']);
-        $sendType = $this->normalizeSendType($validated['send_type']);
 
         if (! $status) {
             return response()->json([
                 'success' => false,
                 'message' => 'Status tidak valid.',
-            ], 422);
-        }
-
-        if (! $sendType) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tipe pengiriman tidak valid.',
             ], 422);
         }
 
@@ -121,14 +121,24 @@ class PesananController extends Controller
             ], 422);
         }
 
-        // Update status, send_type dan nomor resi jika ada
+        if ($order->send_type === 'kurirEkspedisi' && empty($validated['nomor_resi'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Nomor resi wajib diisi untuk kurir ekspedisi.',
+            ], 422);
+        }
+
+        // Update status dan nomor resi jika ada
         $updateData = [
             'status' => $status,
-            'send_type' => $sendType,
         ];
 
-        if (!empty($validated['nomor_resi'])) {
+        if (! empty($validated['nomor_resi'])) {
             $updateData['tracking_number'] = $validated['nomor_resi'];
+        }
+
+        if ($order->send_type !== 'kurirEkspedisi') {
+            $updateData['tracking_number'] = $order->tracking_number;
         }
 
         $order->update($updateData);
@@ -137,7 +147,7 @@ class PesananController extends Controller
             'success' => true,
             'status' => $status,
             'status_label' => $this->statusLabel($status),
-            'send_type' => $sendType,
+            'send_type' => $order->send_type,
             'tracking_number' => $order->tracking_number,
         ]);
     }
@@ -161,11 +171,15 @@ class PesananController extends Controller
             'email' => $order->customer?->email ?? '',
             'tanggal_pembelian' => $this->formatDateString($order->created_at),
             'tanggal_pengantaran' => $this->formatDateString($order->actual_periode) ?? $this->formatDateString($order->end_periode),
+            'send_type' => $order->send_type,
+            'start_periode' => $this->formatDateString($order->start_periode),
+            'end_periode' => $this->formatDateString($order->end_periode),
             'total_harga' => (int) $order->total,
             'status' => $this->statusLabel($order->status),
             'metode_pembayaran' => $this->paymentMethodLabel($order->payment_method),
             'status_pembayaran' => $this->paymentStatusLabel($order->status),
             'metode_pengiriman' => $this->sendTypeLabel($order->send_type),
+            'choosen_expedition' => $order->choosen_expedition ?? '',
             'alamat' => $this->formatAddress($order),
             'catatan_alamat' => $order->address?->notes ?? '',
             'nomor_resi' => $order->tracking_number ?? '',
@@ -200,26 +214,60 @@ class PesananController extends Controller
     {
         $validated = $request->validate([
             'status' => ['required', 'string'],
-            'tanggal_pengantaran' => ['nullable', 'date'],
+            'send_type' => ['required', 'string'],
+            'start_periode' => ['nullable', 'date'],
+            'end_periode' => ['nullable', 'date'],
             'metode_pembayaran' => ['nullable', 'string', 'max:30'],
-            'metode_pengiriman' => ['nullable', 'string', 'max:50'],
             'nomor_resi' => ['nullable', 'string', 'max:50'],
+            'choosen_expedition' => ['nullable', 'string', 'max:90'],
         ]);
 
         $status = $this->normalizeStatus($validated['status']);
+        $sendType = $this->normalizeSendType($validated['send_type']);
 
         if (! $status) {
             return back()->withErrors(['status' => 'Status tidak valid.'])->withInput();
         }
 
+        if (! $sendType) {
+            return back()->withErrors(['send_type' => 'Metode pengiriman tidak valid.'])->withInput();
+        }
+
+        if ($sendType === 'pickUp') {
+            $request->validate([
+                'start_periode' => ['required', 'date'],
+                'end_periode' => ['required', 'date', 'after_or_equal:start_periode'],
+            ]);
+        }
+
         $order = PreOrder::findOrFail($id);
-        $order->update([
+        $updateData = [
             'status' => $status,
-            'actual_periode' => $validated['tanggal_pengantaran'] ?? $order->actual_periode,
+            'send_type' => $sendType,
             'payment_method' => $validated['metode_pembayaran'] ?? $order->payment_method,
-            'send_type' => $this->normalizeSendType($validated['metode_pengiriman'] ?? null) ?? $order->send_type,
-            'tracking_number' => $validated['nomor_resi'] ?? $order->tracking_number,
-        ]);
+        ];
+
+        if ($sendType === 'pickUp') {
+            $updateData['start_periode'] = $validated['start_periode'];
+            $updateData['end_periode'] = $validated['end_periode'];
+            $updateData['actual_periode'] = null;
+            $updateData['tracking_number'] = null;
+            $updateData['choosen_expedition'] = null;
+        } else {
+            $updateData['start_periode'] = null;
+            $updateData['end_periode'] = null;
+            $updateData['actual_periode'] = $order->actual_periode;
+
+            if ($sendType === 'kurirEkspedisi') {
+                $updateData['tracking_number'] = $validated['nomor_resi'] ?? $order->tracking_number;
+                $updateData['choosen_expedition'] = $validated['choosen_expedition'] ?? $order->choosen_expedition;
+            } else {
+                $updateData['tracking_number'] = null;
+                $updateData['choosen_expedition'] = null;
+            }
+        }
+
+        $order->update($updateData);
 
         return redirect()->route('pesanan.index')->with('success', 'Pesanan berhasil diupdate');
     }

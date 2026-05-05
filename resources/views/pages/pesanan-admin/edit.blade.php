@@ -175,10 +175,14 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-4">
                 <div>
-                    <label class="block text-sm text-gray-600 mb-1.5">Metode</label>
-                    <input type="text" name="metode_pengiriman" placeholder="Metode pengantaran"
-                        value="{{ old('metode_pengiriman', $pesanan->metode_pengiriman ?? '') }}"
-                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition placeholder:text-gray-300">
+                    <label class="block text-sm text-gray-600 mb-1.5">Metode Pengiriman</label>
+                    <select name="send_type" id="sendTypeSelect"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition bg-white">
+                        <option value="">-- Pilih Metode Pengiriman --</option>
+                        <option value="pickUp" {{ old('send_type', $pesanan->send_type ?? '') == 'pickUp' ? 'selected' : '' }}>Ambil Sendiri</option>
+                        <option value="kurirToko" {{ old('send_type', $pesanan->send_type ?? '') == 'kurirToko' ? 'selected' : '' }}>Kurir Toko</option>
+                        <option value="kurirEkspedisi" {{ old('send_type', $pesanan->send_type ?? '') == 'kurirEkspedisi' ? 'selected' : '' }}>Kurir Ekspedisi</option>
+                    </select>
                 </div>
 
                 <div>
@@ -196,14 +200,43 @@
                 </div>
             </div>
 
-            <div class="w-full md:w-1/3 mb-8">
-                <label class="block text-sm text-gray-600 mb-1.5">
-                    Nomor Resi
-                    <span class="text-gray-400 font-normal text-xs ml-1">(Opsional, jika ada)</span>
-                </label>
-                <input type="text" name="nomor_resi" placeholder="Masukan nomor resi"
-                    value="{{ old('nomor_resi', $pesanan->nomor_resi ?? '') }}"
-                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition placeholder:text-gray-300">
+            <div id="pickupDateContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 hidden">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1.5">Tanggal Start Ambil</label>
+                    <input type="date" name="start_periode"
+                        value="{{ old('start_periode', $pesanan->start_periode ?? '') }}"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition">
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1.5">Tanggal End Ambil</label>
+                    <input type="date" name="end_periode"
+                        value="{{ old('end_periode', $pesanan->end_periode ?? '') }}"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition">
+                </div>
+            </div>
+
+            <div id="shippingMetaContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 hidden">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1.5">Ekspedisi</label>
+                    <select name="choosen_expedition" id="expeditionSelect" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition bg-white">
+                        <option value="">-- Pilih Ekspedisi --</option>
+                        <option value="JNE" {{ old('choosen_expedition', $pesanan->choosen_expedition ?? '') == 'JNE' ? 'selected' : '' }}>JNE</option>
+                        <option value="J&T" {{ old('choosen_expedition', $pesanan->choosen_expedition ?? '') == 'J&T' ? 'selected' : '' }}>J&T</option>
+                        <option value="SiCepat" {{ old('choosen_expedition', $pesanan->choosen_expedition ?? '') == 'SiCepat' ? 'selected' : '' }}>SiCepat</option>
+                        <option value="Pos Indonesia" {{ old('choosen_expedition', $pesanan->choosen_expedition ?? '') == 'Pos Indonesia' ? 'selected' : '' }}>Pos Indonesia</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1.5">
+                        Nomor Resi
+                        <span class="text-gray-400 font-normal text-xs ml-1">(Opsional, jika ada)</span>
+                    </label>
+                    <input type="text" name="nomor_resi" id="nomorResiInput" placeholder="Masukan nomor resi"
+                        value="{{ old('nomor_resi', $pesanan->nomor_resi ?? '') }}"
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition placeholder:text-gray-300">
+                </div>
             </div>
 
             <div class="flex justify-end">
@@ -215,5 +248,34 @@
 
         </form>
     </div>
+
+    <script>
+        function toggleShippingFields() {
+            const sendType = document.getElementById('sendTypeSelect')?.value || '';
+            const pickupDateContainer = document.getElementById('pickupDateContainer');
+            const shippingMetaContainer = document.getElementById('shippingMetaContainer');
+
+            if (!pickupDateContainer || !shippingMetaContainer) return;
+
+            if (sendType === 'pickUp') {
+                pickupDateContainer.classList.remove('hidden');
+                shippingMetaContainer.classList.add('hidden');
+            } else if (sendType === 'kurirEkspedisi') {
+                pickupDateContainer.classList.add('hidden');
+                shippingMetaContainer.classList.remove('hidden');
+            } else {
+                pickupDateContainer.classList.add('hidden');
+                shippingMetaContainer.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const sendTypeSelect = document.getElementById('sendTypeSelect');
+            if (sendTypeSelect) {
+                sendTypeSelect.addEventListener('change', toggleShippingFields);
+                toggleShippingFields();
+            }
+        });
+    </script>
 
 @endsection
