@@ -22,7 +22,7 @@
     {{-- Card utama berisi form --}}
     <div class="bg-white rounded-2xl shadow-sm p-8">
 
-        <h3 class="text-lg font-bold text-gray-800 mb-6">Tambah Promosi Produk</h3>
+        <h3 class="text-lg font-bold text-gray-800 mb-6">Edit Promosi Produk</h3>
         <hr class="border-gray-200 mb-6">
 
         {{--
@@ -40,23 +40,55 @@
         <form action="{{ route('promo-admin.update', $promo->id) }}" method="POST" enctype="multipart/form-data"
             x-data="{
                 selectedProducts: {{ $promo->promoDetails->map(fn($d) => ['id' => $d->product->id, 'name' => $d->product->name, 'image' => $d->product->hasMedia(App\Models\Product::MEDIA_COLLECTION) ? $d->product->getFirstMediaUrl(App\Models\Product::MEDIA_COLLECTION) : ''])->toJson() }},
-                allProducts: {{ $allProducts->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'image' => $p->hasMedia(App\Models\Product::MEDIA_COLLECTION) ? $p->getFirstMediaUrl(App\Models\Product::MEDIA_COLLECTION) : ''])->toJson() }},
+                allProducts: {{ $allProducts->map(fn($p) => ['id' => $p->id, 'name' => $p->name, 'price' => $p->price, 'image' => $p->hasMedia(App\Models\Product::MEDIA_COLLECTION) ? $p->getFirstMediaUrl(App\Models\Product::MEDIA_COLLECTION) : ''])->toJson() }},
                 showDropdown: false,
+                actualPrice: {{ (int) old('actual_price', $promo->actual_price) }},
+                price: {{ (int) old('price', $promo->price) }},
+                percentage: 0,
+                get availableProducts() {
+                    return this.allProducts.filter((product) => !this.selectedProducts.some((selected) => selected.id === product.id));
+                },
+                syncActualPrice() {
+                    this.actualPrice = this.selectedProducts.reduce((total, product) => {
+                        const productFromAll = this.allProducts.find(p => p.id === product.id);
+                        return total + Number(productFromAll?.price || 0);
+                    }, 0);
+                    this.syncPercentage();
+                },
+                syncPercentage() {
+                    if (this.actualPrice > 0) {
+                        this.percentage = Math.round(((this.actualPrice - this.price) / this.actualPrice) * 100);
+                    } else {
+                        this.percentage = 0;
+                    }
+                },
                 removeProduct(id) {
                     this.selectedProducts = this.selectedProducts.filter(p => p.id !== id);
+                    this.syncActualPrice();
                 },
                 addProduct(product) {
                     if (!this.selectedProducts.find(p => p.id === product.id)) {
                         this.selectedProducts.push(product);
                     }
+                    this.syncActualPrice();
                     this.showDropdown = false;
                 }
-            }">
+            }" x-init="syncActualPrice()">
             @csrf
             @method('PUT') {{-- Method spoofing: memberitahu Laravel bahwa ini adalah request PUT --}}
 
             {{-- ======= SECTION: Informasi Utama ======= --}}
             <p class="text-base font-bold text-gray-800 mb-4">Informasi Utama</p>
+
+            <div class="mb-6">
+                <label class="block text-sm text-gray-600 mb-1.5">Nama Promo</label>
+                <input type="text" name="name" placeholder="Masukan nama promo"
+                    value="{{ old('name', $promo->name) }}"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#8A9E5B] focus:ring-1 focus:ring-[#8A9E5B] transition placeholder:text-gray-300">
+                @error('name')
+                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
             {{-- SECTION MULTI-SELECT PRODUK --}}
             <div class="mb-6">
@@ -92,7 +124,7 @@
                             + Tambah Produk
                         </button>
 
-                        {{-- 
+                        {{--
                             Dropdown daftar semua produk.
                             x-show: tampil/sembunyi berdasarkan showDropdown.
                             x-transition: animasi buka/tutup.
@@ -101,7 +133,7 @@
                         <div x-show="showDropdown" x-transition @click.outside="showDropdown = false"
                             class="absolute right-0 top-10 w-56 bg-white rounded-xl shadow-lg border border-gray-100 z-20 max-h-60 overflow-y-auto">
                             {{-- Iterasi semua produk sebagai opsi di dropdown --}}
-                            <template x-for="product in allProducts" :key="product.id">
+                            <template x-for="product in availableProducts" :key="product.id">
                                 <button type="button" @click="addProduct(product)"
                                     class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition">
                                     <img :src="product.image || ''" class="w-8 h-8 rounded-lg object-cover bg-gray-200">
@@ -119,29 +151,31 @@
                 {{-- Input: Harga Total Awal — diisi dari $promo->actual_price --}}
                 <div>
                     <label class="block text-sm text-gray-600 mb-1.5">Harga Total Awal</label>
-                    <input type="number" name="actual_price" placeholder="Masukan harga kue"
-                        value="{{ old('actual_price', $promo->actual_price) }}"
-                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#8A9E5B] focus:ring-1 focus:ring-[#8A9E5B] transition placeholder:text-gray-300">
+                    <input type="number" name="actual_price" placeholder="Otomatis dari harga produk"
+                        x-model="actualPrice" readonly
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none bg-gray-50 focus:border-[#8A9E5B] focus:ring-1 focus:ring-[#8A9E5B] transition placeholder:text-gray-300">
+                    <p class="text-xs text-gray-400 mt-1">Diisi otomatis dari total harga produk yang dipilih.</p>
                 </div>
 
                 {{-- Input: Harga Promo — diisi dari $promo->price --}}
                 <div>
                     <label class="block text-sm text-gray-600 mb-1.5">Harga Promo</label>
                     <input type="number" name="price" placeholder="Masukan harga kue"
-                        value="{{ old('price', $promo->price) }}"
+                        x-model.number="price" @input="syncPercentage()"
                         class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#8A9E5B] focus:ring-1 focus:ring-[#8A9E5B] transition placeholder:text-gray-300">
                 </div>
 
-                {{-- 
+                {{--
                     Field Persenan: read-only, tidak bisa diedit user.
-                    Nilai dihitung otomatis oleh sistem dari selisih harga asli dan harga promo.
-                    disabled + bg-gray-50 + cursor-not-allowed memberi visual tidak bisa diklik.
+                    Nilai dihitung otomatis realtime dari selisih harga asli dan harga promo.
+                    readonly + bg-gray-50 memberi visual tidak bisa diklik.
                 --}}
                 <div>
                     <label class="block text-sm text-gray-600 mb-1.5">Persenan</label>
-                    <input type="text" value="{{ $promo->percentage }}%" disabled
+                    <input type="text" readonly
+                        x-model="percentage" placeholder="0%"
                         class="w-full border border-gray-100 bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-500 cursor-not-allowed">
-                    <p class="text-xs text-gray-400 mt-1">Dihitung otomatis dari harga</p>
+                    <p class="text-xs text-gray-400 mt-1">Dihitung otomatis realtime dari harga</p>
                 </div>
             </div>
 
@@ -170,11 +204,11 @@
                     <div>
                         <label class="block text-sm text-gray-600 mb-1.5">Tanggal Mulai Promosi</label>
                         <input type="date" name="date_start"
-                            value="{{ old('date_start', $promo->date_start ?? '') }}"
+                            value="{{ old('date_start', $promo->date_start ? $promo->date_start->format('Y-m-d') : '') }}"
                             class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#8A9E5B] focus:ring-1 focus:ring-[#8A9E5B] transition">
                     </div>
 
-                    {{-- 
+                    {{--
                         Input: Tanggal Berakhir — perlu ->format('Y-m-d') karena $promo->date_until
                         adalah objek Carbon, sedangkan input type="date" butuh format string Y-m-d.
                         Null coalescing (??) dipakai jika date_until belum diset.
@@ -202,7 +236,7 @@
                         <span class="text-red-400 text-xs ml-1">(khusus bundle)</span>
                     </label>
 
-                    {{-- 
+                    {{--
                         Alpine.js x-data: preview diisi langsung dari $promo->image jika ada.
                         Berbeda dengan form Tambah yang selalu mulai dari null.
                         Jika $promo->image null/kosong, preview juga kosong (placeholder tampil).

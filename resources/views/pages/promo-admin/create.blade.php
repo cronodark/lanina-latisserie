@@ -28,7 +28,9 @@
         @php
             // Ambil array ID produk yang sudah dipilih dari query string URL (?product_ids[]=1&product_ids[]=2)
             // Default ke array kosong jika tidak ada
-            $preselectedIds = request('product_ids', []);
+            $preselectedIds = collect(old('product_ids', request('product_ids', [])))
+                ->filter()
+                ->values();
 
             // Filter $products hanya yang ID-nya ada di $preselectedIds,
             // lalu petakan ke array sederhana berisi id, name, dan URL gambar
@@ -37,6 +39,7 @@
                 ->map(fn($p) => [
                     'id'    => $p->id,
                     'name'  => $p->name,
+                    'price' => $p->price,
                     // Ambil URL gambar jika ada, kosongkan string jika tidak ada
                     'image' => $p->hasMedia(App\Models\Product::MEDIA_COLLECTION)
                                 ? $p->getFirstMediaUrl(App\Models\Product::MEDIA_COLLECTION)
@@ -48,6 +51,7 @@
             $allProductsJson = $products->map(fn($p) => [
                 'id'    => $p->id,
                 'name'  => $p->name,
+                'price' => $p->price,
                 'image' => $p->hasMedia(App\Models\Product::MEDIA_COLLECTION)
                             ? $p->getFirstMediaUrl(App\Models\Product::MEDIA_COLLECTION)
                             : '',
@@ -68,26 +72,45 @@
                 selectedProducts: {{ $preselected->toJson() }},
                 allProducts: {{ $allProductsJson->toJson() }},
                 showDropdown: false,
+                actualPrice: {{ (int) old('actual_price', $preselected->sum('price')) }},
+                get availableProducts() {
+                    return this.allProducts.filter((product) => !this.selectedProducts.some((selected) => selected.id === product.id));
+                },
+                syncActualPrice() {
+                    this.actualPrice = this.selectedProducts.reduce((total, product) => total + Number(product.price || 0), 0);
+                },
                 removeProduct(id) {
                     this.selectedProducts = this.selectedProducts.filter(p => p.id !== id);
+                    this.syncActualPrice();
                 },
                 addProduct(product) {
                     if (!this.selectedProducts.find(p => p.id === product.id)) {
                         this.selectedProducts.push(product);
                     }
+                    this.syncActualPrice();
                     this.showDropdown = false;
                 }
-            }">
+            }" x-init="syncActualPrice()">
             @csrf {{-- Token CSRF untuk keamanan form --}}
 
             {{-- ======= SECTION: Informasi Utama ======= --}}
             <p class="text-base font-bold text-gray-800 mb-4">Informasi Utama</p>
 
+            <div class="mb-6">
+                <label class="block text-sm text-gray-600 mb-1.5">Nama Promo</label>
+                <input type="text" name="name" placeholder="Masukan nama promo"
+                    value="{{ old('name') }}"
+                    class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#8A9E5B] focus:ring-1 focus:ring-[#8A9E5B] transition placeholder:text-gray-300">
+                @error('name')
+                    <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
             {{-- SECTION MULTI-SELECT PRODUK --}}
             <div class="mb-6">
                 <label class="block text-sm text-gray-600 mb-1.5">Nama Kue</label>
 
-                {{-- 
+                {{--
                     Kontainer chip produk terpilih + tombol tambah produk.
                     Chip = badge kecil berisi foto + nama + tombol hapus per produk.
                 --}}
@@ -101,7 +124,7 @@
                                 onerror="this.style.display='none'">
                             {{-- Nama produk --}}
                             <span class="text-sm font-medium text-gray-700" x-text="product.name"></span>
-                            {{-- 
+                            {{--
                                 Hidden input: mengirim ID produk terpilih ke server saat form disubmit.
                                 Setiap produk terpilih menghasilkan satu input product_ids[].
                             --}}
@@ -124,7 +147,7 @@
                             + Tambah Produk
                         </button>
 
-                        {{-- 
+                        {{--
                             Dropdown daftar semua produk.
                             x-show: tampil/sembunyi berdasarkan showDropdown.
                             x-transition: animasi buka/tutup.
@@ -133,7 +156,7 @@
                         <div x-show="showDropdown" x-transition @click.outside="showDropdown = false"
                             class="absolute right-0 top-10 w-56 bg-white rounded-xl shadow-lg border border-gray-100 z-20 max-h-60 overflow-y-auto">
                             {{-- Iterasi semua produk sebagai opsi pilihan di dropdown --}}
-                            <template x-for="product in allProducts" :key="product.id">
+                            <template x-for="product in availableProducts" :key="product.id">
                                 <button type="button" @click="addProduct(product)"
                                     class="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition">
                                     <img :src="product.image || ''" class="w-8 h-8 rounded-lg object-cover bg-gray-200"
@@ -157,9 +180,10 @@
                 {{-- Input: Harga Total Awal (harga asli sebelum promo) --}}
                 <div>
                     <label class="block text-sm text-gray-600 mb-1.5">Harga Total Awal</label>
-                    <input type="number" name="actual_price" placeholder="Masukan harga kue"
-                        value="{{ old('actual_price') }}"
-                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#8A9E5B] focus:ring-1 focus:ring-[#8A9E5B] transition placeholder:text-gray-300">
+                    <input type="number" name="actual_price" placeholder="Otomatis dari harga produk"
+                        x-model="actualPrice" readonly
+                        class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none bg-gray-50 focus:border-[#8A9E5B] focus:ring-1 focus:ring-[#8A9E5B] transition placeholder:text-gray-300">
+                    <p class="text-xs text-gray-400 mt-1">Diisi otomatis dari total harga produk yang dipilih.</p>
                     @error('actual_price')
                         <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
                     @enderror
@@ -236,7 +260,7 @@
                         <span class="text-red-400 text-xs ml-1">(khusus bundle)</span>
                     </label>
 
-                    {{-- 
+                    {{--
                         Alpine.js x-data: state 'preview' untuk menyimpan URL sementara gambar.
                         Sama seperti form produk biasa, klik area memicu input file tersembunyi.
                     --}}
