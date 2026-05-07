@@ -22,12 +22,33 @@ class PromoController extends Controller
 
     public function rekomendasi(Request $request): View
     {
-        $products = Product::all();
+        $sort = $request->query('sort', 'penjualan_terendah');
+        $salesCounts = $this->buildProductSalesCounts();
+
+        $products = Product::query()
+            ->get()
+            ->sort(function (Product $left, Product $right) use ($sort, $salesCounts) {
+                $leftSales = $salesCounts[$left->id] ?? 0;
+                $rightSales = $salesCounts[$right->id] ?? 0;
+
+                if ($leftSales === $rightSales) {
+                    return strcasecmp($left->name, $right->name);
+                }
+
+                if ($sort === 'penjualan_tertinggi') {
+                    return $rightSales <=> $leftSales;
+                }
+
+                return $leftSales <=> $rightSales;
+            })
+            ->values();
+
         $recommendedCombinations = $this->buildPromoCombinationRanking();
 
         return view('pages.promo-admin.rekomendasi', [
             'title' => 'Rekomendasi Produk Promosi',
             'products' => $products,
+            'salesCounts' => $salesCounts,
             'recommendedCombinations' => $recommendedCombinations,
         ]);
     }
@@ -145,6 +166,52 @@ class PromoController extends Controller
             ->sortByDesc(fn(array $item) => $item['score'])
             ->values()
             ->take(10);
+    }
+
+    /**
+     * Count how often each product appears in completed preorder transactions.
+     *
+     * @return array<int, int>
+     */
+    private function buildProductSalesCounts(): array
+    {
+        $validStatuses = ['processing', 'shipping', 'completed'];
+
+        $rawDetails = PreOrderDetail::query()
+            ->select(['pre_order_id', 'product_id'])
+            ->whereNotNull('product_id')
+            ->whereHas('preOrder', function ($query) use ($validStatuses) {
+                $query->whereIn('status', $validStatuses);
+            })
+            ->orderBy('pre_order_id')
+            ->get();
+
+        if ($rawDetails->isEmpty()) {
+            return [];
+        }
+
+        $transactions = $rawDetails
+            ->groupBy('pre_order_id')
+            ->map(function (Collection $details): array {
+                return $details
+                    ->pluck('product_id')
+                    ->filter()
+                    ->map(fn($id) => (int) $id)
+                    ->unique()
+                    ->values()
+                    ->all();
+            })
+            ->filter(fn(array $items) => count($items) > 0);
+
+        $salesCounts = [];
+
+        foreach ($transactions as $items) {
+            foreach ($items as $productId) {
+                $salesCounts[$productId] = ($salesCounts[$productId] ?? 0) + 1;
+            }
+        }
+
+        return $salesCounts;
     }
 
     public function produkDalamPromosi(): View
