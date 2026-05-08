@@ -66,7 +66,16 @@
             </button>
         </div>
 
-        {{-- Ranking kombinasi promo hasil analisis transaksi preorder --}}
+        {{-- 
+            Ranking kombinasi promo hasil Association Rules Mining
+            Menampilkan top 10 pasangan produk yang sering dibeli bersama
+            dengan metrik: Support, Confidence, Lift
+            
+            Algoritma: 2-Itemset Association Rules (bukan Apriori)
+            Data source: Transaksi PreOrder dengan status valid (processing/shipping/completed)
+            
+            Dokumentasi lengkap: RECOMMENDATION_SYSTEM.md
+        --}}
         <div class="bg-white rounded-2xl border border-gray-200 px-6 py-5 mb-8">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-bold text-gray-800">Ranking Kombinasi Promo</h3>
