@@ -23,6 +23,11 @@ class TanggalTersediaController extends Controller
             ->mendatang()
             ->orderBy('tanggal')
             ->get()
+            ->filter(function ($slot) {
+                // Only return slots with available quota
+                return $slot->sisa_kuota > 0;
+            })
+            ->values() // Reset array keys
             ->map(function ($slot) {
                 return [
                     'id' => $slot->id,
@@ -32,6 +37,7 @@ class TanggalTersediaController extends Controller
                     'terisi' => $slot->terisi,
                     'sisa' => $slot->sisa_kuota,
                     'status' => $slot->status,
+                    'is_aktif' => $slot->is_aktif,
                     'is_available' => $slot->sisa_kuota > 0 && $slot->is_aktif,
                     'keterangan' => $slot->keterangan,
                 ];

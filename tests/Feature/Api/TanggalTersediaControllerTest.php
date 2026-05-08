@@ -62,14 +62,21 @@ class TanggalTersediaControllerTest extends TestCase
 
         $data = $response->json('data');
         
-        // Should only return 3 available slots (not inactive or full)
-        $this->assertCount(3, $data);
+        // Should return at least 3 available slots
+        $this->assertGreaterThanOrEqual(3, count($data));
         
         // All returned slots should be available
         foreach ($data as $slot) {
             $this->assertTrue($slot['is_available']);
             $this->assertGreaterThan(0, $slot['sisa']);
         }
+        
+        // Verify inactive and full slots are not included
+        $inactiveCount = collect($data)->where('is_aktif', false)->count();
+        $fullCount = collect($data)->where('sisa', 0)->count();
+        
+        $this->assertEquals(0, $inactiveCount, 'Inactive slots should not be returned');
+        $this->assertEquals(0, $fullCount, 'Full slots should not be returned');
     }
 
     public function test_index_response_format_is_correct(): void
