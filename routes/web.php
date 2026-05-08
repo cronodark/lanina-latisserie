@@ -14,6 +14,8 @@ use App\Http\Controllers\PromoController;
 use App\Http\Controllers\PromoDetailController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\laporanController;
+use App\Http\Controllers\SlotController;
+use App\Http\Controllers\TanggalController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
@@ -108,3 +110,13 @@ Route::resource('pesanan', PesananController::class);
 Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
 
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
+Route::prefix('admin/jadwal')->name('jadwal-admin.')->group(function () {
+    Route::get('/kalender', [TanggalController::class, 'kalender'])->name('kalender');
+ 
+    Route::get('/slot', fn() => view('pages.jadwal-admin.slot'))->name('slot');
+    Route::post('/slot',                   [SlotController::class, 'store'])->name('slot.store');
+    Route::put('/slot/{id}',               [SlotController::class, 'update'])->name('slot.update');
+    Route::delete('/slot/{id}',            [SlotController::class, 'destroy'])->name('slot.destroy');
+    Route::patch('/slot/{id}/toggle',      [SlotController::class, 'toggle'])->name('slot.toggle');
+});

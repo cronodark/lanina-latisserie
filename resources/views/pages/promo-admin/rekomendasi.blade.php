@@ -130,7 +130,14 @@
                             '{{ $product->hasMedia(App\Models\Product::MEDIA_COLLECTION) ? $product->getFirstMediaUrl(App\Models\Product::MEDIA_COLLECTION) : '' }}'
                         )"
                         :class="isSelected({{ $product->id }}) ? 'ring-2 ring-[#8A9E5B]' : ''"
-                        class="bg-white rounded-3xl overflow-hidden hover:shadow-lg transition-shadow duration-300 group cursor-pointer">
+                        class="bg-white rounded-3xl overflow-hidden hover:shadow-lg transition-shadow duration-300 group cursor-pointer"
+                        x-data="{
+                            showDetail: false,
+                            openDetail(e) {
+                                e.stopPropagation();
+                                this.showDetail = true;
+                            }
+                        }">
 
                         {{-- SECTION FOTO PRODUK --}}
                         <div class="mx-3 mt-3 h-44 rounded-2xl overflow-hidden">
@@ -168,14 +175,24 @@
                             <p class="text-[#8A9E5B] font-bold text-xl mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
 
                             {{-- SECTION TOMBOL AKSI --}}
-                            <div class="flex items-center justify-end gap-3">
+                            <div class="flex items-center justify-between gap-3">
+
+                                {{-- Tombol Detail: buka popup modal detail produk --}}
+                                <button type="button"
+                                    @click="openDetail($event)"
+                                    class="flex items-center gap-1.5 text-gray-500 hover:text-[#4A5E2F] transition text-xs font-medium">
+                                    {{-- Ikon mata (eye), mirip referensi --}}
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                    Detail
+                                </button>
 
                                 {{--
                                     Tombol Checklist: toggle pilih/batal pilih produk untuk promosi.
-                                    @click memanggil toggle() dengan id, name, dan URL gambar produk.
-                                    addslashes() mencegah karakter kutip dalam nama produk merusak JS.
-                                    :class binding: warna hijau jika terpilih, abu-abu jika belum.
-                                    Ikon centang hanya tampil jika produk ini sedang terpilih (isSelected).
                                 --}}
                                 <button type="button"
                                     :class="isSelected({{ $product->id }})
@@ -193,6 +210,93 @@
 
                             </div>
                         </div>
+
+                        {{-- ===== MODAL DETAIL PRODUK ===== --}}
+                        <div x-show="showDetail" x-transition
+                            class="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+                            @click.self="showDetail = false"
+                            style="display:none">
+                            <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden" @click.stop>
+
+                                {{-- ===== HEADER: label + nama + tombol X ===== --}}
+                                <div class="px-8 pt-7 pb-5">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            {{-- Label kecil "DETAIL PRODUK" --}}
+                                            <p class="text-xs font-bold tracking-widest text-[#8A9E5B] uppercase mb-1">Detail Produk</p>
+                                            {{-- Nama produk besar --}}
+                                            <h3 class="text-2xl font-bold text-gray-800">{{ $product->name }}</h3>
+                                        </div>
+                                        {{-- Tombol tutup X --}}
+                                        <button @click="showDetail = false"
+                                            class="text-gray-400 hover:text-gray-600 transition mt-1 flex-shrink-0">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {{-- ===== BODY: foto kiri + info kanan ===== --}}
+                                <div class="flex gap-6 px-8 pb-6">
+
+                                    {{-- Foto produk: kiri, ukuran kotak --}}
+                                    <div class="flex-shrink-0 w-56 h-44 rounded-2xl overflow-hidden bg-[#C4A882]">
+                                        @if($product->hasMedia(App\Models\Product::MEDIA_COLLECTION))
+                                            <img src="{{ $product->getFirstMediaUrl(App\Models\Product::MEDIA_COLLECTION) }}"
+                                                alt="{{ $product->name }}"
+                                                class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center">
+                                                <svg class="w-12 h-12 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    {{-- Info kanan --}}
+                                    <div class="flex-1 flex flex-col justify-between">
+                                        <div>
+                                            {{-- Harga --}}
+                                            <p class="text-xs text-gray-400 mb-0.5">Harga</p>
+                                            <p class="text-[#8A9E5B] font-bold text-2xl mb-4">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+
+                                            {{-- Deskripsi --}}
+                                            <p class="text-xs text-gray-400 mb-1">Deskripsi</p>
+                                            <p class="text-gray-600 text-sm leading-relaxed">{{ $product->description ?: 'Tidak ada deskripsi.' }}</p>
+
+                                            {{-- Info tambahan: penjualan, stok --}}
+                                            @php
+                                                $salesCount = (int) ($salesCounts[$product->id] ?? 0);
+                                            @endphp
+                                            <div class="flex items-center gap-3 mt-3">
+                                                <span class="bg-[#EEF2E6] text-[#5F6F43] text-xs font-semibold px-2.5 py-1 rounded-full">
+                                                    {{ $salesCount }}x terjual
+                                                </span>
+                                                @if(isset($product->stok))
+                                                <span class="bg-gray-100 text-gray-500 text-xs font-semibold px-2.5 py-1 rounded-full">
+                                                    Stok: {{ $product->stok }}
+                                                </span>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        {{-- Tombol bawah: Tutup + Pilih --}}
+                                        <div class="flex items-center justify-end gap-3 mt-5">
+                                            <button type="button"
+                                                @click="showDetail = false"
+                                                class="bg-[#4A5E2F] hover:bg-[#3a4c23] text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition">
+                                                Tutup
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        {{-- ===== END MODAL ===== --}}
 
                     </div>
                 @endforeach
