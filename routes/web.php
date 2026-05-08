@@ -109,7 +109,7 @@ Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show
 
 // API Routes for available dates
 Route::get('/api/tanggal-tersedia', [TanggalTersediaController::class, 'index'])->name('api.tanggal-tersedia.index');
-Route::get('/api/tanggal-tersedia/{tanggal}', [TanggalTersediaController::class, 'show'])->name('api.tanggal-tersedia.show');
+Route::get('/api/tanggal-tersedia/check', [TanggalTersediaController::class, 'check'])->name('api.tanggal-tersedia.check');
 
 Route::resource('pesanan', PesananController::class);
 Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');

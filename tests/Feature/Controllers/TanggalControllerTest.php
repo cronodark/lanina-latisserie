@@ -14,7 +14,7 @@ class TanggalControllerTest extends TestCase
 
     private function createAdmin(): User
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->create();
         $this->actingAs($admin);
         return $admin;
     }

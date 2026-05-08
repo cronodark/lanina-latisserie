@@ -322,6 +322,7 @@ class LaporanController extends Controller
             ];
 
             return (object) [
+                'id' => $order->id,
                 'id_pesanan' => 'ORD-' . str_pad($order->id, 3, '0', STR_PAD_LEFT),
                 'nama_pelanggan' => $order->customer ? $order->customer->name : 'Unknown',
                 'nama_produk' => $productNames ?: 'No products',
