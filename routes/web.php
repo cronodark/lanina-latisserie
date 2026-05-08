@@ -11,9 +11,8 @@ use App\Http\Controllers\PreOrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PromoController;
-use App\Http\Controllers\PromoDetailController;
 use App\Http\Controllers\PesananController;
-use App\Http\Controllers\laporanController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\TanggalController;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +32,21 @@ Route::group(['middleware' => 'auth'], function () {
             Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
             Route::put('/{product}', [ProductController::class, 'update'])->name('update');
             Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/export-pdf', [LaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
+
+        Route::prefix('admin/promo')->name('promo-admin.')->group(function () {
+            Route::get('/rekomendasi', [PromoController::class, 'rekomendasi'])->name('rekomendasi');
+            Route::get('/status/{tab}', [PromoController::class, 'status'])->name('status');
+            Route::get('/create', [PromoController::class, 'create'])->name('create');
+            Route::post('/', [PromoController::class, 'store'])->name('store');
+            Route::get('/{promo}/edit', [PromoController::class, 'edit'])->name('edit');
+            Route::put('/{promo}', [PromoController::class, 'update'])->name('update');
+            Route::delete('/{promo}', [PromoController::class, 'destroy'])->name('destroy');
+            Route::delete('/product/{product}', [PromoController::class, 'destroyProduct'])->name('destroyProduct');
+            Route::post('/toggle/{product}', [PromoController::class, 'toggleSelect'])->name('toggleSelect');
         });
     });
 
@@ -92,28 +106,12 @@ Route::prefix('product')->name('product.')->group(function () {
 
 Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show');
 
-
-
-Route::prefix('admin/promo')->name('promo-admin.')->group(function () {
-    Route::get('/rekomendasi', [PromoController::class, 'rekomendasi'])->name('rekomendasi');
-    Route::get('/status/{tab}', [PromoController::class, 'status'])->name('status');
-    Route::get('/create', [PromoController::class, 'create'])->name('create');
-    Route::post('/', [PromoController::class, 'store'])->name('store');
-    Route::get('/{promo}/edit', [PromoController::class, 'edit'])->name('edit');
-    Route::put('/{promo}', [PromoController::class, 'update'])->name('update');
-    Route::delete('/{promo}', [PromoController::class, 'destroy'])->name('destroy');
-    Route::delete('/product/{product}', [PromoController::class, 'destroyProduct'])->name('destroyProduct');
-    Route::post('/toggle/{product}', [PromoController::class, 'toggleSelect'])->name('toggleSelect');
-});
-
 Route::resource('pesanan', PesananController::class);
 Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
 
-Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-
 Route::prefix('admin/jadwal')->name('jadwal-admin.')->group(function () {
     Route::get('/kalender', [TanggalController::class, 'kalender'])->name('kalender');
- 
+
     Route::get('/slot', fn() => view('pages.jadwal-admin.slot'))->name('slot');
     Route::post('/slot',                   [SlotController::class, 'store'])->name('slot.store');
     Route::put('/slot/{id}',               [SlotController::class, 'update'])->name('slot.update');

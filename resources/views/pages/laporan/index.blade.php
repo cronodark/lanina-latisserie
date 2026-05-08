@@ -7,8 +7,7 @@
 
 @php
 // ══════════════════════════════════════════════════════════════
-// DUMMY DATA — Saat disambung backend, hapus semua blok ?? ini
-// dan pass variabel dari controller via compact() atau with()
+// Data dari LaporanController - Real database data
 // ══════════════════════════════════════════════════════════════
 
 $bulanList = [
@@ -17,110 +16,20 @@ $bulanList = [
     9=>'September',10=>'Oktober',11=>'November', 12=>'Desember',
 ];
 
-// Ambil filter dari query string (GET), default Oktober 2025
-$bulanTerpilihAngka  = (int) request('bulan',  10);
-$tahunTerpilih       = (int) request('tahun',   2025);
+// Ambil filter dari query string (GET), default bulan dan tahun sekarang
+$bulanTerpilihAngka  = (int) request('bulan',  now()->month);
+$tahunTerpilih       = (int) request('tahun',   now()->year);
 $produkFilterDipilih = request('produk_filter', '');
 
 // Pastikan nilai bulan valid
-if (!array_key_exists($bulanTerpilihAngka, $bulanList)) $bulanTerpilihAngka = 10;
+if (!array_key_exists($bulanTerpilihAngka, $bulanList)) {
+    $bulanTerpilihAngka = now()->month;
+}
 
 $bulanTerpilih   = $bulanList[$bulanTerpilihAngka];
 $bulanSebelumnya = $bulanTerpilihAngka === 1
     ? $bulanList[12]
     : $bulanList[$bulanTerpilihAngka - 1];
-
-// ── Dummy ringkasan per bulan ──
-$dummyData = [
-    1  => ['penjualan'=>3200000, 'pesanan'=>75,  'produk'=>210, 'pend_sblm'=>2800000, 'jml_sblm'=>185],
-    2  => ['penjualan'=>3800000, 'pesanan'=>88,  'produk'=>245, 'pend_sblm'=>3200000, 'jml_sblm'=>210],
-    3  => ['penjualan'=>4100000, 'pesanan'=>95,  'produk'=>260, 'pend_sblm'=>3800000, 'jml_sblm'=>245],
-    4  => ['penjualan'=>3900000, 'pesanan'=>90,  'produk'=>250, 'pend_sblm'=>4100000, 'jml_sblm'=>260],
-    5  => ['penjualan'=>4600000, 'pesanan'=>105, 'produk'=>295, 'pend_sblm'=>3900000, 'jml_sblm'=>250],
-    6  => ['penjualan'=>5100000, 'pesanan'=>115, 'produk'=>320, 'pend_sblm'=>4600000, 'jml_sblm'=>295],
-    7  => ['penjualan'=>5400000, 'pesanan'=>118, 'produk'=>335, 'pend_sblm'=>5100000, 'jml_sblm'=>320],
-    8  => ['penjualan'=>4800000, 'pesanan'=>108, 'produk'=>300, 'pend_sblm'=>5400000, 'jml_sblm'=>335],
-    9  => ['penjualan'=>4500000, 'pesanan'=>95,  'produk'=>280, 'pend_sblm'=>4800000, 'jml_sblm'=>300],
-    10 => ['penjualan'=>6000000, 'pesanan'=>120, 'produk'=>350, 'pend_sblm'=>4500000, 'jml_sblm'=>280],
-    11 => ['penjualan'=>7200000, 'pesanan'=>145, 'produk'=>420, 'pend_sblm'=>6000000, 'jml_sblm'=>350],
-    12 => ['penjualan'=>8500000, 'pesanan'=>180, 'produk'=>510, 'pend_sblm'=>7200000, 'jml_sblm'=>420],
-];
-
-$d = $dummyData[$bulanTerpilihAngka];
-
-$totalPenjualan       = $totalPenjualan       ?? $d['penjualan'];
-$totalPesanan         = $totalPesanan         ?? $d['pesanan'];
-$totalProdukTerjual   = $totalProdukTerjual   ?? $d['produk'];
-$pendapatanSebelumnya = $pendapatanSebelumnya ?? $d['pend_sblm'];
-$pendapatanTerpilih   = $pendapatanTerpilih   ?? $d['penjualan'];
-$jumlahSebelumnya     = $jumlahSebelumnya     ?? $d['jml_sblm'];
-$jumlahTerpilih       = $jumlahTerpilih       ?? $d['produk'];
-
-// ── Dummy produk terlaris ──
-$produkTertaris = $produkTertaris ?? [
-    ['nama'=>'Nastar',       'persen'=>40.8, 'warna'=>'#BB9457'],
-    ['nama'=>'Putri Salju',  'persen'=>25.4, 'warna'=>'#C4A882'],
-    ['nama'=>'Lidah Kucing', 'persen'=>18.3, 'warna'=>'#6B8F4E'],
-    ['nama'=>'Cookies',      'persen'=>10.2, 'warna'=>'#A8C17A'],
-    ['nama'=>'Stick Keju',   'persen'=>5.3,  'warna'=>'#D4C5A9'],
-];
-
-// ── Dummy jumlah per produk (untuk filter chart jumlah terjual) ──
-$jumlahProdukSebelumnya = $jumlahProdukSebelumnya ?? [
-    'Nastar'      => round($d['jml_sblm'] * 0.41),
-    'Putri Salju' => round($d['jml_sblm'] * 0.25),
-    'Lidah Kucing'=> round($d['jml_sblm'] * 0.18),
-    'Cookies'     => round($d['jml_sblm'] * 0.10),
-    'Stick Keju'  => round($d['jml_sblm'] * 0.06),
-];
-$jumlahProdukTerpilih = $jumlahProdukTerpilih ?? [
-    'Nastar'      => round($d['produk'] * 0.41),
-    'Putri Salju' => round($d['produk'] * 0.25),
-    'Lidah Kucing'=> round($d['produk'] * 0.18),
-    'Cookies'     => round($d['produk'] * 0.10),
-    'Stick Keju'  => round($d['produk'] * 0.06),
-];
-
-// Terapkan filter produk ke bar jumlah
-if ($produkFilterDipilih && isset($jumlahProdukSebelumnya[$produkFilterDipilih])) {
-    $jumlahSebelumnya = $jumlahProdukSebelumnya[$produkFilterDipilih];
-    $jumlahTerpilih   = $jumlahProdukTerpilih[$produkFilterDipilih];
-}
-
-// ── Dummy slider produk ──
-$sliderProduk = $sliderProduk ?? [
-    ['nama'=>'Nastar',       'persen'=>40.8, 'gambar'=>'/images/nastar.jpg'],
-    ['nama'=>'Putri Salju',  'persen'=>25.4, 'gambar'=>'/images/putri-salju.jpg'],
-    ['nama'=>'Lidah Kucing', 'persen'=>18.3, 'gambar'=>'/images/lidah-kucing.jpg'],
-    ['nama'=>'Cookies',      'persen'=>10.2, 'gambar'=>'/images/cookies.jpg'],
-    ['nama'=>'Stick Keju',   'persen'=>5.3,  'gambar'=>'/images/stick-keju.jpg'],
-];
-
-// ── Dummy tabel per bulan ──
-$dummyTabel = [
-    9 => [
-        (object)['id_pesanan'=>'ORD-091','nama_pelanggan'=>'Budi',   'nama_produk'=>'Nastar',       'tanggal_pembelian'=>'02/09/25','tanggal_pengantaran'=>'04/09/25','total_harga'=>150000,'status'=>'Selesai'],
-        (object)['id_pesanan'=>'ORD-092','nama_pelanggan'=>'Sari',   'nama_produk'=>'Cookies',      'tanggal_pembelian'=>'05/09/25','tanggal_pengantaran'=>'07/09/25','total_harga'=>60000, 'status'=>'Selesai'],
-        (object)['id_pesanan'=>'ORD-093','nama_pelanggan'=>'Andi',   'nama_produk'=>'Lidah Kucing', 'tanggal_pembelian'=>'10/09/25','tanggal_pengantaran'=>'12/09/25','total_harga'=>95000, 'status'=>'Belum'],
-    ],
-    10 => [
-        (object)['id_pesanan'=>'ORD-001','nama_pelanggan'=>'Kasyah', 'nama_produk'=>'Nastar',       'tanggal_pembelian'=>'12/10/25','tanggal_pengantaran'=>'14/10/25','total_harga'=>150000,'status'=>'Selesai'],
-        (object)['id_pesanan'=>'ORD-002','nama_pelanggan'=>'Fatima', 'nama_produk'=>'Lidah Kucing', 'tanggal_pembelian'=>'13/10/25','tanggal_pengantaran'=>'15/10/25','total_harga'=>95000, 'status'=>'Belum'],
-        (object)['id_pesanan'=>'ORD-003','nama_pelanggan'=>'Puci',   'nama_produk'=>'Nastar',       'tanggal_pembelian'=>'13/10/25','tanggal_pengantaran'=>'13/10/25','total_harga'=>120000,'status'=>'Selesai'],
-        (object)['id_pesanan'=>'ORD-004','nama_pelanggan'=>'Saniyah','nama_produk'=>'Putri Salju',  'tanggal_pembelian'=>'13/10/25','tanggal_pengantaran'=>'14/10/25','total_harga'=>80000, 'status'=>'Selesai'],
-        (object)['id_pesanan'=>'ORD-005','nama_pelanggan'=>'Fatam',  'nama_produk'=>'Stick Keju',   'tanggal_pembelian'=>'13/10/25','tanggal_pengantaran'=>'14/10/25','total_harga'=>75000, 'status'=>'Dikerjakan'],
-        (object)['id_pesanan'=>'ORD-006','nama_pelanggan'=>'Putri',  'nama_produk'=>'Nastar',       'tanggal_pembelian'=>'13/10/25','tanggal_pengantaran'=>'14/10/25','total_harga'=>150000,'status'=>'Dikirim'],
-    ],
-    11 => [
-        (object)['id_pesanan'=>'ORD-111','nama_pelanggan'=>'Dewi',   'nama_produk'=>'Putri Salju',  'tanggal_pembelian'=>'01/11/25','tanggal_pengantaran'=>'03/11/25','total_harga'=>120000,'status'=>'Selesai'],
-        (object)['id_pesanan'=>'ORD-112','nama_pelanggan'=>'Hasan',  'nama_produk'=>'Nastar',       'tanggal_pembelian'=>'02/11/25','tanggal_pengantaran'=>'05/11/25','total_harga'=>150000,'status'=>'Dikirim'],
-        (object)['id_pesanan'=>'ORD-113','nama_pelanggan'=>'Rizki',  'nama_produk'=>'Stick Keju',   'tanggal_pembelian'=>'03/11/25','tanggal_pengantaran'=>'06/11/25','total_harga'=>75000, 'status'=>'Dikerjakan'],
-        (object)['id_pesanan'=>'ORD-114','nama_pelanggan'=>'Nilam',  'nama_produk'=>'Cookies',      'tanggal_pembelian'=>'05/11/25','tanggal_pengantaran'=>'08/11/25','total_harga'=>60000, 'status'=>'Selesai'],
-    ],
-];
-
-$tabelPenjualan = $tabelPenjualan
-    ?? ($dummyTabel[$bulanTerpilihAngka] ?? $dummyTabel[10]);
 
 // ── Kalkulasi bar chart (%) ──
 $maxPendapatan   = max($pendapatanSebelumnya, $pendapatanTerpilih, 1);
@@ -133,10 +42,10 @@ $pctJmlTerpilih  = max(5, round(($jumlahTerpilih       / $maxJumlah)     * 100))
 // ── Kalkulasi donut SVG ──
 $r             = 54;
 $circumference = round(2 * M_PI * $r, 4);
-$totalPersen   = array_sum(array_column($produkTertaris, 'persen'));
+$totalPersen   = array_sum(array_column($produkTerlaris, 'persen'));
 $offsetAcc     = 0;
 $segments      = [];
-foreach ($produkTertaris as $p) {
+foreach ($produkTerlaris as $p) {
     $pct        = $totalPersen > 0 ? ($p['persen'] / $totalPersen) * 100 : 0;
     $dash       = round(($pct / 100) * $circumference, 4);
     $gap        = round($circumference - $dash, 4);
@@ -294,7 +203,7 @@ foreach ($produkTertaris as $p) {
                            text-gray-600 bg-gray-50 outline-none shrink-0"
                     onchange="document.getElementById('filterForm').submit()">
                     <option value="">Semua Produk</option>
-                    @foreach ($produkTertaris as $p)
+                    @foreach ($produkTerlaris as $p)
                         <option value="{{ $p['nama'] }}"
                             {{ $produkFilterDipilih === $p['nama'] ? 'selected' : '' }}>
                             {{ $p['nama'] }}
@@ -349,85 +258,97 @@ foreach ($produkTertaris as $p) {
     <p class="text-base font-bold text-gray-800 mb-1">Produk Terlaris</p>
     <p class="text-xs text-gray-400 mb-5">{{ $bulanTerpilih }} {{ $tahunTerpilih }}</p>
 
-    <div class="flex flex-col md:flex-row items-center gap-8">
-
-        {{-- Donut SVG --}}
-        <div class="relative shrink-0" style="width:140px;height:140px">
-            <svg viewBox="0 0 120 120" class="w-full h-full" style="transform:rotate(-90deg)">
-                @foreach ($segments as $seg)
-                <circle
-                    cx="60" cy="60" r="{{ $r }}"
-                    fill="none"
-                    stroke="{{ $seg['warna'] }}"
-                    stroke-width="12"
-                    stroke-dasharray="{{ $seg['dash'] }} {{ $seg['gap'] }}"
-                    stroke-dashoffset="{{ $seg['offset'] }}"
-                    stroke-linecap="butt"
-                />
-                @endforeach
+    @if(empty($produkTerlaris) || count($produkTerlaris) === 0)
+        {{-- Empty State --}}
+        <div class="flex flex-col items-center justify-center py-12 text-gray-400">
+            <svg class="w-16 h-16 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
             </svg>
-            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span class="text-sm font-bold text-gray-700">{{ $segments[0]['persen'] }}%</span>
-                <span class="text-[9px] text-gray-400 text-center leading-tight px-2">
-                    {{ $segments[0]['nama'] }}
-                </span>
-            </div>
+            <p class="text-sm font-medium">Belum ada data penjualan</p>
+            <p class="text-xs mt-1">Pilih bulan lain atau tunggu transaksi masuk</p>
         </div>
+    @else
+        <div class="flex flex-col md:flex-row items-center gap-8">
 
-        {{-- Legenda --}}
-        <div class="flex flex-col gap-2.5 flex-1">
-            @foreach ($produkTertaris as $p)
-            <div class="flex items-center justify-between text-sm">
-                <div class="flex items-center gap-2">
-                    <span class="w-3 h-3 rounded-sm shrink-0" style="background:{{ $p['warna'] }}"></span>
-                    <span class="text-gray-700">{{ $p['nama'] }}</span>
-                </div>
-                <span class="text-xs font-semibold text-gray-500">{{ $p['persen'] }}%</span>
-            </div>
-            @endforeach
-        </div>
-
-    </div>
-
-    {{-- Slider --}}
-    <div class="mt-6">
-        <div class="flex items-center gap-3">
-
-            <button type="button" onclick="slideLeft()"
-                class="shrink-0 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200
-                       flex items-center justify-center transition cursor-pointer">
-                <i class="fas fa-chevron-left text-gray-500 text-xs"></i>
-            </button>
-
-            <div class="flex-1 overflow-hidden">
-                <div class="flex gap-3 transition-transform duration-300 ease-in-out"
-                     id="sliderInner">
-                    @foreach ($sliderProduk as $sp)
-                    <div class="shrink-0 relative rounded-xl overflow-hidden bg-gray-100"
-                         style="width:140px;height:90px">
-                        <img src="{{ asset($sp['gambar']) }}"
-                             alt="{{ $sp['nama'] }}"
-                             class="w-full h-full object-cover"
-                             onerror="this.style.display='none'">
-                        <div class="absolute inset-0
-                                    bg-gradient-to-t from-black/60 to-black/10
-                                    flex flex-col items-center justify-end pb-3">
-                            <p class="text-white text-xs font-semibold">{{ $sp['nama'] }}</p>
-                            <p class="text-white text-sm font-bold">{{ $sp['persen'] }}%</p>
-                        </div>
-                    </div>
+            {{-- Donut SVG --}}
+            <div class="relative shrink-0" style="width:140px;height:140px">
+                <svg viewBox="0 0 120 120" class="w-full h-full" style="transform:rotate(-90deg)">
+                    @foreach ($segments as $seg)
+                    <circle
+                        cx="60" cy="60" r="{{ $r }}"
+                        fill="none"
+                        stroke="{{ $seg['warna'] }}"
+                        stroke-width="12"
+                        stroke-dasharray="{{ $seg['dash'] }} {{ $seg['gap'] }}"
+                        stroke-dashoffset="{{ $seg['offset'] }}"
+                        stroke-linecap="butt"
+                    />
                     @endforeach
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span class="text-sm font-bold text-gray-700">{{ $segments[0]['persen'] }}%</span>
+                    <span class="text-[9px] text-gray-400 text-center leading-tight px-2">
+                        {{ $segments[0]['nama'] }}
+                    </span>
                 </div>
             </div>
 
-            <button type="button" onclick="slideRight()"
-                class="shrink-0 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200
-                       flex items-center justify-center transition cursor-pointer">
-                <i class="fas fa-chevron-right text-gray-500 text-xs"></i>
-            </button>
+            {{-- Legenda --}}
+            <div class="flex flex-col gap-2.5 flex-1">
+                @foreach ($produkTerlaris as $p)
+                <div class="flex items-center justify-between text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-sm shrink-0" style="background:{{ $p['warna'] }}"></span>
+                        <span class="text-gray-700">{{ $p['nama'] }}</span>
+                    </div>
+                    <span class="text-xs font-semibold text-gray-500">{{ $p['persen'] }}%</span>
+                </div>
+                @endforeach
+            </div>
 
         </div>
-    </div>
+
+        {{-- Slider --}}
+        <div class="mt-6">
+            <div class="flex items-center gap-3">
+
+                <button type="button" onclick="slideLeft()"
+                    class="shrink-0 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200
+                           flex items-center justify-center transition cursor-pointer">
+                    <i class="fas fa-chevron-left text-gray-500 text-xs"></i>
+                </button>
+
+                <div class="flex-1 overflow-hidden">
+                    <div class="flex gap-3 transition-transform duration-300 ease-in-out"
+                         id="sliderInner">
+                        @foreach ($sliderProduk as $sp)
+                        <div class="shrink-0 relative rounded-xl overflow-hidden bg-gray-100"
+                             style="width:140px;height:90px">
+                            <img src="{{ asset($sp['gambar']) }}"
+                                 alt="{{ $sp['nama'] }}"
+                                 class="w-full h-full object-cover"
+                                 onerror="this.style.display='none'">
+                            <div class="absolute inset-0
+                                        bg-gradient-to-t from-black/60 to-black/10
+                                        flex flex-col items-center justify-end pb-3">
+                                <p class="text-white text-xs font-semibold">{{ $sp['nama'] }}</p>
+                                <p class="text-white text-sm font-bold">{{ $sp['persen'] }}%</p>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <button type="button" onclick="slideRight()"
+                    class="shrink-0 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200
+                           flex items-center justify-center transition cursor-pointer">
+                    <i class="fas fa-chevron-right text-gray-500 text-xs"></i>
+                </button>
+
+            </div>
+        </div>
+    @endif
 </div>
 
 
@@ -439,14 +360,11 @@ foreach ($produkTertaris as $p) {
             <h2 class="text-base font-semibold text-gray-800">Tabel Penjualan</h2>
             <p class="text-xs text-gray-400 mt-0.5">{{ $bulanTerpilih }} {{ $tahunTerpilih }}</p>
         </div>
-        {{--
-            Sambungkan href ke route ekspor backend:
-            route('admin.laporan.ekspor', ['bulan'=>$bulanTerpilihAngka,'tahun'=>$tahunTerpilih])
-        --}}
-        <a href="#"
+        {{-- Export PDF Button - Connected to LaporanController@exportPdf --}}
+        <a href="{{ route('laporan.export-pdf', ['bulan' => $bulanTerpilihAngka, 'tahun' => $tahunTerpilih]) }}"
            class="flex items-center gap-2 px-4 py-2 bg-[#BB9457] text-white text-xs
                   font-semibold rounded-lg hover:bg-[#a07d45] transition">
-            <i class="fas fa-file-arrow-down"></i> Ekspor
+            <i class="fas fa-file-arrow-down"></i> Ekspor PDF
         </a>
     </div>
 
@@ -461,7 +379,6 @@ foreach ($produkTertaris as $p) {
                     <th class="py-3 px-3 text-left font-medium">Tgl Pengantaran</th>
                     <th class="py-3 px-3 text-left font-medium">Total Harga</th>
                     <th class="py-3 px-3 text-left font-medium">Status</th>
-                    <th class="py-3 px-3 text-left font-medium">Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
@@ -489,29 +406,10 @@ foreach ($produkTertaris as $p) {
                             {{ $item->status }}
                         </span>
                     </td>
-                    <td class="px-3 py-3">
-                        <div class="flex items-center gap-2">
-                            {{-- Sambungkan ke route DELETE backend --}}
-                            <button type="button"
-                                onclick="confirmHapus('{{ $item->id_pesanan }}')"
-                                class="w-7 h-7 flex items-center justify-center rounded-lg
-                                       bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600
-                                       hover:scale-110 transition" title="Hapus">
-                                <i class="fas fa-trash-can text-xs"></i>
-                            </button>
-                            {{-- Sambungkan ke route edit backend --}}
-                            <a href="#"
-                               class="w-7 h-7 flex items-center justify-center rounded-lg
-                                      bg-yellow-50 text-yellow-400 hover:bg-yellow-100 hover:text-yellow-600
-                                      hover:scale-110 transition" title="Edit">
-                                <i class="fas fa-pen-to-square text-xs"></i>
-                            </a>
-                        </div>
-                    </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="text-center py-12 text-gray-400 text-sm">
+                    <td colspan="7" class="text-center py-12 text-gray-400 text-sm">
                         <i class="fas fa-inbox text-3xl mb-3 block opacity-30"></i>
                         Belum ada data laporan untuk bulan ini.
                     </td>
@@ -529,13 +427,6 @@ foreach ($produkTertaris as $p) {
 </div>
 
 
-{{-- Form DELETE tersembunyi — sambungkan action ke route backend --}}
-<form id="formHapus" method="POST" action="#" style="display:none">
-    @csrf
-    @method('DELETE')
-</form>
-
-
 <script>
 // ── Slider ──
 let sliderPos = 0;
@@ -543,6 +434,7 @@ const CARD_W  = 140 + 12; // card width + gap
 
 function getSliderMax() {
     const inner   = document.getElementById('sliderInner');
+    if (!inner) return 0;
     const wrapper = inner.parentElement;
     const total   = inner.children.length;
     const visible = Math.floor(wrapper.offsetWidth / CARD_W);
@@ -551,22 +443,18 @@ function getSliderMax() {
 
 function slideLeft() {
     sliderPos = Math.max(0, sliderPos - CARD_W);
-    document.getElementById('sliderInner').style.transform = `translateX(-${sliderPos}px)`;
+    const inner = document.getElementById('sliderInner');
+    if (inner) {
+        inner.style.transform = `translateX(-${sliderPos}px)`;
+    }
 }
 
 function slideRight() {
     sliderPos = Math.min(getSliderMax(), sliderPos + CARD_W);
-    document.getElementById('sliderInner').style.transform = `translateX(-${sliderPos}px)`;
-}
-
-// ── Konfirmasi hapus & kirim DELETE ke backend ──
-function confirmHapus(id) {
-    if (!confirm('Yakin ingin menghapus pesanan ' + id + '?')) return;
-    const form   = document.getElementById('formHapus');
-    // Ganti path sesuai route backend:
-    // form.action = '/admin/laporan/' + id;
-    // form.submit();
-    alert('Sambungkan form action ke route DELETE: ' + id);
+    const inner = document.getElementById('sliderInner');
+    if (inner) {
+        inner.style.transform = `translateX(-${sliderPos}px)`;
+    }
 }
 </script>
 

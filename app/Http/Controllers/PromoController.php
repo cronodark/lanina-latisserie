@@ -20,6 +20,21 @@ class PromoController extends Controller
         ]);
     }
 
+    /**
+     * Display product recommendation page for creating promotional bundles.
+     *
+     * This page shows:
+     * 1. Top 10 product pair recommendations based on association rules
+     * 2. All products sorted by sales count (ascending/descending)
+     * 3. Interactive selection for manual bundle creation
+     *
+     * The recommendation system uses Association Rules Mining to analyze
+     * transaction history and suggest product combinations that are
+     * frequently purchased together.
+     *
+     * @param Request $request Query params: ?sort=penjualan_terendah|penjualan_tertinggi
+     * @return View
+     */
     public function rekomendasi(Request $request): View
     {
         $sort = $request->query('sort', 'penjualan_terendah');
@@ -54,15 +69,34 @@ class PromoController extends Controller
     }
 
     /**
-     * Build ranked product-pair recommendations based on preorder transaction history.
+     * Build ranked product-pair recommendations using Association Rules Mining.
      *
-     * Metrics:
-     * - support(A,B): P(A and B)
-     * - confidence(A->B): P(B|A)
-     * - confidence(B->A): P(A|B)
-     * - lift: P(A and B) / (P(A) * P(B))
+     * This method analyzes historical transaction data to find frequently 
+     * co-purchased product pairs and ranks them using statistical metrics.
      *
-     * @return Collection<int, array<string, mixed>>
+     * Algorithm: 2-Itemset Association Rules (NOT Apriori)
+     * - Only handles pairs of products (2-itemsets)
+     * - No iterative candidate generation
+     * - No minimum support threshold filtering
+     *
+     * Metrics calculated:
+     * - support(A,B): P(A and B) = proportion of transactions containing both
+     * - confidence(A->B): P(B|A) = probability of B given A was purchased
+     * - confidence(B->A): P(A|B) = probability of A given B was purchased
+     * - lift: support(A,B) / (support(A) * support(B)) = co-occurrence ratio
+     * - score: weighted combination for ranking
+     *
+     * Complexity: O(T * N^2) where T = transactions, N = avg items per transaction
+     *
+     * @return Collection<int, array{
+     *   product_ids: array<int>,
+     *   products: array<string>,
+     *   support: float,
+     *   confidence_a_to_b: float,
+     *   confidence_b_to_a: float,
+     *   lift: float,
+     *   score: float
+     * }> Top 10 product pair recommendations sorted by score
      */
     private function buildPromoCombinationRanking(): Collection
     {
