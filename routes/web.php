@@ -112,9 +112,9 @@ Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])
 Route::prefix('admin/jadwal')->name('jadwal-admin.')->group(function () {
     Route::get('/kalender', [TanggalController::class, 'kalender'])->name('kalender');
 
-    Route::get('/slot', fn() => view('pages.jadwal-admin.slot'))->name('slot');
-    Route::post('/slot',                   [SlotController::class, 'store'])->name('slot.store');
-    Route::put('/slot/{id}',               [SlotController::class, 'update'])->name('slot.update');
-    Route::delete('/slot/{id}',            [SlotController::class, 'destroy'])->name('slot.destroy');
-    Route::patch('/slot/{id}/toggle',      [SlotController::class, 'toggle'])->name('slot.toggle');
+    Route::get('/slot', [SlotController::class, 'index'])->name('slot');
+    Route::post('/slot', [SlotController::class, 'store'])->name('slot.store');
+    Route::put('/slot/{id}', [SlotController::class, 'update'])->name('slot.update');
+    Route::delete('/slot/{id}', [SlotController::class, 'destroy'])->name('slot.destroy');
+    Route::patch('/slot/{id}/toggle', [SlotController::class, 'toggle'])->name('slot.toggle');
 });

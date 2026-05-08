@@ -2,17 +2,51 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PreOrder;
+use App\Models\TanggalTersedia;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class TanggalController extends Controller
 {
+    /**
+     * Display calendar view with orders grouped by date.
+     */
     public function kalender(Request $request)
     {
         $bulan = (int) $request->get('bulan', now()->month);
         $tahun = (int) $request->get('tahun', now()->year);
 
-        $semuaPesanan = collect([
+        // Get all orders for the selected month
+        $semuaPesanan = PreOrder::with(['customer', 'detailPreOrders.product', 'detailPreOrders.promo'])
+            ->whereYear('actual_periode', $tahun)
+            ->whereMonth('actual_periode', $bulan)
+            ->whereIn('status', ['processing', 'shipping', 'completed'])
+            ->get()
+            ->map(function ($order) {
+                // Get product names
+                $items = $order->detailPreOrders->map(function ($detail) {
+                    $item = $detail->type === 'promo' ? $detail->promo : $detail->product;
+                    return [
+                        'produk' => $item ? $item->name : 'Unknown',
+                        'quantity' => $detail->quantity,
+                        'type' => $detail->type,
+                    ];
+                })->toArray();
+
+                return [
+                    'tanggal' => $order->actual_periode->format('Y-m-d'),
+                    'customer' => $order->customer ? $order->customer->name : 'Unknown',
+                    'email' => $order->customer ? $order->customer->email : '-',
+                    'status' => $order->status,
+                    'total' => (int) $order->total,
+                    'items' => $items,
+                ];
+            });
+
+        // Fallback to dummy data if no orders
+        if ($semuaPesanan->isEmpty()) {
+            $semuaPesanan = collect([
             [
                 'tanggal'  => Carbon::createFromDate($tahun, $bulan, 3)->format('Y-m-d'),
                 'customer' => 'Andi Saputra',
@@ -148,6 +182,7 @@ class TanggalController extends Controller
                 ],
             ],
         ]);
+        }
 
         $pesananPerTanggal = $semuaPesanan->groupBy('tanggal');
 

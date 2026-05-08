@@ -18,10 +18,19 @@
 
 <div x-data="{
     editModal: false,
+    deleteModal: false,
     editSlot: {},
+    deleteSlot: {},
     openEdit(slot) {
         this.editSlot = { ...slot };
         this.editModal = true;
+    },
+    openDelete(slot) {
+        this.deleteSlot = { ...slot };
+        this.deleteModal = true;
+    },
+    confirmDelete() {
+        document.getElementById('deleteForm-' + this.deleteSlot.id).submit();
     }
 }">
 
@@ -179,16 +188,20 @@
                                     </form>
 
                                     {{-- Hapus --}}
-                                    <form action="{{ route('jadwal-admin.slot.destroy', $slot->id) }}" method="POST"
-                                        onsubmit="return confirm('Hapus slot ini?')">
+                                    <button type="button"
+                                        @click="openDelete({{ json_encode($slotArr) }})"
+                                        class="w-7 h-7 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                    
+                                    {{-- Hidden form for delete --}}
+                                    <form id="deleteForm-{{ $slot->id }}" 
+                                        action="{{ route('jadwal-admin.slot.destroy', $slot->id) }}" 
+                                        method="POST" style="display:none">
                                         @csrf @method('DELETE')
-                                        <button type="submit"
-                                            class="w-7 h-7 rounded-lg bg-gray-100 text-gray-400 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                            </svg>
-                                        </button>
                                     </form>
                                 </div>
                             </td>
@@ -263,6 +276,86 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+{{-- Delete Confirmation Modal --}}
+<div
+    x-show="deleteModal"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    style="display:none">
+
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="deleteModal = false"></div>
+
+    <div
+        x-show="deleteModal"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95 translate-y-3"
+        x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md z-10 overflow-hidden">
+
+        {{-- Modal Header --}}
+        <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-5">
+            <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-white text-lg font-bold">Hapus Slot?</h3>
+                    <p class="text-white/80 text-sm mt-1">Tindakan ini tidak dapat dibatalkan</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- Modal Body --}}
+        <div class="px-6 py-5">
+            <div class="bg-red-50 border border-red-100 rounded-xl p-4 mb-4">
+                <p class="text-sm text-gray-700 mb-2">
+                    Anda akan menghapus slot:
+                </p>
+                <div class="space-y-1">
+                    <p class="text-sm font-semibold text-gray-800">
+                        📅 <span x-text="deleteSlot.tanggal"></span>
+                    </p>
+                    <p class="text-xs text-gray-600">
+                        Kuota: <span x-text="deleteSlot.kuota"></span> | 
+                        Terisi: <span x-text="deleteSlot.terisi"></span> | 
+                        Status: <span x-text="deleteSlot.status"></span>
+                    </p>
+                </div>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-4">
+                Slot yang sudah dihapus tidak dapat dikembalikan. Pastikan tidak ada pesanan aktif pada tanggal ini.
+            </p>
+
+            <div class="flex gap-3">
+                <button type="button" @click="deleteModal = false"
+                    class="flex-1 py-2.5 rounded-xl bg-gray-100 text-gray-600 text-sm font-medium hover:bg-gray-200 transition">
+                    Batal
+                </button>
+                <button type="button" @click="confirmDelete()"
+                    class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                    Hapus Slot
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
