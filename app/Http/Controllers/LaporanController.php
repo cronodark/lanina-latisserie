@@ -42,7 +42,7 @@ class LaporanController extends Controller
 
         // Get sales data for selected month
         $dataBulanIni = $this->getSalesDataForMonth($tahunTerpilih, $bulanTerpilih);
-        
+
         // Get sales data for previous month
         $dataBulanLalu = $this->getSalesDataForMonth($tahunSebelumnya, $bulanSebelumnya);
 
@@ -56,7 +56,7 @@ class LaporanController extends Controller
         // Apply product filter if specified
         $jumlahSebelumnya = $dataBulanLalu['totalProdukTerjual'];
         $jumlahTerpilih = $dataBulanIni['totalProdukTerjual'];
-        
+
         if ($produkFilter && isset($jumlahProdukSebelumnya[$produkFilter])) {
             $jumlahSebelumnya = $jumlahProdukSebelumnya[$produkFilter];
             $jumlahTerpilih = $jumlahProdukTerpilih[$produkFilter];
@@ -79,21 +79,21 @@ class LaporanController extends Controller
             'totalPenjualan' => $dataBulanIni['totalPenjualan'],
             'totalPesanan' => $dataBulanIni['totalPesanan'],
             'totalProdukTerjual' => $dataBulanIni['totalProdukTerjual'],
-            
+
             // Previous month comparison
             'pendapatanSebelumnya' => $dataBulanLalu['totalPenjualan'],
             'pendapatanTerpilih' => $dataBulanIni['totalPenjualan'],
-            
+
             // Product count for chart
             'jumlahSebelumnya' => $jumlahSebelumnya,
             'jumlahTerpilih' => $jumlahTerpilih,
             'jumlahProdukSebelumnya' => $jumlahProdukSebelumnya,
             'jumlahProdukTerpilih' => $jumlahProdukTerpilih,
-            
+
             // Top products
             'produkTerlaris' => $produkTerlaris->toArray(),
             'sliderProduk' => $sliderProduk,
-            
+
             // Transaction table
             'tabelPenjualan' => $tabelPenjualan,
         ]);
@@ -144,13 +144,13 @@ class LaporanController extends Controller
 
         // Generate PDF
         $pdf = Pdf::loadView('pages.laporan.pdf', $data);
-        
+
         // Set paper size and orientation
         $pdf->setPaper('a4', 'portrait');
 
         // Download PDF
         $filename = 'Laporan_Penjualan_' . $bulanNama . '_' . $tahunTerpilih . '.pdf';
-        
+
         return $pdf->download($filename);
     }
 
@@ -326,8 +326,8 @@ class LaporanController extends Controller
                 'nama_pelanggan' => $order->customer ? $order->customer->name : 'Unknown',
                 'nama_produk' => $productNames ?: 'No products',
                 'tanggal_pembelian' => $order->created_at->format('d/m/y'),
-                'tanggal_pengantaran' => $order->actual_periode 
-                    ? $order->actual_periode->format('d/m/y') 
+                'tanggal_pengantaran' => $order->actual_periode
+                    ? $order->actual_periode->format('d/m/y')
                     : ($order->end_periode ? $order->end_periode->format('d/m/y') : '-'),
                 'total_harga' => (int) $order->total,
                 'status' => $statusMap[$order->status] ?? ucfirst($order->status),

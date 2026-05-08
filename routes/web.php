@@ -114,6 +114,9 @@ Route::get('/api/tanggal-tersedia/{tanggal}', [TanggalTersediaController::class,
 Route::resource('pesanan', PesananController::class);
 Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
 
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])
+    ->name('pesanan.destroy');
 Route::prefix('admin/jadwal')->name('jadwal-admin.')->group(function () {
     Route::get('/kalender', [TanggalController::class, 'kalender'])->name('kalender');
 
