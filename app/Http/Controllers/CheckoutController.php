@@ -6,6 +6,7 @@ use App\Models\PreOrder;
 use App\Models\PreOrderDetail;
 use App\Models\Product;
 use App\Models\Promo;
+use App\Models\TanggalTersedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -70,35 +71,58 @@ class CheckoutController extends Controller
                 Rule::exists('addresses', 'id')->where(fn ($query) => $query->where('user_id', Auth::id())),
             ],
             'send_type' => 'required|in:pickUp,kurirEkspedisi,kurirToko',
-            'actual_periode' => ['nullable', 'date'],
+            'actual_periode' => ['required', 'date', 'after_or_equal:today'],
         ]);
 
         $preOrder = null;
 
-        DB::transaction(function () use ($items, $total, $validated, &$preOrder) {
-            $preOrder = PreOrder::create([
-                'actual_periode' => $validated['actual_periode'] ?? now()->addDays(2)->toDateString(),
-                'status' => 'unpaid',
-                'start_periode' => now()->toDateString(),
-                'end_periode' => null,
-                'total' => $total,
-                'send_type' => $validated['send_type'] ?? 'pickUp',
-                'tracking_number' => null,
-                'choosen_expedition' => null,
-                'address_id' => $validated['address_id'] ?? null,
-                'user_id' => Auth::id(),
-            ]);
+        try {
+            DB::transaction(function () use ($items, $total, $validated, &$preOrder) {
+                // Lock row untuk mencegah race condition
+                $tanggalTersedia = TanggalTersedia::where('tanggal', $validated['actual_periode'])
+                    ->lockForUpdate()
+                    ->first();
+                
+                if (!$tanggalTersedia) {
+                    throw new \Exception('Tanggal yang dipilih tidak tersedia untuk pre-order.');
+                }
 
-            foreach ($items as $item) {
-                PreOrderDetail::create([
-                    'quantity' => $item['qty'],
-                    'type' => $item['type'],
-                    'product_id' => $item['type'] === 'product' ? $item['id'] : null,
-                    'promo_id' => $item['type'] === 'promo' ? $item['id'] : null,
-                    'pre_order_id' => $preOrder->id,
+                if (!$tanggalTersedia->is_aktif) {
+                    throw new \Exception('Tanggal yang dipilih sedang tidak aktif.');
+                }
+
+                if ($tanggalTersedia->sisa_kuota <= 0) {
+                    throw new \Exception('Slot untuk tanggal ini sudah penuh. Silakan pilih tanggal lain.');
+                }
+
+                $preOrder = PreOrder::create([
+                    'actual_periode' => $validated['actual_periode'],
+                    'status' => 'unpaid',
+                    'start_periode' => now()->toDateString(),
+                    'end_periode' => null,
+                    'total' => $total,
+                    'send_type' => $validated['send_type'] ?? 'pickUp',
+                    'tracking_number' => null,
+                    'choosen_expedition' => null,
+                    'address_id' => $validated['address_id'] ?? null,
+                    'user_id' => Auth::id(),
                 ]);
-            }
-        });
+
+                foreach ($items as $item) {
+                    PreOrderDetail::create([
+                        'quantity' => $item['qty'],
+                        'type' => $item['type'],
+                        'product_id' => $item['type'] === 'product' ? $item['id'] : null,
+                        'promo_id' => $item['type'] === 'promo' ? $item['id'] : null,
+                        'pre_order_id' => $preOrder->id,
+                    ]);
+                }
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
 
         if (! $preOrder instanceof PreOrder) {
             return redirect()->route('checkout.index')

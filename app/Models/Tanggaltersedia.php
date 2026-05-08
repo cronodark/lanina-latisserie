@@ -36,12 +36,13 @@ class TanggalTersedia extends Model
     // ─── Accessor ─────────────────────────────────────────────────────────────
 
     /**
-     * Jumlah slot yang sudah terisi (total pesanan paid/shipping/completed).
+     * Jumlah slot yang sudah terisi (total pesanan termasuk unpaid untuk lock slot).
+     * Lock slot sejak order dibuat untuk mencegah race condition dan overbooking.
      */
     public function getTerisiAttribute(): int
     {
         return $this->preOrders()
-            ->whereIn('status', ['paid', 'shipping', 'completed'])
+            ->whereIn('status', ['unpaid', 'paid', 'processing', 'shipping', 'completed'])
             ->count();
     }
 
