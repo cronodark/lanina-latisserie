@@ -2,26 +2,256 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PreOrderDetail;
 use App\Models\Product;
 use App\Models\Promo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 class PromoController extends Controller
 {
+    public function show(Promo $promo): View
+    {
+        return view('pages.promo.show', [
+            'title' => 'Detail Promosi',
+            'promo' => $promo,
+        ]);
+    }
+
+    /**
+     * Display product recommendation page for creating promotional bundles.
+     *
+     * This page shows:
+     * 1. Top 10 product pair recommendations based on association rules
+     * 2. All products sorted by sales count (ascending/descending)
+     * 3. Interactive selection for manual bundle creation
+     *
+     * The recommendation system uses Association Rules Mining to analyze
+     * transaction history and suggest product combinations that are
+     * frequently purchased together.
+     *
+     * @param Request $request Query params: ?sort=penjualan_terendah|penjualan_tertinggi
+     * @return View
+     */
     public function rekomendasi(Request $request): View
     {
-        $products = Product::all();
+        $sort = $request->query('sort', 'penjualan_terendah');
+        $salesCounts = $this->buildProductSalesCounts();
+
+        $products = Product::query()
+            ->get()
+            ->sort(function (Product $left, Product $right) use ($sort, $salesCounts) {
+                $leftSales = $salesCounts[$left->id] ?? 0;
+                $rightSales = $salesCounts[$right->id] ?? 0;
+
+                if ($leftSales === $rightSales) {
+                    return strcasecmp($left->name, $right->name);
+                }
+
+                if ($sort === 'penjualan_tertinggi') {
+                    return $rightSales <=> $leftSales;
+                }
+
+                return $leftSales <=> $rightSales;
+            })
+            ->values();
+
+        $recommendedCombinations = $this->buildPromoCombinationRanking();
 
         return view('pages.promo-admin.rekomendasi', [
-            'title'    => 'Rekomendasi Produk Promosi',
+            'title' => 'Rekomendasi Produk Promosi',
             'products' => $products,
+            'salesCounts' => $salesCounts,
+            'recommendedCombinations' => $recommendedCombinations,
         ]);
+    }
+
+    /**
+     * Build ranked product-pair recommendations using Association Rules Mining.
+     *
+     * This method analyzes historical transaction data to find frequently 
+     * co-purchased product pairs and ranks them using statistical metrics.
+     *
+     * Algorithm: 2-Itemset Association Rules (NOT Apriori)
+     * - Only handles pairs of products (2-itemsets)
+     * - No iterative candidate generation
+     * - No minimum support threshold filtering
+     *
+     * Metrics calculated:
+     * - support(A,B): P(A and B) = proportion of transactions containing both
+     * - confidence(A->B): P(B|A) = probability of B given A was purchased
+     * - confidence(B->A): P(A|B) = probability of A given B was purchased
+     * - lift: support(A,B) / (support(A) * support(B)) = co-occurrence ratio
+     * - score: weighted combination for ranking
+     *
+     * Complexity: O(T * N^2) where T = transactions, N = avg items per transaction
+     *
+     * @return Collection<int, array{
+     *   product_ids: array<int>,
+     *   products: array<string>,
+     *   support: float,
+     *   confidence_a_to_b: float,
+     *   confidence_b_to_a: float,
+     *   lift: float,
+     *   score: float
+     * }> Top 10 product pair recommendations sorted by score
+     */
+    private function buildPromoCombinationRanking(): Collection
+    {
+        $validStatuses = ['processing', 'shipping', 'completed'];
+
+        $rawDetails = PreOrderDetail::query()
+            ->select(['pre_order_id', 'product_id'])
+            ->whereNotNull('product_id')
+            ->whereHas('preOrder', function ($query) use ($validStatuses) {
+                $query->whereIn('status', $validStatuses);
+            })
+            ->orderBy('pre_order_id')
+            ->get();
+
+        if ($rawDetails->isEmpty()) {
+            return collect();
+        }
+
+        $transactions = $rawDetails
+            ->groupBy('pre_order_id')
+            ->map(function (Collection $details): array {
+                return $details
+                    ->pluck('product_id')
+                    ->filter()
+                    ->map(fn($id) => (int) $id)
+                    ->unique()
+                    ->values()
+                    ->all();
+            })
+            ->filter(fn(array $items) => count($items) >= 2)
+            ->values();
+
+        $transactionCount = $transactions->count();
+        if ($transactionCount === 0) {
+            return collect();
+        }
+
+        $productFrequency = [];
+        $pairFrequency = [];
+
+        foreach ($transactions as $items) {
+            foreach ($items as $productId) {
+                $productFrequency[$productId] = ($productFrequency[$productId] ?? 0) + 1;
+            }
+
+            $itemCount = count($items);
+            for ($i = 0; $i < $itemCount - 1; $i++) {
+                for ($j = $i + 1; $j < $itemCount; $j++) {
+                    $left = min($items[$i], $items[$j]);
+                    $right = max($items[$i], $items[$j]);
+                    $pairKey = $left . ':' . $right;
+                    $pairFrequency[$pairKey] = ($pairFrequency[$pairKey] ?? 0) + 1;
+                }
+            }
+        }
+
+        if (empty($pairFrequency)) {
+            return collect();
+        }
+
+        $products = Product::query()
+            ->whereIn('id', array_keys($productFrequency))
+            ->get()
+            ->keyBy('id');
+
+        $ranked = collect();
+
+        foreach ($pairFrequency as $pairKey => $pairCount) {
+            [$leftId, $rightId] = array_map('intval', explode(':', $pairKey));
+            $leftFrequency = $productFrequency[$leftId] ?? 0;
+            $rightFrequency = $productFrequency[$rightId] ?? 0;
+
+            if ($leftFrequency === 0 || $rightFrequency === 0) {
+                continue;
+            }
+
+            $leftProduct = $products->get($leftId);
+            $rightProduct = $products->get($rightId);
+            if (! $leftProduct || ! $rightProduct) {
+                continue;
+            }
+
+            $support = $pairCount / $transactionCount;
+            $confidenceLeftToRight = $pairCount / $leftFrequency;
+            $confidenceRightToLeft = $pairCount / $rightFrequency;
+            $lift = $support / (($leftFrequency / $transactionCount) * ($rightFrequency / $transactionCount));
+
+            $ranked->push([
+                'product_ids' => [$leftId, $rightId],
+                'products' => [$leftProduct->name, $rightProduct->name],
+                'support' => $support,
+                'confidence_a_to_b' => $confidenceLeftToRight,
+                'confidence_b_to_a' => $confidenceRightToLeft,
+                'lift' => $lift,
+                // Weighted score to prioritize strong and frequent combinations.
+                'score' => ($support * 0.4) + (max($confidenceLeftToRight, $confidenceRightToLeft) * 0.3) + (min($lift / 3, 1) * 0.3),
+            ]);
+        }
+
+        return $ranked
+            ->sortByDesc(fn(array $item) => $item['score'])
+            ->values()
+            ->take(10);
+    }
+
+    /**
+     * Count how often each product appears in completed preorder transactions.
+     *
+     * @return array<int, int>
+     */
+    private function buildProductSalesCounts(): array
+    {
+        $validStatuses = ['processing', 'shipping', 'completed'];
+
+        $rawDetails = PreOrderDetail::query()
+            ->select(['pre_order_id', 'product_id'])
+            ->whereNotNull('product_id')
+            ->whereHas('preOrder', function ($query) use ($validStatuses) {
+                $query->whereIn('status', $validStatuses);
+            })
+            ->orderBy('pre_order_id')
+            ->get();
+
+        if ($rawDetails->isEmpty()) {
+            return [];
+        }
+
+        $transactions = $rawDetails
+            ->groupBy('pre_order_id')
+            ->map(function (Collection $details): array {
+                return $details
+                    ->pluck('product_id')
+                    ->filter()
+                    ->map(fn($id) => (int) $id)
+                    ->unique()
+                    ->values()
+                    ->all();
+            })
+            ->filter(fn(array $items) => count($items) > 0);
+
+        $salesCounts = [];
+
+        foreach ($transactions as $items) {
+            foreach ($items as $productId) {
+                $salesCounts[$productId] = ($salesCounts[$productId] ?? 0) + 1;
+            }
+        }
+
+        return $salesCounts;
     }
 
     public function produkDalamPromosi(): View
     {
+        Promo::synchronizeStatuses();
+
         $promos = Promo::where('status', 'active')->get();
 
         return view('pages.promo-admin.produk-dalam-promosi', [
@@ -32,9 +262,18 @@ class PromoController extends Controller
 
     public function status(string $tab): View
     {
-        $promos = match($tab) {
+        Promo::synchronizeStatuses();
+
+        $tab = match ($tab) {
+            'active' => 'aktif',
+            'scheduled' => 'terjadwal',
+            'inactive' => 'berakhir',
+            default => $tab,
+        };
+
+        $promos = match ($tab) {
             'terjadwal' => Promo::where('status', 'scheduled')->get(),
-            'berakhir'  => Promo::where('status', 'expired')->get(),
+            'berakhir'  => Promo::where('status', 'inactive')->get(),
             default     => Promo::where('status', 'active')->get(),
         };
 
@@ -57,31 +296,56 @@ class PromoController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        $selectedProductIds = collect($request->input('product_ids', []))
+            ->filter()
+            ->values();
+
         $request->validate([
-            'name'         => ['nullable', 'string', 'max:255'],
-            'actual_price' => ['required', 'integer', 'min:0'],
+            'name'         => ['required', 'string', 'max:50', 'unique:promos,name'],
+            'actual_price' => ['nullable', 'integer', 'min:0'],
             'price'        => ['required', 'integer', 'min:0'],
             'date_start'   => ['nullable', 'date'],
             'date_until'   => ['required', 'date'],
             'stok'         => ['nullable', 'integer', 'min:0'],
             'description'  => ['nullable', 'string'],
-            'image'        => ['nullable', 'image', 'max:2048'],
+            'image'        => array_merge(
+                $selectedProductIds->count() > 2 ? ['required'] : ['nullable'],
+                ['image', 'max:2048']
+            ),
+            'product_ids'  => ['required', 'array', 'min:1'],
+            'product_ids.*'=> ['integer', 'exists:products,id'],
         ]);
 
+        $productIds = collect($request->input('product_ids', []))
+            ->map(fn($productId) => (int) $productId)
+            ->values();
+
+        $actualPrice = Product::query()
+            ->whereIn('id', $productIds)
+            ->sum('price');
+
         $promo = Promo::create([
-            'name'         => $request->name ?? '-',
-            'actual_price' => $request->actual_price,
+            'name'         => $request->name,
+            'actual_price' => $actualPrice,
             'price'        => $request->price,
             'date_start'   => $request->date_start,
             'date_until'   => $request->date_until,
             'stok'         => $request->stok,
             'description'  => $request->description,
-            'status'       => 'active',
+            'status'       => Promo::resolveStatus($request->date_start, $request->date_until),
         ]);
+
+
 
         if ($request->hasFile('image')) {
             $promo->addMediaFromRequest('image')
-                  ->toMediaCollection(Promo::MEDIA_COLLECTION);
+                ->toMediaCollection(Promo::MEDIA_COLLECTION);
+        }
+
+        foreach ($productIds as $productId) {
+            $promo->promoDetails()->create([
+                'product_id' => $productId,
+            ]);
         }
 
         return redirect()
@@ -103,13 +367,13 @@ class PromoController extends Controller
     public function update(Request $request, Promo $promo): RedirectResponse
     {
         $request->validate([
-            'name'         => ['nullable', 'string', 'max:255'],
+            'name'         => ['required', 'string', 'max:255'],
             'actual_price' => ['required', 'integer', 'min:0'],
             'price'        => ['required', 'integer', 'min:0'],
-            'date_start'   => ['nullable', 'date'],
+            'date_start'   => ['required', 'date'],
             'date_until'   => ['required', 'date'],
-            'stok'         => ['nullable', 'integer', 'min:0'],
-            'description'  => ['nullable', 'string'],
+            'stok'         => ['required', 'integer', 'min:0'],
+            'description'  => ['required', 'string'],
             'image'        => ['nullable', 'image', 'max:2048'],
         ]);
 
@@ -121,11 +385,12 @@ class PromoController extends Controller
             'date_until'   => $request->date_until,
             'stok'         => $request->stok,
             'description'  => $request->description,
+            'status'       => Promo::resolveStatus($request->date_start, $request->date_until),
         ]);
 
         if ($request->hasFile('image')) {
             $promo->addMediaFromRequest('image')
-                  ->toMediaCollection(Promo::MEDIA_COLLECTION);
+                ->toMediaCollection(Promo::MEDIA_COLLECTION);
         }
 
         return redirect()

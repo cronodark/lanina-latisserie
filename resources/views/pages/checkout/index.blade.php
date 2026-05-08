@@ -100,7 +100,7 @@
                     <input type="hidden" name="address_id" id="address-id-input" value="{{ $selectedAddressId }}">
                     <input type="hidden" name="send_type" id="send-type-input" value="pickUp">
                     <input type="hidden" name="payment_bank" id="payment-bank-input" value="bca">
-                    <input type="hidden" name="actual_periode" value="{{ $pickupDate }}">
+                    <input type="hidden" name="actual_periode" id="actual-periode-input" value="">
 
                     {{-- ===== SECTION 2: Metode Kirim ===== --}}
                     <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
@@ -115,6 +115,24 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                             </svg>
                         </div>
+                    </div>
+
+                    {{-- ===== SECTION 2.5: Tanggal Pengambilan ===== --}}
+                    <div class="bg-white rounded-[20px] px-8 py-7 shadow-[0_3px_16px_rgba(0,0,0,0.06)]">
+                        <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-xl mb-4">
+                            Tanggal Pengambilan/Pengiriman
+                        </h2>
+                        <div id="open-date-modal"
+                            class="flex items-center justify-between pb-4 border-b border-[#E8E0D4] cursor-pointer hover:opacity-75 transition-opacity">
+                            <span id="selected-date-label" class="font-glacial text-[#6B4C3B] text-sm">Pilih tanggal...</span>
+                            <svg class="w-5 h-5 text-[#7A8C5C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <p class="text-xs text-[#9A8878] mt-2">
+                            Pilih tanggal yang tersedia untuk pengambilan atau pengiriman pesanan Anda
+                        </p>
                     </div>
 
                     {{-- ===== SECTION 3: Metode Pembayaran ===== --}}
@@ -167,4 +185,5 @@
     @include('modalAlamat')
     @include('modalpembayaran')
     @include('modalpengiriman')
+    @include('modalTanggal')
 @endsection

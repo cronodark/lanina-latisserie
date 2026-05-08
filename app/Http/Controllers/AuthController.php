@@ -34,10 +34,10 @@ class AuthController extends Controller
             $user = $request->user();
 
             if ($user && $user->hasRole('admin')) {
-                return redirect()->route('dashboard');
+                return redirect()->route('dashboard')->with('success', 'Login berhasil. Selamat datang, Admin.');
             }
 
-            return redirect()->route('beranda');
+            return redirect()->route('beranda')->with('success', 'Login berhasil. Selamat datang kembali, ' . $user->name . '.');
         }
 
         return back()->withErrors([
@@ -87,6 +87,6 @@ class AuthController extends Controller
         request()->session()->invalidate();
         request()->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('login')->with('success', 'Anda telah berhasil logout.');
     }
 }

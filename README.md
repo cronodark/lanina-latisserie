@@ -1,11 +1,176 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Lanina Patisserie - E-Commerce System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem e-commerce berbasis Laravel 11 untuk toko kue/patisserie dengan fitur pre-order, manajemen promosi, dan sistem rekomendasi produk.
+
+## Fitur Utama
+
+### 🛒 Pre-Order System
+- Shopping cart dengan Livewire
+- Multiple payment methods via Midtrans
+- Order tracking (unpaid → processing → shipping → completed)
+- Address management untuk customer
+
+### 🎁 Promo Management
+- Bundle promosi (multiple products)
+- Status otomatis: active, scheduled, inactive
+- Perhitungan diskon otomatis
+- Stok management
+
+### 📊 Sistem Rekomendasi Promosi
+Lanina Patisserie menggunakan **Association Rules Mining** untuk menganalisis pola pembelian dan merekomendasikan kombinasi produk untuk bundle promosi.
+
+**Metrik yang digunakan**:
+- **Support**: Frekuensi co-occurrence produk dalam transaksi
+- **Confidence**: Probabilitas kondisional pembelian
+- **Lift**: Rasio co-occurrence vs random
+
+**Dokumentasi lengkap**: Lihat [RECOMMENDATION_SYSTEM.md](RECOMMENDATION_SYSTEM.md)
+
+**Akses**: `/admin/promo/rekomendasi` (Admin only)
+
+### 📈 Dashboard Admin
+- Total pendapatan & statistik pesanan
+- Grafik penjualan (per hari/bulan)
+- Dynamic filtering
+- Tabel pesanan terbaru
+
+### 📅 Jadwal Management
+- Kalender ketersediaan tanggal
+- Slot management untuk kapasitas produksi
+
+### 👥 User Management
+- Role-based access (Admin & Customer)
+- Profile management
+- Multiple address per user
+
+## Tech Stack
+
+- **Backend**: Laravel 11 (PHP 8.2+)
+- **Frontend**: Tailwind CSS 4.2 + Livewire 4.2
+- **Database**: MySQL/PostgreSQL
+- **Payment**: Midtrans
+- **Media**: Spatie Media Library
+- **Permissions**: Spatie Laravel Permission
+
+## Installation
+
+### Requirements
+- PHP 8.2 or higher
+- Composer
+- Node.js & NPM
+- MySQL/PostgreSQL
+
+### Setup
+
+1. Clone repository
+```bash
+git clone <repository-url>
+cd lanina-patisserie
+```
+
+2. Install dependencies
+```bash
+composer install
+npm install
+```
+
+3. Setup environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. Configure database di `.env`
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=lanina_patisserie
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+5. Configure Midtrans di `.env`
+```env
+MIDTRANS_SERVER_KEY=your_server_key
+MIDTRANS_CLIENT_KEY=your_client_key
+MIDTRANS_IS_PRODUCTION=false
+```
+
+6. Run migrations
+```bash
+php artisan migrate
+```
+
+7. Create storage link
+```bash
+php artisan storage:link
+```
+
+8. Build assets
+```bash
+npm run dev  # development
+npm run build  # production
+```
+
+9. Run server
+```bash
+php artisan serve
+```
+
+10. Access application
+```
+http://localhost:8000
+```
+
+## Default Credentials
+
+Setelah seeding (jika ada):
+- **Admin**: admin@lanina.com / password
+- **Customer**: customer@lanina.com / password
+
+## Project Structure
+
+```
+lanina-patisserie/
+├── app/
+│   ├── Http/Controllers/     # 16 controllers
+│   ├── Livewire/             # 4 Livewire components
+│   ├── Models/               # 8 models
+│   └── Services/             # Business logic (future)
+├── database/
+│   └── migrations/           # 19 migrations
+├── resources/
+│   └── views/
+│       ├── layouts/          # Admin & customer layouts
+│       ├── pages/            # 16 page directories
+│       └── livewire/         # Livewire views
+├── routes/
+│   └── web.php               # 122 lines routing
+└── public/                   # Static assets
+```
+
+## Documentation
+
+- [Sistem Rekomendasi](RECOMMENDATION_SYSTEM.md) - Association Rules Mining
+- [API Documentation](#) - Coming soon
+- [Deployment Guide](#) - Coming soon
+
+## Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+## License
+
+This project is licensed under the MIT License.
+
+---
 
 ## About Laravel
 

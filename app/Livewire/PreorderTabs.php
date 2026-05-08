@@ -11,6 +11,8 @@ use Livewire\Component;
 class PreorderTabs extends Component
 {
     public string $tab = 'belum-bayar';
+    public ?int $selectedOrderId = null;
+    public bool $showDetailModal = false;
 
     protected array $allowedTabs = ['belum-bayar', 'diproses', 'diantar', 'selesai'];
 
@@ -28,37 +30,37 @@ class PreorderTabs extends Component
         $this->tab = $this->sanitizeTab($tab);
     }
 
-    public function getOrdersProperty(): Collection
+    public function openDetail(int $preOrderId): void
     {
-        $userId = Auth::id();
+        $order = $this->findUserOrder($preOrderId);
 
-        if (! $userId) {
-            return collect();
+        if (! $order) {
+            session()->flash('error', 'Pesanan tidak ditemukan.');
+
+            return;
         }
 
-        return PreOrder::query()
-            ->where('user_id', $userId)
-            ->with([
-                'detailPreOrders.product:id,name,description,price',
-                'detailPreOrders.promo:id,name,description,price',
-                'detailPreOrders.product.media',
-                'detailPreOrders.promo.media',
-            ])
+        $this->selectedOrderId = $order->id;
+        $this->showDetailModal = true;
+    }
+
+    public function closeDetailModal(): void
+    {
+        $this->showDetailModal = false;
+        $this->selectedOrderId = null;
+    }
+
+    public function getOrdersProperty(): Collection
+    {
+        return $this->baseOrderQuery()
             ->when($this->tab === 'belum-bayar', function ($query) {
-                $query->where(function ($inner) {
-                    $inner->where('payment_status', 'unpaid')
-                        ->orWhereIn('status', ['pending', 'unpaid']);
-                });
+                $query->whereIn('status', ['unpaid', 'expired', 'failed']);
             })
             ->when($this->tab === 'diproses', function ($query) {
                 $query->where('status', 'processing');
             })
             ->when($this->tab === 'diantar', function ($query) {
-                $query->whereIn('status', ['shipping', 'diantar', 'delivering', 'siap_diambil', 'ready_pickup'])
-                    ->orWhere(function ($inner) {
-                        $inner->where('send_type', 'pickUp')
-                            ->whereIn('status', ['siap_diambil', 'ready_pickup']);
-                    });
+                $query->whereIn('status', ['shipping', 'diantar', 'delivering', 'siap_diambil', 'ready_pickup']);
             })
             ->when($this->tab === 'selesai', function ($query) {
                 $query->whereIn('status', ['completed', 'selesai', 'done']);
@@ -67,12 +69,18 @@ class PreorderTabs extends Component
             ->get();
     }
 
+    public function getSelectedOrderProperty(): ?PreOrder
+    {
+        if (! $this->selectedOrderId) {
+            return null;
+        }
+
+        return $this->findUserOrder($this->selectedOrderId);
+    }
+
     public function pay(int $preOrderId)
     {
-        $order = PreOrder::query()
-            ->where('id', $preOrderId)
-            ->where('user_id', Auth::id())
-            ->first();
+        $order = $this->findUserOrder($preOrderId);
 
         if (! $order || ! $order->payment_redirect_url) {
             session()->flash('error', 'Link pembayaran tidak tersedia untuk pesanan ini.');
@@ -85,11 +93,7 @@ class PreorderTabs extends Component
 
     public function cancel(int $preOrderId): void
     {
-        $order = PreOrder::query()
-            ->where('id', $preOrderId)
-            ->where('user_id', Auth::id())
-            ->where('payment_status', 'unpaid')
-            ->first();
+        $order = $this->findUserOrder($preOrderId, true);
 
         if (! $order) {
             session()->flash('error', 'Pesanan tidak dapat dibatalkan.');
@@ -99,7 +103,6 @@ class PreorderTabs extends Component
 
         $order->update([
             'status' => 'cancelled',
-            'payment_status' => 'cancelled',
         ]);
 
         session()->flash('success', 'Pesanan berhasil dibatalkan.');
@@ -107,10 +110,7 @@ class PreorderTabs extends Component
 
     public function confirmReceived(int $preOrderId): void
     {
-        $order = PreOrder::query()
-            ->where('id', $preOrderId)
-            ->where('user_id', Auth::id())
-            ->first();
+        $order = $this->findUserOrder($preOrderId);
 
         if (! $order) {
             session()->flash('error', 'Pesanan tidak ditemukan.');
@@ -138,10 +138,10 @@ class PreorderTabs extends Component
 
         $orders = PreOrder::query()
             ->where('user_id', Auth::id())
-            ->get(['status', 'payment_status', 'send_type']);
+            ->get(['status', 'send_type']);
 
         foreach ($orders as $order) {
-            if ($order->payment_status === 'unpaid' || in_array($order->status, ['pending', 'unpaid'], true)) {
+            if (in_array($order->status, ['unpaid', 'expired', 'failed'], true)) {
                 $counts['belum-bayar']++;
                 continue;
             }
@@ -166,12 +166,12 @@ class PreorderTabs extends Component
 
     public function orderTotal(PreOrder $order): int
     {
-        return $order->detailPreOrders->sum(function ($detail) {
+        return (int) $order->detailPreOrders->reduce(function (int $carry, $detail) {
             $item = $detail->type === 'promo' ? $detail->promo : $detail->product;
             $price = (int) ($item->price ?? 0);
 
-            return $price * (int) $detail->quantity;
-        });
+            return $carry + ($price * (int) $detail->quantity);
+        }, 0);
     }
 
     public function orderTitle(PreOrder $order): string
@@ -243,6 +243,35 @@ class PreorderTabs extends Component
     private function sanitizeTab(string $tab): string
     {
         return in_array($tab, $this->allowedTabs, true) ? $tab : 'belum-bayar';
+    }
+
+    private function baseOrderQuery()
+    {
+        $userId = Auth::id();
+
+        if (! $userId) {
+            return PreOrder::query()->whereRaw('1 = 0');
+        }
+
+        return PreOrder::query()
+            ->where('user_id', $userId)
+            ->with([
+                'detailPreOrders.product:id,name,description,price',
+                'detailPreOrders.promo:id,name,description,price',
+                'detailPreOrders.product.media',
+                'detailPreOrders.promo.media',
+                'address',
+            ]);
+    }
+
+    private function findUserOrder(int $preOrderId, bool $unpaidOnly = false): ?PreOrder
+    {
+        return $this->baseOrderQuery()
+            ->where('id', $preOrderId)
+            ->when($unpaidOnly, function ($query) {
+                $query->whereIn('status', ['unpaid', 'expired', 'failed']);
+            })
+            ->first();
     }
 
     private function resolveDetailItem($detail)

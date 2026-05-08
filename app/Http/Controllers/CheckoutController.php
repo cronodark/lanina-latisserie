@@ -6,6 +6,7 @@ use App\Models\PreOrder;
 use App\Models\PreOrderDetail;
 use App\Models\Product;
 use App\Models\Promo;
+use App\Models\TanggalTersedia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,7 +57,7 @@ class CheckoutController extends Controller
                 ->with('error', 'Pilih minimal 1 item untuk checkout.');
         }
 
-        [$items] = $this->buildCheckoutItems($checkedCart);
+        [$items, $total] = $this->buildCheckoutItems($checkedCart);
 
         if (empty($items)) {
             return redirect()->route('cart.index')
@@ -70,35 +71,58 @@ class CheckoutController extends Controller
                 Rule::exists('addresses', 'id')->where(fn ($query) => $query->where('user_id', Auth::id())),
             ],
             'send_type' => 'required|in:pickUp,kurirEkspedisi,kurirToko',
-            'actual_periode' => ['nullable', 'date'],
+            'actual_periode' => ['required', 'date', 'after_or_equal:today'],
         ]);
 
         $preOrder = null;
 
-        DB::transaction(function () use ($items, $validated, &$preOrder) {
-            $preOrder = PreOrder::create([
-                'actual_periode' => $validated['actual_periode'] ?? now()->addDays(2)->toDateString(),
-                'status' => 'pending',
-                'payment_status' => 'unpaid',
-                'start_periode' => now()->toDateString(),
-                'end_periode' => null,
-                'send_type' => $validated['send_type'] ?? 'pickUp',
-                'tracking_number' => null,
-                'choosen_expedition' => null,
-                'address_id' => $validated['address_id'] ?? null,
-                'user_id' => Auth::id(),
-            ]);
+        try {
+            DB::transaction(function () use ($items, $total, $validated, &$preOrder) {
+                // Lock row untuk mencegah race condition
+                $tanggalTersedia = TanggalTersedia::where('tanggal', $validated['actual_periode'])
+                    ->lockForUpdate()
+                    ->first();
+                
+                if (!$tanggalTersedia) {
+                    throw new \Exception('Tanggal yang dipilih tidak tersedia untuk pre-order.');
+                }
 
-            foreach ($items as $item) {
-                PreOrderDetail::create([
-                    'quantity' => $item['qty'],
-                    'type' => $item['type'],
-                    'product_id' => $item['type'] === 'product' ? $item['id'] : null,
-                    'promo_id' => $item['type'] === 'promo' ? $item['id'] : null,
-                    'pre_order_id' => $preOrder->id,
+                if (!$tanggalTersedia->is_aktif) {
+                    throw new \Exception('Tanggal yang dipilih sedang tidak aktif.');
+                }
+
+                if ($tanggalTersedia->sisa_kuota <= 0) {
+                    throw new \Exception('Slot untuk tanggal ini sudah penuh. Silakan pilih tanggal lain.');
+                }
+
+                $preOrder = PreOrder::create([
+                    'actual_periode' => $validated['actual_periode'],
+                    'status' => 'unpaid',
+                    'start_periode' => now()->toDateString(),
+                    'end_periode' => null,
+                    'total' => $total,
+                    'send_type' => $validated['send_type'] ?? 'pickUp',
+                    'tracking_number' => null,
+                    'choosen_expedition' => null,
+                    'address_id' => $validated['address_id'] ?? null,
+                    'user_id' => Auth::id(),
                 ]);
-            }
-        });
+
+                foreach ($items as $item) {
+                    PreOrderDetail::create([
+                        'quantity' => $item['qty'],
+                        'type' => $item['type'],
+                        'product_id' => $item['type'] === 'product' ? $item['id'] : null,
+                        'promo_id' => $item['type'] === 'promo' ? $item['id'] : null,
+                        'pre_order_id' => $preOrder->id,
+                    ]);
+                }
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
 
         if (! $preOrder instanceof PreOrder) {
             return redirect()->route('checkout.index')
@@ -153,13 +177,12 @@ class CheckoutController extends Controller
 
         $preOrder->refresh();
 
-        if ($preOrder->payment_status === 'paid') {
-            return redirect()->route('cart.index')
-                ->with('success', 'Pembayaran terverifikasi. Pesanan Anda sedang diproses.');
-        }
+        $message = $preOrder->status === 'processing'
+            ? 'Pembayaran terverifikasi. Pesanan Anda sedang diproses.'
+            : 'Pesanan berhasil dibuat. Pembayaran belum terverifikasi, silakan selesaikan pembayaran dari halaman pesanan.';
 
-        return redirect()->route('cart.index')
-            ->with('error', 'Pembayaran belum terverifikasi. Coba cek kembali beberapa saat lagi.');
+        return redirect()->route('profile.preorder.index')
+            ->with('success', $message);
     }
 
     private function sessionKey(): string
@@ -304,17 +327,19 @@ class CheckoutController extends Controller
             (string) ($statusData['fraud_status'] ?? '')
         );
 
+        $mappedStatus = $this->mapMidtransStatus(
+            (string) ($statusData['transaction_status'] ?? ''),
+            (string) ($statusData['fraud_status'] ?? '')
+        );
+
         $updates = [
-            'payment_status' => $mappedStatus,
+            'status' => $mappedStatus,
             'payment_method' => $statusData['payment_type'] ?? $preOrder->payment_method,
             'midtrans_transaction_id' => $statusData['transaction_id'] ?? $preOrder->midtrans_transaction_id,
         ];
 
-        if ($mappedStatus === 'paid') {
-            $updates['status'] = 'processing';
+        if ($mappedStatus === 'processing') {
             $updates['paid_at'] = $preOrder->paid_at ?? now();
-        } elseif (in_array($mappedStatus, ['expired', 'failed', 'cancelled', 'refunded'], true)) {
-            $updates['status'] = 'cancelled';
         }
 
         $preOrder->update($updates);
@@ -323,8 +348,8 @@ class CheckoutController extends Controller
     private function mapMidtransStatus(string $transactionStatus, string $fraudStatus): string
     {
         return match ($transactionStatus) {
-            'settlement' => 'paid',
-            'capture' => $fraudStatus === 'accept' ? 'paid' : 'unpaid',
+            'settlement' => 'processing',
+            'capture' => $fraudStatus === 'accept' ? 'processing' : 'unpaid',
             'pending' => 'unpaid',
             'expire' => 'expired',
             'deny' => 'failed',

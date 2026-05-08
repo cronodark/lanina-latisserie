@@ -18,15 +18,6 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
-            <div class="flex-1 max-w-[360px]">
-                <div class="flex items-center gap-2 bg-[#F5F6FA] border border-[#D5D5D5] rounded-full px-5 py-3 shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
-                    <svg class="w-5 h-5 text-[#9A8878]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
-                    </svg>
-                    <input type="text" placeholder="Search"
-                        class="font-nunito text-sm text-[#3D2B1F] placeholder-[#C4B8AE] outline-none bg-transparent w-full">
-                </div>
-            </div>
         </div>
 
         <div class="py-4 flex items-center justify-between gap-3">
@@ -130,6 +121,11 @@
                             </p>
 
                             <div class="flex items-center gap-3">
+                                <button type="button" wire:click="openDetail({{ $order->id }})"
+                                    class="border border-[#7A8C5C] text-[#7A8C5C] hover:bg-[#F0F7E6] font-poppins font-semibold text-sm px-6 py-2.5 rounded-full transition-colors">
+                                    Detail
+                                </button>
+
                                 @if ($tab === 'belum-bayar')
                                     <button type="button" wire:click="cancel({{ $order->id }})"
                                         class="bg-red-400 hover:bg-red-500 text-white font-poppins font-semibold text-sm px-6 py-2.5 rounded-full transition-colors">
@@ -158,6 +154,140 @@
             @endforelse
         </div>
     </div>
+
+    @if ($this->showDetailModal && $this->selectedOrder)
+        @php
+            $selectedOrder = $this->selectedOrder;
+            $shippingMethodLabel = match ($selectedOrder->send_type ?? null) {
+                'pickUp' => 'Ambil Sendiri',
+                'kurirEkspedisi' => 'Kirim Kurir Ekspedisi',
+                'kurirToko' => 'Kirim Kurir Toko',
+                default => $selectedOrder->send_type ?? '-',
+            };
+
+            $expeditionLabel = match (strtolower((string) ($selectedOrder->choosen_expedition ?? ''))) {
+                'jne' => 'JNE',
+                'pos' => 'POS Indonesia',
+                'tiki' => 'TIKI',
+                '' => '-',
+                default => strtoupper((string) $selectedOrder->choosen_expedition),
+            };
+        @endphp
+
+        <div class="fixed inset-0 z-50 flex items-center justify-center px-4 py-6">
+            <div class="absolute inset-0 bg-black/50" wire:click="closeDetailModal"></div>
+
+            <div class="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[28px] bg-[#FFFDF8] shadow-2xl border border-white/70">
+                <div class="flex items-center justify-between gap-4 px-6 sm:px-8 py-5 border-b border-[#E7DDCF]">
+                    <div>
+                        <p class="text-sm font-poppins text-[#7A8C5C] uppercase tracking-[0.18em]">Detail Preorder</p>
+                        <h2 class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-2xl mt-1">
+                            Pre Order #{{ $selectedOrder->id }}
+                        </h2>
+                    </div>
+
+                    <button type="button" wire:click="closeDetailModal"
+                        class="w-10 h-10 rounded-full bg-[#F5F1EA] text-[#3D2B1F] hover:bg-[#E8E0D4] transition-colors flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="px-6 sm:px-8 py-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="rounded-2xl bg-[#F8F4EC] p-4 border border-[#E7DDCF] md:col-span-2">
+                            <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold">Status Pesanan</p>
+                            <p class="mt-2 font-poppins font-bold text-[#3D2B1F] text-lg">
+                                {{ str_replace('_', ' ', $selectedOrder->status ?? '-') }}
+                            </p>
+                        </div>
+                        <div class="rounded-2xl bg-[#F8F4EC] p-4 border border-[#E7DDCF]">
+                            <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold">Metode Pengiriman</p>
+                            <p class="mt-2 font-poppins font-bold text-[#3D2B1F] text-lg">
+                                {{ $shippingMethodLabel }}
+                            </p>
+                        </div>
+                        <div class="rounded-2xl bg-[#F8F4EC] p-4 border border-[#E7DDCF]">
+                            <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold">Nomor Resi</p>
+                            <p class="mt-2 font-poppins font-bold text-[#3D2B1F] text-lg break-words">
+                                {{ $selectedOrder->tracking_number ?: '-' }}
+                            </p>
+                        </div>
+                        <div class="rounded-2xl bg-[#F8F4EC] p-4 border border-[#E7DDCF] md:col-span-2">
+                            <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold">Ekspedisi Digunakan</p>
+                            <p class="mt-2 font-poppins font-bold text-[#3D2B1F] text-lg">
+                                {{ $expeditionLabel }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="rounded-2xl bg-white p-5 border border-[#E7DDCF]">
+                            <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold mb-3">Penerima</p>
+                            <p class="font-poppins font-bold text-[#3D2B1F]">{{ auth()->user()->name }}</p>
+                            <p class="font-poppins text-[#6B4C3B] mt-1">{{ auth()->user()->telp }}</p>
+                        </div>
+                        <div class="rounded-2xl bg-white p-5 border border-[#E7DDCF]">
+                            <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold mb-3">Alamat Pengiriman</p>
+                            @if ($selectedOrder->address)
+                                <p class="font-poppins text-[#3D2B1F] leading-relaxed">
+                                    {{ $selectedOrder->address->street }}, {{ $selectedOrder->address->district }}, {{ $selectedOrder->address->city }}, {{ $selectedOrder->address->state }} {{ $selectedOrder->address->zip_code }}, RT {{ $selectedOrder->address->rt }}/RW {{ $selectedOrder->address->rw }}
+                                    @if ($selectedOrder->address->notes)
+                                        . {{ $selectedOrder->address->notes }}
+                                    @endif
+                                </p>
+                            @else
+                                <p class="font-poppins text-[#6B4C3B]">Alamat tidak tersedia.</p>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl bg-white p-5 border border-[#E7DDCF]">
+                        <p class="text-xs uppercase tracking-[0.18em] text-[#7A8C5C] font-semibold mb-4">Rincian Item</p>
+
+                        <div class="space-y-4">
+                            @foreach ($selectedOrder->detailPreOrders as $detail)
+                                @php
+                                    $item = $detail->type === 'promo' ? $detail->promo : $detail->product;
+                                @endphp
+
+                                <div class="flex items-center justify-between gap-4 pb-4 border-b border-[#F0E7DA] last:border-b-0 last:pb-0">
+                                    <div class="flex items-center gap-4 min-w-0">
+                                        <div class="w-14 h-14 rounded-xl overflow-hidden bg-[#F6F1E8] shrink-0">
+                                            @if ($item && !empty($item->image))
+                                                <img src="{{ $item->image }}" alt="{{ $item->name }}" class="w-full h-full object-cover">
+                                            @else
+                                                <div class="w-full h-full flex items-center justify-center text-[#B79F87] text-xs">No Image</div>
+                                            @endif
+                                        </div>
+
+                                        <div class="min-w-0">
+                                            <p class="font-poppins font-semibold text-[#3D2B1F] truncate">
+                                                {{ $item->name ?? 'Item tidak tersedia' }}
+                                            </p>
+                                            <p class="font-poppins text-sm text-[#6B4C3B]">
+                                                {{ ucfirst($detail->type) }} x {{ $detail->quantity }}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <p class="font-poppins font-bold text-[#7A8C5C] shrink-0">
+                                        Rp {{ number_format((int) ($item->price ?? 0) * (int) $detail->quantity, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between rounded-2xl bg-[#7A8C5C] px-5 py-4 text-white">
+                        <span class="font-poppins font-semibold">Total</span>
+                        <span class="font-poppins font-bold text-xl">Rp {{ number_format($this->orderTotal($selectedOrder), 0, ',', '.') }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <script>
         {

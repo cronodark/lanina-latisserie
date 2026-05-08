@@ -73,6 +73,8 @@
 
 <body class="bg-[#F5F5F0] min-h-screen">
 
+    <x-swal />
+
     {{-- Sidebar --}}
     @include('components.sidebar')
 

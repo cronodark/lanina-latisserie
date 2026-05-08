@@ -5,6 +5,61 @@
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+@php
+// ══════════════════════════════════════════════════════════════
+// Data dari LaporanController - Real database data
+// ══════════════════════════════════════════════════════════════
+
+$bulanList = [
+    1=>'Januari', 2=>'Februari', 3=>'Maret',    4=>'April',
+    5=>'Mei',     6=>'Juni',     7=>'Juli',      8=>'Agustus',
+    9=>'September',10=>'Oktober',11=>'November', 12=>'Desember',
+];
+
+// Ambil filter dari query string (GET), default bulan dan tahun sekarang
+$bulanTerpilihAngka  = (int) request('bulan',  now()->month);
+$tahunTerpilih       = (int) request('tahun',   now()->year);
+$produkFilterDipilih = request('produk_filter', '');
+
+// Pastikan nilai bulan valid
+if (!array_key_exists($bulanTerpilihAngka, $bulanList)) {
+    $bulanTerpilihAngka = now()->month;
+}
+
+$bulanTerpilih   = $bulanList[$bulanTerpilihAngka];
+$bulanSebelumnya = $bulanTerpilihAngka === 1
+    ? $bulanList[12]
+    : $bulanList[$bulanTerpilihAngka - 1];
+
+// ── Kalkulasi bar chart (%) ──
+$maxPendapatan   = max($pendapatanSebelumnya, $pendapatanTerpilih, 1);
+$maxJumlah       = max($jumlahSebelumnya, $jumlahTerpilih, 1);
+$pctPendSebelum  = max(5, round(($pendapatanSebelumnya / $maxPendapatan) * 100));
+$pctPendTerpilih = max(5, round(($pendapatanTerpilih   / $maxPendapatan) * 100));
+$pctJmlSebelum   = max(5, round(($jumlahSebelumnya     / $maxJumlah)     * 100));
+$pctJmlTerpilih  = max(5, round(($jumlahTerpilih       / $maxJumlah)     * 100));
+
+// ── Kalkulasi donut SVG ──
+$r             = 54;
+$circumference = round(2 * M_PI * $r, 4);
+$totalPersen   = array_sum(array_column($produkTerlaris, 'persen'));
+$offsetAcc     = 0;
+$segments      = [];
+foreach ($produkTerlaris as $p) {
+    $pct        = $totalPersen > 0 ? ($p['persen'] / $totalPersen) * 100 : 0;
+    $dash       = round(($pct / 100) * $circumference, 4);
+    $gap        = round($circumference - $dash, 4);
+    $segments[] = [
+        'dash'   => $dash,
+        'gap'    => $gap,
+        'offset' => round($circumference - $offsetAcc, 4),
+        'warna'  => $p['warna'],
+        'nama'   => $p['nama'],
+        'persen' => round($p['persen'], 1),
+    ];
+    $offsetAcc += $dash;
+}
+@endphp
 
 {{-- ══════════════ HALAMAN ══════════════ --}}
 <h1 class="text-2xl font-bold text-gray-800 mb-6">Laporan Penjualan</h1>

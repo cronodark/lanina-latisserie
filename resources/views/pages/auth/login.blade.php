@@ -74,5 +74,6 @@
         </div>
 
     </div>
+    <x-swal/>
 
 @endsection

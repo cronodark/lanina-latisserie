@@ -32,16 +32,13 @@ class MidtransWebhookController extends Controller
         );
 
         $updates = [
-            'payment_status' => $mappedStatus,
+            'status' => $mappedStatus,
             'payment_method' => $payload['payment_type'] ?? $preOrder->payment_method,
             'midtrans_transaction_id' => $payload['transaction_id'] ?? $preOrder->midtrans_transaction_id,
         ];
 
-        if ($mappedStatus === 'paid') {
-            $updates['status'] = 'processing';
+        if ($mappedStatus === 'processing') {
             $updates['paid_at'] = $preOrder->paid_at ?? now();
-        } elseif (in_array($mappedStatus, ['expired', 'failed', 'cancelled', 'refunded'], true)) {
-            $updates['status'] = 'cancelled';
         }
 
         $preOrder->update($updates);
@@ -73,8 +70,8 @@ class MidtransWebhookController extends Controller
     private function mapPaymentStatus(string $transactionStatus, string $fraudStatus): string
     {
         return match ($transactionStatus) {
-            'settlement' => 'paid',
-            'capture' => $fraudStatus === 'accept' ? 'paid' : 'unpaid',
+            'settlement' => 'processing',
+            'capture' => $fraudStatus === 'accept' ? 'processing' : 'unpaid',
             'pending' => 'unpaid',
             'expire' => 'expired',
             'deny' => 'failed',

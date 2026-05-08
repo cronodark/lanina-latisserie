@@ -41,9 +41,9 @@ class PreorderTabsTest extends TestCase
         $user = $this->createUser();
         $otherUser = $this->createUser();
 
-        $this->createOrder($user, ['status' => 'processing', 'payment_status' => 'paid']);
-        $this->createOrder($user, ['status' => 'pending', 'payment_status' => 'unpaid']);
-        $this->createOrder($otherUser, ['status' => 'processing', 'payment_status' => 'paid']);
+        $this->createOrder($user, ['status' => 'processing']);
+        $this->createOrder($user, ['status' => 'unpaid']);
+        $this->createOrder($otherUser, ['status' => 'processing']);
 
         $this->actingAs($user);
 
@@ -61,10 +61,10 @@ class PreorderTabsTest extends TestCase
     {
         $user = $this->createUser();
 
-        $this->createOrder($user, ['status' => 'pending', 'payment_status' => 'unpaid']);
-        $this->createOrder($user, ['status' => 'processing', 'payment_status' => 'paid']);
-        $this->createOrder($user, ['status' => 'ready_pickup', 'payment_status' => 'paid']);
-        $this->createOrder($user, ['status' => 'completed', 'payment_status' => 'paid']);
+        $this->createOrder($user, ['status' => 'unpaid']);
+        $this->createOrder($user, ['status' => 'processing']);
+        $this->createOrder($user, ['status' => 'ready_pickup']);
+        $this->createOrder($user, ['status' => 'completed']);
 
         $this->actingAs($user);
 
@@ -81,8 +81,8 @@ class PreorderTabsTest extends TestCase
     public function test_cancel_only_updates_unpaid_order(): void
     {
         $user = $this->createUser();
-        $unpaidOrder = $this->createOrder($user, ['status' => 'pending', 'payment_status' => 'unpaid']);
-        $paidOrder = $this->createOrder($user, ['status' => 'processing', 'payment_status' => 'paid']);
+        $unpaidOrder = $this->createOrder($user, ['status' => 'unpaid']);
+        $paidOrder = $this->createOrder($user, ['status' => 'processing']);
 
         $this->actingAs($user);
 
@@ -92,20 +92,18 @@ class PreorderTabsTest extends TestCase
         $this->assertDatabaseHas('pre_orders', [
             'id' => $unpaidOrder->id,
             'status' => 'cancelled',
-            'payment_status' => 'cancelled',
         ]);
 
         $this->assertDatabaseHas('pre_orders', [
             'id' => $paidOrder->id,
             'status' => 'processing',
-            'payment_status' => 'paid',
         ]);
     }
 
     public function test_confirm_received_marks_order_completed_and_moves_tab(): void
     {
         $user = $this->createUser();
-        $order = $this->createOrder($user, ['status' => 'shipping', 'payment_status' => 'paid']);
+        $order = $this->createOrder($user, ['status' => 'shipping']);
 
         $this->actingAs($user);
 
@@ -122,7 +120,7 @@ class PreorderTabsTest extends TestCase
     public function test_order_helper_methods_generate_expected_title_description_total_and_qty(): void
     {
         $user = $this->createUser();
-        $order = $this->createOrder($user, ['status' => 'processing', 'payment_status' => 'paid']);
+        $order = $this->createOrder($user, ['status' => 'processing']);
 
         $products = Product::factory()->count(3)->create();
         $promo = Promo::factory()->create(['price' => 30000, 'actual_price' => 40000]);
