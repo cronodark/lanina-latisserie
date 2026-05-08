@@ -61,7 +61,7 @@
                 </div>
 
                 {{-- Laporan Penjualan --}}
-                <a href="#"
+                <a href="/laporan"
                     class="block px-3 py-2 rounded-lg text-white font-semibold text-sm hover:bg-white/10 transition">
                     <span class="hide-text">Laporan Penjualan</span>
                 </a>
