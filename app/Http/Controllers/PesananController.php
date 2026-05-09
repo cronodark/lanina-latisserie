@@ -53,13 +53,8 @@ class PesananController extends Controller
                     ->values()
                     ->all();
 
-                $tanggalPembelian = $this->formatDateString($order->created_at);
-                $pickupStart = $this->formatDateString($order->start_periode);
-                $pickupEnd = $this->formatDateString($order->end_periode);
-                $tanggalPengantaran = $order->send_type === 'pickUp'
-                    ? trim(($pickupStart ?: '-') . ' s/d ' . ($pickupEnd ?: '-'))
-                    : ($this->formatDateString($order->actual_periode)
-                        ?? $this->formatDateString($order->end_periode));
+                // Tanggal pembelian = actual_periode (tanggal yang dipilih customer)
+                $tanggalPembelian = $this->formatDateString($order->actual_periode);
 
                 return (object) [
                     'id' => $order->id,
@@ -67,7 +62,6 @@ class PesananController extends Controller
                     'nama_pelanggan' => $order->customer?->name ?? '-',
                     'nama_produk' => $productNames->isNotEmpty() ? $productNames->implode(', ') : '-',
                     'tanggal_pembelian' => $tanggalPembelian,
-                    'tanggal_pengantaran' => $tanggalPengantaran,
                     'total_harga' => (int) $order->total,
                     'status' => $order->status,
                     'status_filter' => $this->statusFilterValue($order->status),
@@ -76,8 +70,7 @@ class PesananController extends Controller
                     'email' => $order->customer?->email ?? '-',
                     'metode_pengiriman' => $this->sendTypeLabel($order->send_type),
                     'send_type' => $order->send_type,
-                    'start_periode' => $pickupStart,
-                    'end_periode' => $pickupEnd,
+                    'actual_periode' => $order->actual_periode?->format('Y-m-d') ?? '-',
                     'choosen_expedition' => $order->choosen_expedition ?? '',
                     'alamat' => $this->formatAddress($order),
                     'catatan_alamat' => $order->address?->notes ?? '-',
@@ -98,9 +91,8 @@ class PesananController extends Controller
     {
         $validated = $request->validate([
             'status' => ['required', 'string'],
-            'start_periode' => ['nullable', 'date'],
-            'end_periode' => ['nullable', 'date'],
             'nomor_resi' => ['nullable', 'string', 'max:50'],
+            'choosen_expedition' => ['nullable', 'string', 'max:90'],
         ]);
 
         $status = $this->normalizeStatus($validated['status']);
@@ -128,13 +120,17 @@ class PesananController extends Controller
             ], 422);
         }
 
-        // Update status dan nomor resi jika ada
+        // Update status dan data pengiriman
         $updateData = [
             'status' => $status,
         ];
 
         if (! empty($validated['nomor_resi'])) {
             $updateData['tracking_number'] = $validated['nomor_resi'];
+        }
+        
+        if (! empty($validated['choosen_expedition'])) {
+            $updateData['choosen_expedition'] = $validated['choosen_expedition'];
         }
 
         if ($order->send_type !== 'kurirEkspedisi') {
