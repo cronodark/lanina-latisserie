@@ -49,6 +49,18 @@ Route::group(['middleware' => 'auth'], function () {
             Route::delete('/product/{product}', [PromoController::class, 'destroyProduct'])->name('destroyProduct');
             Route::post('/toggle/{product}', [PromoController::class, 'toggleSelect'])->name('toggleSelect');
         });
+
+        Route::prefix('admin/jadwal')->name('jadwal-admin.')->group(function () {
+            Route::get('/kalender', [TanggalController::class, 'kalender'])->name('kalender');
+
+            Route::get('/slot', [SlotController::class, 'index'])->name('slot');
+            Route::post('/slot', [SlotController::class, 'store'])->name('slot.store');
+            Route::put('/slot/{id}', [SlotController::class, 'update'])->name('slot.update');
+            Route::delete('/slot/{id}', [SlotController::class, 'destroy'])->name('slot.destroy');
+            Route::patch('/slot/{id}/toggle', [SlotController::class, 'toggle'])->name('slot.toggle');
+        });
+
+
     });
 
     // Customer Routes
@@ -115,14 +127,3 @@ Route::resource('pesanan', PesananController::class);
 Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
 
 Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-Route::delete('/pesanan/{id}', [PesananController::class, 'destroy'])
-    ->name('pesanan.destroy');
-Route::prefix('admin/jadwal')->name('jadwal-admin.')->group(function () {
-    Route::get('/kalender', [TanggalController::class, 'kalender'])->name('kalender');
-
-    Route::get('/slot', [SlotController::class, 'index'])->name('slot');
-    Route::post('/slot', [SlotController::class, 'store'])->name('slot.store');
-    Route::put('/slot/{id}', [SlotController::class, 'update'])->name('slot.update');
-    Route::delete('/slot/{id}', [SlotController::class, 'destroy'])->name('slot.destroy');
-    Route::patch('/slot/{id}/toggle', [SlotController::class, 'toggle'])->name('slot.toggle');
-});
