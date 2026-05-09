@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             PreOrderSeeder::class,
             PreOrderDetailSeeder::class,
             AddressSeeder::class,
+            LaporanPreviousMonthSeeder::class,
+            LaporanCurrentMonthSeeder::class,
         ]);
     }
 }

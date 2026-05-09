@@ -4,6 +4,8 @@
 
 @section('content')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 @php
 // ══════════════════════════════════════════════════════════════
@@ -282,99 +284,26 @@ foreach ($produkTerlaris as $p) {
 
     <h2 class="text-[23px] font-bold text-[#2B2B2B] mb-5">Produk Terlaris</h2>
 
-    {{-- DONUT + LEGEND --}}
+    {{-- PIE CHART + LEGEND --}}
     <div class="bg-[#F9F9F7] rounded-[20px] shadow-sm px-10 py-8">
-        <div class="flex flex-col lg:flex-row items-center justify-center gap-24">
+        <div class="flex flex-col lg:flex-row items-center justify-center gap-12">
 
-            {{-- DONUT CHART --}}
-            {{-- circumference = 2 * π * 38 ≈ 238.76 --}}
-            <div class="relative w-[240px] h-[240px] shrink-0">
-
-                <svg viewBox="0 0 120 120" class="w-full h-full -rotate-90">
-
-                    {{-- NASTAR 45.8% → dash=109.35 --}}
-                    <circle cx="60" cy="60" r="38" fill="none"
-                        stroke="#996633" stroke-width="21"
-                        stroke-dasharray="109.35 129.41"
-                        stroke-dashoffset="0"/>
-
-                    {{-- STICK KEJU 29.3% → dash=69.96 --}}
-                    <circle cx="60" cy="60" r="38" fill="none"
-                        stroke="#A7B86A" stroke-width="21"
-                        stroke-dasharray="69.96 168.8"
-                        stroke-dashoffset="-109.35"/>
-
-                    {{-- LIDAH KUCING 8.3% → dash=19.82 --}}
-                    <circle cx="60" cy="60" r="38" fill="none"
-                        stroke="#E9E1CC" stroke-width="21"
-                        stroke-dasharray="19.82 218.94"
-                        stroke-dashoffset="-179.31"/>
-
-                    {{-- COOKIES 8.3% → dash=19.82 --}}
-                    <circle cx="60" cy="60" r="38" fill="none"
-                        stroke="#D8DEB4" stroke-width="21"
-                        stroke-dasharray="19.82 218.94"
-                        stroke-dashoffset="-199.13"/>
-
-                    {{-- PUTRI SALJU 8.3% → dash=19.82 --}}
-                    <circle cx="60" cy="60" r="38" fill="none"
-                        stroke="#C48C5A" stroke-width="21"
-                        stroke-dasharray="19.82 218.94"
-                        stroke-dashoffset="-218.95"/>
-
-                </svg>
-
-                {{-- LUBANG TENGAH --}}
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="w-[64px] h-[64px] rounded-full bg-[#F9F9F7]"></div>
-                </div>
-
-                {{-- LABEL PERSENTASE --}}
-                {{-- Nastar — tengah segmen ~22.9% dari kanan bawah --}}
-                <span class="absolute text-white font-bold"
-                    style="font-size:10px;left:124px;top:122px;
-                           transform:rotate(12deg);transform-origin:left center;white-space:nowrap;">
-                </span>
-                {{-- Stick Keju — segmen hijau atas kiri --}}
-                <span class="absolute text-white font-bold"
-                    style="font-size:9px;left:36px;top:48px;
-                           transform:rotate(22deg);transform-origin:left center;white-space:nowrap;">
-                </span>
-                {{-- Lidah Kucing --}}
-                <span class="absolute text-white font-bold"
-                    style="font-size:8px;left:8px;top:96px;
-                           transform:rotate(78deg);transform-origin:left center;white-space:nowrap;">
-                </span>
-                {{-- Cookies --}}
-                <span class="absolute text-white font-bold"
-                    style="font-size:8px;left:22px;top:150px;
-                           transform:rotate(52deg);transform-origin:left center;white-space:nowrap;">
-                </span>
-
+            {{-- PIE CHART CANVAS --}}
+            <div class="relative w-[320px] h-[320px] shrink-0">
+                <canvas id="topProductsPieChart"></canvas>
             </div>
 
-            {{-- LEGEND --}}
-            <div class="flex flex-col gap-[14px]">
-                <div class="flex items-center gap-5">
-                    <div class="w-[72px] h-[18px] rounded-[2px]" style="background:#996633;"></div>
-                    <span class="text-[15px] font-semibold text-[#332A24]">Nastar</span>
-                </div>
-                <div class="flex items-center gap-5">
-                    <div class="w-[72px] h-[18px] rounded-[2px]" style="background:#C48C5A;"></div>
-                    <span class="text-[15px] font-semibold text-[#332A24]">Putri Salju</span>
-                </div>
-                <div class="flex items-center gap-5">
-                    <div class="w-[72px] h-[18px] rounded-[2px]" style="background:#E9E1CC;"></div>
-                    <span class="text-[15px] font-semibold text-[#332A24]">Lidah Kucing</span>
-                </div>
-                <div class="flex items-center gap-5">
-                    <div class="w-[72px] h-[18px] rounded-[2px]" style="background:#D8DEB4;"></div>
-                    <span class="text-[15px] font-semibold text-[#332A24]">Cookies</span>
-                </div>
-                <div class="flex items-center gap-5">
-                    <div class="w-[72px] h-[18px] rounded-[2px]" style="background:#A7B86A;"></div>
-                    <span class="text-[15px] font-semibold text-[#332A24]">Stick Keju</span>
-                </div>
+            {{-- LEGEND DINAMIS --}}
+            <div id="chartLegend" class="flex flex-col gap-[14px]">
+                @foreach ($produkTerlaris as $index => $produk)
+                    <div class="flex items-center gap-5">
+                        <div class="w-[72px] h-[18px] rounded-[2px]" style="background:{{ $produk['warna'] }};"></div>
+                        <div class="flex flex-col">
+                            <span class="text-[15px] font-semibold text-[#332A24]">{{ $produk['nama'] }}</span>
+                            <span class="text-[12px] text-gray-500">{{ number_format($produk['persen'], 1) }}%</span>
+                        </div>
+                    </div>
+                @endforeach
             </div>
 
         </div>
@@ -495,7 +424,7 @@ foreach ($produkTerlaris as $p) {
                             <th class="py-3 px-4 text-left">Nama Produk</th>
                             <th class="py-3 px-4 text-left">Tanggal Pembelian</th>
                             <th class="py-3 px-4 text-left">Tanggal Pengantaran</th>
-                            <th class="py-3 px-4 text-left">Total Harga</th>
+                            <th class="py-3 px-4 text-left whitespace-nowrap">Total Harga</th>
                             <th class="py-3 px-4 text-left">Status</th>
                             <th class="py-3 px-4 text-left">Aksi</th>
                         </tr>
@@ -549,7 +478,7 @@ foreach ($produkTerlaris as $p) {
                             </td>
 
                             {{-- TOTAL --}}
-                            <td class="px-4 py-3">
+                            <td class="px-4 py-3 whitespace-nowrap">
                                 Rp {{ number_format($item->total_harga, 0, ',', '.') }}
                             </td>
 
@@ -818,12 +747,85 @@ foreach ($produkTerlaris as $p) {
     document.getElementById('viewModal').classList.remove('hidden');
     document.getElementById('viewModal').classList.add('flex');
 }
-function closeViewModal() {
+    function closeViewModal() {
 
         document.getElementById('viewModal').classList.remove('flex');
         document.getElementById('viewModal').classList.add('hidden');
 
     }
+
+    // ═════════ PIE CHART - PRODUK TERLARIS ═════════
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('topProductsPieChart');
+        
+        if (!ctx) {
+            console.error('Canvas element not found');
+            return;
+        }
+
+        // Data dari controller
+        const produkTerlaris = @json($produkTerlaris);
+        
+        // Prepare data untuk Chart.js
+        const labels = produkTerlaris.map(p => p.nama);
+        const data = produkTerlaris.map(p => p.persen);
+        const colors = produkTerlaris.map(p => p.warna);
+        
+        // Create pie chart
+        const pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors,
+                    borderColor: '#F9F9F7',
+                    borderWidth: 3,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false // Kita gunakan legend custom
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        padding: 12,
+                        titleFont: {
+                            size: 14,
+                            weight: 'bold'
+                        },
+                        bodyFont: {
+                            size: 13
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                return label + ': ' + value.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    animateRotate: true,
+                    animateScale: true,
+                    duration: 1000,
+                    easing: 'easeInOutQuart'
+                }
+            }
+        });
+
+        console.log('Pie chart initialized with data:', {
+            labels: labels,
+            data: data,
+            colors: colors
+        });
+    });
+
 </script>
 
 @endsection

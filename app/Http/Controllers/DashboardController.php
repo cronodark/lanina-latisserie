@@ -68,16 +68,21 @@ class DashboardController extends Controller
     }
 
     /**
-     * Data pendapatan per hari dalam satu bulan
+     * Data pendapatan per hari dalam satu bulan berdasarkan actual_periode (tanggal slot).
+     * 
+     * Menggunakan actual_periode karena ini adalah tanggal pengantaran yang dipilih customer,
+     * yang merepresentasikan kapan slot digunakan dan produk dikirim/diambil.
      */
     private function getGrafikPerHari(int $year, int $month): array
     {
         $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
 
-        $rows = PreOrder::selectRaw('DAY(created_at) as hari, SUM(total) as total')
-            ->whereYear('created_at', $year)
-            ->whereMonth('created_at', $month)
-            ->whereNotNull('created_at')
+        // Query berdasarkan actual_periode (tanggal slot)
+        $rows = PreOrder::selectRaw('DAY(actual_periode) as hari, SUM(total) as total')
+            ->whereYear('actual_periode', $year)
+            ->whereMonth('actual_periode', $month)
+            ->whereNotNull('actual_periode')
+            ->whereIn('status', ['unpaid', 'processing', 'shipping', 'completed']) // Exclude canceled
             ->groupBy('hari')
             ->orderBy('hari')
             ->pluck('total', 'hari');
@@ -98,13 +103,18 @@ class DashboardController extends Controller
     }
 
     /**
-     * Data pendapatan per bulan dalam satu tahun
+     * Data pendapatan per bulan dalam satu tahun berdasarkan actual_periode (tanggal slot).
+     * 
+     * Menggunakan actual_periode karena ini adalah tanggal pengantaran yang dipilih customer,
+     * yang merepresentasikan kapan slot digunakan dan produk dikirim/diambil.
      */
     private function getGrafikPerBulan(int $year): array
     {
-        $rows = PreOrder::selectRaw('MONTH(created_at) as bulan, SUM(total) as total')
-            ->whereYear('created_at', $year)
-            ->whereNotNull('created_at')
+        // Query berdasarkan actual_periode (tanggal slot)
+        $rows = PreOrder::selectRaw('MONTH(actual_periode) as bulan, SUM(total) as total')
+            ->whereYear('actual_periode', $year)
+            ->whereNotNull('actual_periode')
+            ->whereIn('status', ['unpaid', 'processing', 'shipping', 'completed']) // Exclude canceled
             ->groupBy('bulan')
             ->orderBy('bulan')
             ->pluck('total', 'bulan');

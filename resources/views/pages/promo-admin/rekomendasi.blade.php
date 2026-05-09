@@ -76,40 +76,109 @@
             
             Dokumentasi lengkap: RECOMMENDATION_SYSTEM.md
         --}}
-        <div class="bg-white rounded-2xl border border-gray-200 px-6 py-5 mb-8">
+        <div x-data="{ expanded: false }" class="bg-white rounded-2xl border border-gray-200 px-6 py-5 mb-8">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="text-lg font-bold text-gray-800">Ranking Kombinasi Promo</h3>
-                <span class="text-xs text-gray-500">Support • Confidence • Lift</span>
+                <div class="flex items-center gap-3">
+                    <h3 class="text-lg font-bold text-gray-800">Ranking Kombinasi Promo</h3>
+                    @if(!($recommendedCombinations ?? collect())->isEmpty())
+                        <span class="bg-[#B8935A]/10 text-[#B8935A] text-xs font-semibold px-2.5 py-1 rounded-full">
+                            {{ $recommendedCombinations->count() }} kombinasi
+                        </span>
+                    @endif
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-gray-500 hidden sm:inline">Support • Confidence • Lift</span>
+                    @if(!($recommendedCombinations ?? collect())->isEmpty())
+                        <button @click="expanded = !expanded" 
+                            class="text-[#4A5E2F] hover:text-[#3a4c23] text-sm font-semibold flex items-center gap-1 transition">
+                            <span x-text="expanded ? 'Sembunyikan' : 'Lihat Semua'"></span>
+                            <svg class="w-4 h-4 transition-transform" :class="expanded ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                    @endif
+                </div>
             </div>
 
             @if(($recommendedCombinations ?? collect())->isEmpty())
                 <p class="text-sm text-gray-500">Belum ada data transaksi yang cukup untuk menghitung kombinasi promo.</p>
             @else
                 <div class="space-y-3">
-                    @foreach($recommendedCombinations as $index => $combo)
-                        <div class="border border-gray-100 rounded-xl px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                            <div class="space-y-2">
-                                <p class="text-sm font-semibold text-gray-800">
-                                    #{{ $index + 1 }} {{ implode(' + ', $combo['products']) }}
-                                </p>
-                                <p class="text-xs text-gray-600 leading-relaxed max-w-2xl">
-                                    Kombinasi ini muncul pada {{ number_format($combo['support'] * 100, 2) }}% dari transaksi promosi.
-                                    Pelanggan yang memilih salah satu produk memiliki peluang
-                                    {{ number_format(max($combo['confidence_a_to_b'], $combo['confidence_b_to_a']) * 100, 2) }}%
-                                    untuk ikut memilih pasangannya.
-                                </p>
-                                <div class="flex flex-wrap gap-2 text-[11px] font-semibold text-gray-600">
-                                    <span class="bg-gray-50 px-2.5 py-1 rounded-full">Support {{ number_format($combo['support'] * 100, 2) }}%</span>
-                                    <span class="bg-gray-50 px-2.5 py-1 rounded-full">Confidence {{ number_format(max($combo['confidence_a_to_b'], $combo['confidence_b_to_a']) * 100, 2) }}%</span>
-                                    <span class="bg-gray-50 px-2.5 py-1 rounded-full">Lift {{ number_format($combo['lift'], 2) }}x</span>
+                    {{-- Show top 3 by default --}}
+                    @foreach($recommendedCombinations->take(3) as $index => $combo)
+                        <div class="border border-gray-100 rounded-xl px-4 py-3 hover:border-[#B8935A]/30 transition">
+                            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                                <div class="flex-1 space-y-2">
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-[#B8935A] text-white text-xs font-bold flex items-center justify-center">
+                                            {{ $index + 1 }}
+                                        </span>
+                                        <p class="text-sm font-semibold text-gray-800">
+                                            {{ implode(' + ', $combo['products']) }}
+                                        </p>
+                                    </div>
+                                    <div class="flex flex-wrap gap-2 text-[11px] font-semibold text-gray-600">
+                                        <span class="bg-green-50 text-green-700 px-2.5 py-1 rounded-full">
+                                            Support {{ number_format($combo['support'] * 100, 1) }}%
+                                        </span>
+                                        <span class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">
+                                            Confidence {{ number_format(max($combo['confidence_a_to_b'], $combo['confidence_b_to_a']) * 100, 1) }}%
+                                        </span>
+                                        <span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full">
+                                            Lift {{ number_format($combo['lift'], 2) }}x
+                                        </span>
+                                    </div>
                                 </div>
+                                <a href="{{ route('promo-admin.create') }}?{{ collect($combo['product_ids'])->map(fn ($productId) => 'product_ids[]=' . urlencode($productId))->implode('&') }}"
+                                    class="inline-flex items-center justify-center bg-[#4A5E2F] hover:bg-[#3a4c23] text-white text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap">
+                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    Gunakan
+                                </a>
                             </div>
-                            <a href="{{ route('promo-admin.create') }}?{{ collect($combo['product_ids'])->map(fn ($productId) => 'product_ids[]=' . urlencode($productId))->implode('&') }}"
-                                class="inline-flex items-center justify-center bg-[#4A5E2F] hover:bg-[#3a4c23] text-white text-xs font-semibold px-4 py-2 rounded-lg transition self-start sm:self-auto">
-                                Gunakan Kombinasi
-                            </a>
                         </div>
                     @endforeach
+
+                    {{-- Show remaining items when expanded --}}
+                    @if($recommendedCombinations->count() > 3)
+                        <div x-show="expanded" x-collapse class="space-y-3">
+                            @foreach($recommendedCombinations->skip(3) as $index => $combo)
+                                <div class="border border-gray-100 rounded-xl px-4 py-3 hover:border-[#B8935A]/30 transition">
+                                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                                        <div class="flex-1 space-y-2">
+                                            <div class="flex items-center gap-2">
+                                                <span class="flex-shrink-0 w-6 h-6 rounded-full bg-gray-400 text-white text-xs font-bold flex items-center justify-center">
+                                                    {{ $index + 4 }}
+                                                </span>
+                                                <p class="text-sm font-semibold text-gray-800">
+                                                    {{ implode(' + ', $combo['products']) }}
+                                                </p>
+                                            </div>
+                                            <div class="flex flex-wrap gap-2 text-[11px] font-semibold text-gray-600">
+                                                <span class="bg-green-50 text-green-700 px-2.5 py-1 rounded-full">
+                                                    Support {{ number_format($combo['support'] * 100, 1) }}%
+                                                </span>
+                                                <span class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">
+                                                    Confidence {{ number_format(max($combo['confidence_a_to_b'], $combo['confidence_b_to_a']) * 100, 1) }}%
+                                                </span>
+                                                <span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full">
+                                                    Lift {{ number_format($combo['lift'], 2) }}x
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <a href="{{ route('promo-admin.create') }}?{{ collect($combo['product_ids'])->map(fn ($productId) => 'product_ids[]=' . urlencode($productId))->implode('&') }}"
+                                            class="inline-flex items-center justify-center bg-[#4A5E2F] hover:bg-[#3a4c23] text-white text-xs font-semibold px-4 py-2 rounded-lg transition whitespace-nowrap">
+                                            <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                            </svg>
+                                            Gunakan
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             @endif
         </div>
@@ -336,6 +405,9 @@
             return {
                 // Array produk yang sedang dipilih untuk dijadikan promosi
                 selected: [],
+                
+                // State untuk show/hide rekomendasi kombinasi
+                showAllCombinations: false,
 
                 // Snapshot data produk untuk dipakai saat memilih kombinasi otomatis.
                 allProducts: @js($products->map(fn($product) => [
