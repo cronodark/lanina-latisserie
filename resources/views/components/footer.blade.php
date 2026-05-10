@@ -17,14 +17,14 @@
                             <path d="M12 2C8 2 5 5 5 9c0 2 1 4 2.5 5.5L12 22l4.5-7.5C18 13 19 11 19 9c0-4-3-7-7-7z" />
                         </svg>
                     </div>
-                    {{-- <div>
+                    <div>
                         <p class="font-display font-bold text-base sm:text-lg xl:text-xl leading-none tracking-wide">
                             LANINA
                         </p>
                         <p class="text-[9px] sm:text-[10px] xl:text-[11px] tracking-[0.2em] uppercase leading-none">
                             PATISSERIE
                         </p>
-                    </div> --}}
+                    </div>
                 </div>
             </a>
 
