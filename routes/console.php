@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\UpdateExpiredSlots;
 use App\Models\Promo;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -12,3 +13,5 @@ Artisan::command('inspire', function () {
 Schedule::call(function () {
     Promo::synchronizeStatuses();
 })->everyMinute();
+
+Schedule::job(new UpdateExpiredSlots())->daily();
