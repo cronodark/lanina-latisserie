@@ -16,6 +16,7 @@ use App\Http\Controllers\PesananController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SlotController;
 use App\Http\Controllers\TanggalController;
+use App\Http\Controllers\WilayahController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'auth'], function () {
@@ -122,6 +123,14 @@ Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show
 // API Routes for available dates
 Route::get('/api/tanggal-tersedia', [TanggalTersediaController::class, 'index'])->name('api.tanggal-tersedia.index');
 Route::get('/api/tanggal-tersedia/check', [TanggalTersediaController::class, 'check'])->name('api.tanggal-tersedia.check');
+
+// API Routes untuk data wilayah Indonesia (proxy ke emsifa + cache)
+Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {
+    Route::get('/provinces', [WilayahController::class, 'provinces'])->name('provinces');
+    Route::get('/regencies/{provinceId}', [WilayahController::class, 'regencies'])->name('regencies');
+    Route::get('/districts/{regencyId}', [WilayahController::class, 'districts'])->name('districts');
+    Route::get('/kodepos', [WilayahController::class, 'kodepos'])->name('kodepos');
+});
 
 Route::resource('pesanan', PesananController::class);
 Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');

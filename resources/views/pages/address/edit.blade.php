@@ -42,7 +42,13 @@
 
             {{-- Form Card --}}
             <div class="bg-white rounded-[24px] px-6 sm:px-8 lg:px-10 py-8 lg:py-10 card-shadow">
-                <form action="{{ route('profile.address.update', $address->id) }}" method="POST">
+                <form action="{{ route('profile.address.update', $address->id) }}" method="POST"
+                    x-data="addressWilayah({
+                        initStateName:    @js(old('state', $address->state)),
+                        initCityName:     @js(old('city', $address->city)),
+                        initDistrictName: @js(old('district', $address->district)),
+                        initZipCode:      @js(old('zip_code', $address->zip_code))
+                    })" x-init="init()">
                     @csrf
                     @method('PUT')
 
@@ -58,7 +64,7 @@
                         <div>
                             <label class=" text-base font-semibold text-[#1A1A1A] mb-2 block">Alamat Jalan:</label>
                             <input type="text" name="street" value="{{ old('street', $address->street) }}"
-                                placeholder="Masukan alamat jalan"
+                                placeholder="Masukan alamat jalan" minlength="5" maxlength="255" required
                                 class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all placeholder-[#ABABAB] @error('street') ring-2 ring-red-400 @enderror">
                             @error('street')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -72,11 +78,15 @@
                                 <div class="flex items-center gap-2 flex-1 bg-[#F0F0F0] rounded-[12px] px-4 py-3.5">
                                     <span class=" font-bold text-base text-[#6B6B6B] shrink-0">RT</span>
                                     <input type="text" name="rt" value="{{ old('rt', $address->rt) }}"
+                                        placeholder="001" inputmode="numeric" maxlength="3" pattern="\d{1,3}" required
+                                        oninput="this.value = this.value.replace(/\D/g, '').slice(0, 3)"
                                         class="w-full text-base text-[#3D2B1F] bg-transparent outline-none">
                                 </div>
                                 <div class="flex items-center gap-2 flex-1 bg-[#F0F0F0] rounded-[12px] px-4 py-3.5">
                                     <span class=" font-bold text-base text-[#6B6B6B] shrink-0">RW</span>
                                     <input type="text" name="rw" value="{{ old('rw', $address->rw) }}"
+                                        placeholder="001" inputmode="numeric" maxlength="3" pattern="\d{1,3}" required
+                                        oninput="this.value = this.value.replace(/\D/g, '').slice(0, 3)"
                                         class="w-full text-base text-[#3D2B1F] bg-transparent outline-none">
                                 </div>
                             </div>
@@ -91,9 +101,14 @@
                         {{-- Kode Pos --}}
                         <div>
                             <label class=" text-base font-semibold text-[#1A1A1A] mb-2 block">Kode Pos</label>
-                            <input type="text" name="zip_code" value="{{ old('zip_code', $address->zip_code) }}"
-                                placeholder="Masukan informasi kode pos"
-                                class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all placeholder-[#ABABAB] @error('zip_code') ring-2 ring-red-400 @enderror">
+                            <select name="zip_code" x-model="zipCode" required
+                                :disabled="!districtId || loadingZipCodes"
+                                class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all disabled:opacity-60 disabled:cursor-not-allowed @error('zip_code') ring-2 ring-red-400 @enderror">
+                                <option value="" x-text="!districtId ? 'Pilih kecamatan dulu' : (loadingZipCodes ? 'Memuat...' : (zipCodes.length === 0 ? 'Tidak ada data' : 'Pilih kode pos'))"></option>
+                                <template x-for="z in zipCodes" :key="z.code + z.village">
+                                    <option :value="z.code" x-text="`${z.code} - ${z.village}`"></option>
+                                </template>
+                            </select>
                             @error('zip_code')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -101,16 +116,22 @@
 
                     </div>
 
-                    {{-- Row 2: Kecamatan | Kabupaten | Provinsi | Patokan --}}
+                    {{-- Row 2: Provinsi | Kabupaten | Kecamatan | Patokan --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-12">
 
-                        {{-- Kecamatan --}}
+                        {{-- Provinsi --}}
                         <div>
-                            <label class=" text-base font-semibold text-[#1A1A1A] mb-2 block">Kecamatan</label>
-                            <input type="text" name="district" value="{{ old('district', $address->district) }}"
-                                placeholder="Masukan nama kecamatan"
-                                class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all placeholder-[#ABABAB] @error('district') ring-2 ring-red-400 @enderror">
-                            @error('district')
+                            <label class=" text-base font-semibold text-[#1A1A1A] mb-2 block">Provinsi</label>
+                            <select x-model="stateId" @change="onStateChange()" required
+                                :disabled="loadingProvinces"
+                                class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all @error('state') ring-2 ring-red-400 @enderror">
+                                <option value="" x-text="loadingProvinces ? 'Memuat...' : 'Pilih provinsi'"></option>
+                                <template x-for="p in provinces" :key="p.id">
+                                    <option :value="p.id" x-text="p.name"></option>
+                                </template>
+                            </select>
+                            <input type="hidden" name="state" :value="stateName">
+                            @error('state')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -118,21 +139,33 @@
                         {{-- Kabupaten --}}
                         <div>
                             <label class=" text-base font-semibold text-[#1A1A1A] mb-2 block">Kabupaten</label>
-                            <input type="text" name="city" value="{{ old('city', $address->city) }}"
-                                placeholder="Masukan nama kabupaten"
-                                class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all placeholder-[#ABABAB] @error('city') ring-2 ring-red-400 @enderror">
+                            <select x-model="cityId" @change="onCityChange()" required
+                                :disabled="!stateId || loadingCities"
+                                class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all disabled:opacity-60 disabled:cursor-not-allowed @error('city') ring-2 ring-red-400 @enderror">
+                                <option value="" x-text="!stateId ? 'Pilih provinsi dulu' : (loadingCities ? 'Memuat...' : 'Pilih kabupaten')"></option>
+                                <template x-for="c in cities" :key="c.id">
+                                    <option :value="c.id" x-text="c.name"></option>
+                                </template>
+                            </select>
+                            <input type="hidden" name="city" :value="cityName">
                             @error('city')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        {{-- Provinsi --}}
+                        {{-- Kecamatan --}}
                         <div>
-                            <label class=" text-base font-semibold text-[#1A1A1A] mb-2 block">Provinsi</label>
-                            <input type="text" name="state" value="{{ old('state', $address->state) }}"
-                                placeholder="Masukan nama provinsi"
-                                class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all placeholder-[#ABABAB] @error('state') ring-2 ring-red-400 @enderror">
-                            @error('state')
+                            <label class=" text-base font-semibold text-[#1A1A1A] mb-2 block">Kecamatan</label>
+                            <select x-model="districtId" @change="onDistrictChange()" required
+                                :disabled="!cityId || loadingDistricts"
+                                class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all disabled:opacity-60 disabled:cursor-not-allowed @error('district') ring-2 ring-red-400 @enderror">
+                                <option value="" x-text="!cityId ? 'Pilih kabupaten dulu' : (loadingDistricts ? 'Memuat...' : 'Pilih kecamatan')"></option>
+                                <template x-for="d in districts" :key="d.id">
+                                    <option :value="d.id" x-text="d.name"></option>
+                                </template>
+                            </select>
+                            <input type="hidden" name="district" :value="districtName">
+                            @error('district')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
                         </div>
@@ -141,7 +174,8 @@
                         <div>
                             <label class=" text-base font-semibold text-[#1A1A1A] mb-2 block">Patokan/Keterangan</label>
                             <input type="text" name="notes" value="{{ old('notes', $address->notes) }}"
-                                placeholder="Masukan patokan atau keterangan"
+                                placeholder="Contoh: dekat masjid, rumah cat hijau"
+                                minlength="3" maxlength="500" required
                                 class="w-full text-base text-[#3D2B1F] bg-[#F0F0F0] border-0 rounded-[12px] px-5 py-3.5 outline-none focus:ring-2 focus:ring-[#7A8C5C] transition-all placeholder-[#ABABAB] @error('notes') ring-2 ring-red-400 @enderror">
                             @error('notes')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
@@ -149,6 +183,13 @@
                         </div>
 
                     </div>
+
+                    {{-- Pesan error fetch API wilayah --}}
+                    <template x-if="apiError">
+                        <div class="mb-6 rounded-[12px] bg-red-50 border border-red-200 px-5 py-3 text-sm text-red-600">
+                            Gagal memuat data wilayah. Periksa koneksi internet Anda lalu muat ulang halaman.
+                        </div>
+                    </template>
 
                     {{-- Submit Button --}}
                     <div class="flex justify-end gap-3">
@@ -167,6 +208,151 @@
 
         </div>
     </div>
+
+    {{-- Alpine component: cascading dropdown wilayah Indonesia (proxy ke emsifa API) --}}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('addressWilayah', (opts = {}) => ({
+                BASE: '{{ url('/api/wilayah') }}',
+                provinces: [],
+                cities: [],
+                districts: [],
+                zipCodes: [],
+                stateId: '',
+                cityId: '',
+                districtId: '',
+                zipCode: '',
+                stateName: opts.initStateName || '',
+                cityName: opts.initCityName || '',
+                districtName: opts.initDistrictName || '',
+                initZipCode: opts.initZipCode || '',
+                loadingProvinces: false,
+                loadingCities: false,
+                loadingDistricts: false,
+                loadingZipCodes: false,
+                apiError: false,
+
+                async init() {
+                    try {
+                        this.loadingProvinces = true;
+                        const res = await fetch(`${this.BASE}/provinces`);
+                        if (!res.ok) throw new Error('Gagal memuat provinsi');
+                        this.provinces = await res.json();
+
+                        // Prefill saat edit: cari id berdasarkan nama yang sudah tersimpan
+                        if (this.stateName) {
+                            const p = this.provinces.find(x => x.name.toLowerCase() === this.stateName.toLowerCase());
+                            if (p) {
+                                this.stateId = p.id;
+                                await this.loadCities();
+                                if (this.cityName) {
+                                    const c = this.cities.find(x => x.name.toLowerCase() === this.cityName.toLowerCase());
+                                    if (c) {
+                                        this.cityId = c.id;
+                                        await this.loadDistricts();
+                                        if (this.districtName) {
+                                            const d = this.districts.find(x => x.name.toLowerCase() === this.districtName.toLowerCase());
+                                            if (d) {
+                                                this.districtId = d.id;
+                                                await this.loadZipCodes();
+                                                // Set zipCode lama bila masih ada di list
+                                                if (this.initZipCode && this.zipCodes.some(z => z.code === this.initZipCode)) {
+                                                    this.zipCode = this.initZipCode;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        this.apiError = true;
+                    } finally {
+                        this.loadingProvinces = false;
+                    }
+                },
+
+                async loadCities() {
+                    if (!this.stateId) return;
+                    try {
+                        this.loadingCities = true;
+                        const res = await fetch(`${this.BASE}/regencies/${this.stateId}`);
+                        if (!res.ok) throw new Error('Gagal memuat kabupaten');
+                        this.cities = await res.json();
+                    } catch (e) {
+                        this.apiError = true;
+                    } finally {
+                        this.loadingCities = false;
+                    }
+                },
+
+                async loadDistricts() {
+                    if (!this.cityId) return;
+                    try {
+                        this.loadingDistricts = true;
+                        const res = await fetch(`${this.BASE}/districts/${this.cityId}`);
+                        if (!res.ok) throw new Error('Gagal memuat kecamatan');
+                        this.districts = await res.json();
+                    } catch (e) {
+                        this.apiError = true;
+                    } finally {
+                        this.loadingDistricts = false;
+                    }
+                },
+
+                async loadZipCodes() {
+                    if (!this.districtName || !this.cityName) return;
+                    try {
+                        this.loadingZipCodes = true;
+                        const params = new URLSearchParams({
+                            district: this.districtName,
+                            regency: this.cityName
+                        });
+                        const res = await fetch(`${this.BASE}/kodepos?${params}`);
+                        if (!res.ok) throw new Error('Gagal memuat kode pos');
+                        this.zipCodes = await res.json();
+                    } catch (e) {
+                        this.zipCodes = [];
+                    } finally {
+                        this.loadingZipCodes = false;
+                    }
+                },
+
+                async onStateChange() {
+                    this.cityId = '';
+                    this.districtId = '';
+                    this.zipCode = '';
+                    this.cities = [];
+                    this.districts = [];
+                    this.zipCodes = [];
+                    this.cityName = '';
+                    this.districtName = '';
+                    const p = this.provinces.find(x => x.id === this.stateId);
+                    this.stateName = p?.name ?? '';
+                    await this.loadCities();
+                },
+
+                async onCityChange() {
+                    this.districtId = '';
+                    this.zipCode = '';
+                    this.districts = [];
+                    this.zipCodes = [];
+                    this.districtName = '';
+                    const c = this.cities.find(x => x.id === this.cityId);
+                    this.cityName = c?.name ?? '';
+                    await this.loadDistricts();
+                },
+
+                async onDistrictChange() {
+                    this.zipCode = '';
+                    this.zipCodes = [];
+                    const d = this.districts.find(x => x.id === this.districtId);
+                    this.districtName = d?.name ?? '';
+                    await this.loadZipCodes();
+                },
+            }));
+        });
+    </script>
 
     <script>
         {
