@@ -75,18 +75,18 @@
 
                     <div class="flex flex-col divide-y divide-[#E8E0D4]">
                         @foreach ($items as $item)
-                            <div class="py-4 first:pt-0 last:pb-0">
-                                <div class="flex items-start justify-between mb-1">
-                                    <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-base">
+                            <div class="py-3 sm:py-4 first:pt-0 last:pb-0">
+                                <div class="flex items-start justify-between gap-3 mb-1">
+                                    <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-sm sm:text-base break-words min-w-0 flex-1 line-clamp-2">
                                         {{ $item['name'] }}
                                     </p>
-                                    <span class="font-glacial text-[#3D2B1F] text-sm font-bold ml-4 shrink-0">
+                                    <span class="font-glacial text-[#3D2B1F] text-sm font-bold shrink-0">
                                         {{ $item['qty'] }}x
                                     </span>
                                 </div>
-                                <div class="flex items-end justify-between">
-                                    <p class="font-glacial text-[#6B4C3B] text-sm">{{ $item['desc'] }}</p>
-                                    <span class="font-glacial font-bold text-[#7A8C5C] text-lg ml-4 shrink-0">
+                                <div class="flex items-end justify-between gap-3">
+                                    <p class="font-glacial text-[#6B4C3B] text-xs sm:text-sm break-words min-w-0 flex-1 line-clamp-2">{{ $item['desc'] }}</p>
+                                    <span class="font-glacial font-bold text-[#7A8C5C] text-base sm:text-lg shrink-0 whitespace-nowrap">
                                         Rp {{ number_format($item['total'], 0, ',', '.') }}
                                     </span>
                                 </div>

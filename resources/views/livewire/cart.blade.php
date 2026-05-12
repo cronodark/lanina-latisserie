@@ -32,10 +32,10 @@
 
                     {{-- Info --}}
                     <div class="flex-1 min-w-0">
-                        <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg mb-0.5">
+                        <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg mb-0.5 break-words line-clamp-2">
                             {{ $item['name'] }}
                         </p>
-                        <p class="font-glacial text-[#6B4C3B] text-sm leading-relaxed mb-3">
+                        <p class="font-glacial text-[#6B4C3B] text-sm leading-relaxed mb-3 break-words line-clamp-3">
                             {{ $item['desc'] }}
                         </p>
 
@@ -65,7 +65,7 @@
                                 wire:click="toggleItem('{{ $item['key'] }}')"
                                 @checked($item['checked'])>
                         </div>
-                        <div class="bg-[#7A8C5C] text-white font-glacial font-bold text-sm px-5 py-2.5 rounded-full">
+                        <div class="bg-[#7A8C5C] text-white font-glacial font-bold text-sm px-5 py-2.5 rounded-full whitespace-nowrap">
                             Rp {{ number_format($item['price'], 0, ',', '.') }}
                         </div>
                     </div>
@@ -86,17 +86,17 @@
                 @forelse ($this->cartItems as $item)
                     @if ($item['checked'])
                         <div class="py-4 first:pt-0">
-                            <div class="flex items-start justify-between mb-1">
-                                <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-base">
+                            <div class="flex items-start justify-between gap-3 mb-1">
+                                <p class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-base break-words min-w-0 flex-1 line-clamp-2">
                                     {{ $item['name'] }}
                                 </p>
-                                <span class="font-glacial text-[#3D2B1F] text-sm font-bold ml-4 shrink-0">
+                                <span class="font-glacial text-[#3D2B1F] text-sm font-bold shrink-0">
                                     {{ $item['qty'] }}x
                                 </span>
                             </div>
-                            <div class="flex items-end justify-between">
-                                <p class="font-glacial text-[#6B4C3B] text-sm">{{ $item['desc'] }}</p>
-                                <span class="font-glacial font-bold text-[#7A8C5C] text-lg ml-4 shrink-0">
+                            <div class="flex items-end justify-between gap-3">
+                                <p class="font-glacial text-[#6B4C3B] text-sm break-words min-w-0 flex-1 line-clamp-2">{{ $item['desc'] }}</p>
+                                <span class="font-glacial font-bold text-[#7A8C5C] text-lg shrink-0 whitespace-nowrap">
                                     Rp {{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}
                                 </span>
                             </div>
@@ -108,15 +108,15 @@
 
             {{-- Total + Checkout --}}
             <div class="flex items-stretch bg-[#7A8C5C] rounded-[14px] p-2 gap-2">
-                <div class="flex-1 flex items-center bg-white rounded-[10px] px-5 py-4">
-                    <span class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg">
+                <div class="flex-1 min-w-0 flex items-center bg-white rounded-[10px] px-5 py-4 overflow-hidden">
+                    <span class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-lg truncate">
                         Rp {{ number_format($this->total, 0, ',', '.') }}
                     </span>
                 </div>
                 <button
                     type="button"
                     wire:click="checkoutSelected"
-                    class="bg-[#ADC178] hover:bg-[#5C6B44] text-white font-glacial font-bold text-base px-7 py-4 rounded-[10px] transition-colors duration-200 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+                    class="bg-[#ADC178] hover:bg-[#5C6B44] text-white font-glacial font-bold text-base px-7 py-4 rounded-[10px] transition-colors duration-200 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed shrink-0"
                     @disabled($this->total === 0)>
                     Checkout!
                 </button>
