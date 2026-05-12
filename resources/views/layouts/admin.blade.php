@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Admin' }} — Lanina Patisserie</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Fallback SweetAlert via CDN: jamin window.Swal tersedia sebelum inline script di body dieksekusi (di production Vite bundle bisa telat karena type="module" selalu defer). Pin ke versi exact + SRI hash untuk keamanan. --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.24/dist/sweetalert2.all.min.js"
+        integrity="sha384-QjoPbdj/93O7LUz0wqTxepA3tIabUD3jzfZX+x5QLvqFtHBzSw4eYFLSVthB+EDT"
+        crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
