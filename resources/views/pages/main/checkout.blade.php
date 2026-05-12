@@ -177,7 +177,7 @@
             </div>
         </div>
     </main>
-    @include('modalAlamat')
-    @include('modalpembayaran')
-    @include('modalpengiriman')
+    @include('components.modalAlamat')
+    @include('components.modalpembayaran')
+    @include('components.modalpengiriman')
 @endsection

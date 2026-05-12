@@ -152,8 +152,9 @@
                         </div>
                         <div>
                             <label class="text-base font-medium mb-2 block">Nomor Telepon</label>
-                            <input type="text" placeholder="Masukan Nomor Telepon Anda" value="{{ $user->telp }}"
-                                name="telp"
+                            <input type="tel" placeholder="Contoh: 081234567890" value="{{ $user->telp }}"
+                                name="telp" inputmode="numeric" minlength="9" maxlength="13" pattern="[0-9]{9,13}"
+                                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 13)"
                                 class="w-full text-base text-[#3D2B1F] bg-[#F5F6F7] border border-[#979797]/20 rounded-[12px] px-5 py-3.5 outline-none focus:border-[#7A8C5C] transition-colors">
                         </div>
                     </div>

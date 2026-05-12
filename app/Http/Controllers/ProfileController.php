@@ -25,9 +25,11 @@ class ProfileController extends Controller
         $validatedData = $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . $user->id,
-            'telp' => 'nullable|string|max:20|unique:users,telp,' . $user->id,
+            'telp' => ['nullable', 'string', 'regex:/^[0-9]{9,13}$/', 'unique:users,telp,' . $user->id],
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'nullable|string|min:8|confirmed',
+        ], [
+            'telp.regex' => 'Nomor telepon hanya boleh berisi angka (9-13 digit).',
         ]);
 
         $updates = collect($validatedData)

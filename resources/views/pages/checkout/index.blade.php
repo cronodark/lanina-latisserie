@@ -182,8 +182,150 @@
             </div>
         </div>
     </main>
-    @include('modalAlamat')
-    @include('modalpembayaran')
-    @include('modalpengiriman')
-    @include('modalTanggal')
+    @include('components.modalAlamat')
+    @include('components.modalpembayaran')
+    @include('components.modalpengiriman')
+    @include('components.modalTanggal')
+
+    {{-- Modal logic checkout: inline agar tidak tergantung Vite bundle yang di production bisa telat/gagal load. --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!document.getElementById('payment-modal')) return;
+
+            // ===== MODAL ALAMAT =====
+            const addressModal = document.getElementById('address-modal');
+            const addressModalBox = document.getElementById('address-modal-box');
+            const closeAddressBtn = document.getElementById('close-address-modal');
+            const nameEl = document.getElementById('address-name');
+            const detailEl = document.getElementById('address-detail');
+            const openAddressBtn = document.getElementById('open-address-modal');
+
+            if (openAddressBtn && addressModal && addressModalBox) {
+                openAddressBtn.addEventListener('click', () => {
+                    addressModal.classList.remove('opacity-0', 'pointer-events-none');
+                    addressModalBox.classList.remove('scale-95');
+                    addressModalBox.classList.add('scale-100');
+                });
+            }
+            if (closeAddressBtn && addressModal && addressModalBox) {
+                closeAddressBtn.addEventListener('click', () => {
+                    addressModal.classList.add('opacity-0', 'pointer-events-none');
+                    addressModalBox.classList.remove('scale-100');
+                    addressModalBox.classList.add('scale-95');
+                });
+            }
+
+            document.querySelectorAll('.address-item').forEach((item) => {
+                item.addEventListener('click', () => {
+                    const name = item.dataset.name;
+                    const phone = item.dataset.phone;
+                    const address = item.dataset.address;
+                    const addressId = item.dataset.addressId;
+                    const addressIdInput = document.getElementById('address-id-input');
+
+                    if (nameEl) nameEl.innerHTML = `${name} <span class="font-normal text-[#6B4C3B] ml-2">(${phone})</span>`;
+                    if (detailEl) detailEl.textContent = address;
+                    if (addressIdInput) addressIdInput.value = addressId || '';
+
+                    if (addressModal && addressModalBox) {
+                        addressModal.classList.add('opacity-0', 'pointer-events-none');
+                        addressModalBox.classList.remove('scale-100');
+                        addressModalBox.classList.add('scale-95');
+                    }
+                });
+            });
+
+            // ===== MODAL PEMBAYARAN =====
+            const paymentModal = document.getElementById('payment-modal');
+            const paymentModalBox = document.getElementById('payment-modal-box');
+
+            function openPaymentModal() {
+                if (!paymentModal || !paymentModalBox) return;
+                paymentModal.classList.remove('opacity-0', 'pointer-events-none');
+                paymentModal.classList.add('opacity-100');
+                paymentModalBox.classList.remove('translate-y-4');
+            }
+            function closePaymentModal() {
+                if (!paymentModal || !paymentModalBox) return;
+                paymentModal.classList.add('opacity-0', 'pointer-events-none');
+                paymentModal.classList.remove('opacity-100');
+                paymentModalBox.classList.add('translate-y-4');
+            }
+
+            const openPaymentBtn = document.getElementById('open-payment-modal');
+            const closePaymentBtn = document.getElementById('close-payment-modal');
+            if (openPaymentBtn) openPaymentBtn.addEventListener('click', openPaymentModal);
+            if (closePaymentBtn) closePaymentBtn.addEventListener('click', closePaymentModal);
+            if (paymentModal) {
+                paymentModal.addEventListener('click', (e) => {
+                    if (e.target === paymentModal) closePaymentModal();
+                });
+            }
+
+            document.querySelectorAll('.bank-option').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const label = btn.querySelector('span:last-child')?.textContent ?? '';
+                    const bankLabel = document.getElementById('selected-bank-label');
+                    const paymentBankInput = document.getElementById('payment-bank-input');
+                    if (bankLabel) bankLabel.textContent = label;
+                    if (paymentBankInput) paymentBankInput.value = btn.dataset.bank || 'bca';
+                    closePaymentModal();
+                });
+            });
+
+            // ===== MODAL PENGIRIMAN =====
+            const shippingModal = document.getElementById('shipping-modal');
+            const shippingModalBox = document.getElementById('shipping-modal-box');
+
+            function openShippingModal() {
+                if (!shippingModal || !shippingModalBox) return;
+                shippingModal.classList.remove('opacity-0', 'pointer-events-none');
+                shippingModal.classList.add('opacity-100');
+                shippingModalBox.classList.remove('translate-y-4');
+            }
+            function closeShippingModal() {
+                if (!shippingModal || !shippingModalBox) return;
+                shippingModal.classList.add('opacity-0', 'pointer-events-none');
+                shippingModal.classList.remove('opacity-100');
+                shippingModalBox.classList.add('translate-y-4');
+            }
+
+            const openShippingBtn = document.getElementById('open-shipping-modal');
+            const closeShippingBtn = document.getElementById('close-shipping-modal');
+            if (openShippingBtn) openShippingBtn.addEventListener('click', openShippingModal);
+            if (closeShippingBtn) closeShippingBtn.addEventListener('click', closeShippingModal);
+            if (shippingModal) {
+                shippingModal.addEventListener('click', (e) => {
+                    if (e.target === shippingModal) closeShippingModal();
+                });
+            }
+
+            document.querySelectorAll('.shipping-option').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.shipping-option').forEach((b) => {
+                        const radio = b.querySelector('.shipping-radio');
+                        if (!radio) return;
+                        radio.classList.remove('border-[#7A8C5C]', 'bg-[#7A8C5C]');
+                        radio.classList.add('border-[#D8CFC4]', 'bg-white');
+                        radio.innerHTML = '';
+                    });
+
+                    const activeRadio = btn.querySelector('.shipping-radio');
+                    if (activeRadio) {
+                        activeRadio.classList.remove('border-[#D8CFC4]', 'bg-white');
+                        activeRadio.classList.add('border-[#7A8C5C]', 'bg-[#7A8C5C]');
+                        activeRadio.innerHTML = `<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>`;
+                    }
+
+                    const label = btn.querySelector('span')?.textContent ?? '';
+                    const shippingLabel = document.getElementById('selected-shipping-label');
+                    const sendTypeInput = document.getElementById('send-type-input');
+                    if (shippingLabel) shippingLabel.textContent = label;
+                    if (sendTypeInput) sendTypeInput.value = btn.dataset.shipping || 'pickUp';
+
+                    setTimeout(closeShippingModal, 200);
+                });
+            });
+        });
+    </script>
 @endsection
