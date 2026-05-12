@@ -33,13 +33,15 @@
     <style>
         @font-face {
             font-family: 'Glacial';
-            src: url('/fonts/GlacialIndifference-Regular.otf') format('opentype');
+            src: url('{{ asset('fonts/GlacialIndifference-Regular.otf') }}') format('opentype');
             font-weight: 400;
+            font-display: swap;
         }
         @font-face {
             font-family: 'Glacial';
-            src: url('/fonts/GlacialIndifference-Bold.otf') format('opentype');
+            src: url('{{ asset('fonts/GlacialIndifference-Bold.otf') }}') format('opentype');
             font-weight: 700;
+            font-display: swap;
         }
         body { font-family: 'Poppins', sans-serif; }
 
