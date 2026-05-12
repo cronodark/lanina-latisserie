@@ -27,24 +27,25 @@
                 </div>
 
                 {{-- ===== RIGHT: Product Info ===== --}}
-                <div class="relative">
+                <div class="relative min-w-0">
                     {{-- Product Name --}}
                     <h1
                         class="font-['Playfair_Display']
                     text-3xl sm:text-4xl md:text-5xl xl:text-6xl
                     font-bold text-[#3D2B1F]
                     leading-tight mb-4 md:mb-5 xl:mb-6
-                    pr-0 md:pr-16">
+                    pr-0 md:pr-16
+                    break-words">
                         {{ $product->name }}
                     </h1>
 
                     {{-- Description --}}
                     <p
-                        class="font-glacial text-[#6B4C3B] text-sm sm:text-base md:text-lg xl:text-xl leading-relaxed mb-6 md:mb-8 xl:mb-10">
+                        class="font-glacial text-[#6B4C3B] text-sm sm:text-base md:text-lg xl:text-xl leading-relaxed mb-6 md:mb-8 xl:mb-10 break-words whitespace-pre-line">
                         {{ $product->description }}
                     </p>
 
-                    <p class="font-glacial text-[#3D2B1F] text-sm sm:text-base mb-6 md:mb-8">
+                    <p class="font-glacial text-[#3D2B1F] text-sm sm:text-base mb-6 md:mb-8 break-words">
                         Estimasi pengerjaan:
                         <span class="font-bold">
                             {{ $product->production_estimate ? $product->production_estimate . ' hari' : 'Belum ditentukan' }}
@@ -81,14 +82,14 @@
 
                         {{-- Subtotal --}}
                         <div
-                            class="flex flex-1 items-center justify-center sm:justify-start
+                            class="flex flex-1 min-w-0 items-center justify-center sm:justify-start
                             bg-white rounded-lg
                             px-4 sm:px-6 xl:px-8
-                            py-3 sm:py-4 xl:py-5">
+                            py-3 sm:py-4 xl:py-5 overflow-hidden">
                             <span id="subtotal"
                                 class="font-['Playfair_Display'] font-bold
                                 text-lg sm:text-xl xl:text-2xl 2xl:text-3xl
-                                text-[#3D2B1F]">
+                                text-[#3D2B1F] truncate">
                                 Rp {{ number_format($product->price, 0, ',', '.') }}
                             </span>
                         </div>
@@ -101,7 +102,7 @@
                             px-6 sm:px-10 xl:px-12
                             py-3 sm:py-4 xl:py-5
                             rounded-lg transition
-                            w-full sm:w-auto">
+                            w-full sm:w-auto shrink-0 whitespace-nowrap">
                             Tambah ke Keranjang
                         </button>
                     </form>

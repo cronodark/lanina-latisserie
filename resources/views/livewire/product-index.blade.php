@@ -52,7 +52,7 @@
 
                         @foreach ($promos as $promo)
                             <div
-                                class="promo-card shrink-0 w-[calc((100%-40px)/3)] bg-white rounded-[20px] overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative flex flex-col">
+                                class="promo-card shrink-0 w-[calc((100%-40px)/3)] bg-white rounded-[20px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative flex flex-col min-w-0">
 
                                 {{-- Badge --}}
                                 <div
@@ -73,26 +73,25 @@
                                     </div>
                                 </div>
                                 {{-- Card Body --}}
-                                <div class="p-4 pt-3 flex flex-col flex-1">
+                                <div class="p-4 pt-3 flex flex-col flex-1 min-w-0">
                                     <p
-                                        class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
+                                        class="font-['Playfair_Display'] font-bold text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2 line-clamp-1 break-words min-h-[1.75rem]">
                                         {{ $promo->name }}
                                     </p>
-                                    <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4"
-                                        style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                    <p class="font-['Cormorant_Garamond'] text-[14px] text-[#6B4C3B] leading-relaxed mb-4 line-clamp-3 break-words min-h-[4.5rem]">
                                         {{ $promo->description }}
                                     </p>
 
                                     {{-- Price Row --}}
-                                    <a href="{{ route('promo.show', $promo->id) }}" class="cursor-pointer">
+                                    <a href="{{ route('promo.show', $promo->id) }}" class="cursor-pointer mt-auto block">
                                         <div
-                                            class="flex items-center bg-[#7A8C5C] rounded-full p-1.5 pr-2.5 gap-2.5 mt-auto">
+                                            class="flex items-center bg-[#7A8C5C] rounded-full p-1.5 pr-2.5 gap-2.5">
                                             {{-- Price box --}}
                                             <div
-                                                class="flex-1 bg-[#FAF6F0] border-2 border-[#7A8C5C] rounded-full px-4 py-2 text-center">
-                                                <p class="text-[#7A8C5C] font-bold text-[15px] leading-tight">
+                                                class="flex-1 min-w-0 bg-[#FAF6F0] border-2 border-[#7A8C5C] rounded-full px-4 py-2 text-center overflow-hidden">
+                                                <p class="text-[#7A8C5C] font-bold text-[15px] leading-tight truncate">
                                                     Rp {{ number_format($promo->price, 0, ',', '.') }}</p>
-                                                <p class="text-red-400 text-[11px] line-through leading-tight">
+                                                <p class="text-red-400 text-[11px] line-through leading-tight truncate">
                                                     Rp {{ number_format($promo->actual_price, 0, ',', '.') }}</p>
                                             </div>
                                             {{-- Arrow button --}}
@@ -140,7 +139,7 @@
 
                         @foreach ($recentProducts as $product)
                             <div
-                                class="promo-card shrink-0 w-[calc((100%-200px)/3)] bg-[#FFF9F2] rounded-[20px] overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative">
+                                class="promo-card shrink-0 w-[calc((100%-200px)/3)] bg-[#FFF9F2] rounded-[20px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative flex flex-col min-w-0">
                                 {{-- Product Image --}}
                                 <div class="p-3">
                                     <div class="h-40 sm:h-44 md:h-48 overflow-hidden rounded-2xl shadow-md">
@@ -149,22 +148,21 @@
                                     </div>
                                 </div>
                                 {{-- Card Body --}}
-                                <div class="p-4 pt-3">
+                                <div class="p-4 pt-3 flex flex-col flex-1 min-w-0">
                                     <p
-                                        class="font-gloock text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
+                                        class="font-gloock text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2 line-clamp-1 break-words min-h-[1.75rem]">
                                         {{ $product->name }}
                                     </p>
-                                    <p class="font-glacial text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify"
-                                        style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                    <p class="font-glacial text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify line-clamp-3 break-words min-h-[4.5rem]">
                                         {{ $product->description }}
                                     </p>
 
                                     {{-- Price Row --}}
-                                    <a href="{{ route('product.show', $product->id) }}">
+                                    <a href="{{ route('product.show', $product->id) }}" class="mt-auto block">
                                         <div
-                                            class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3">
+                                            class="flex justify-between items-center gap-2 bg-[#7A8C5C] rounded-full p-2 pl-6 pr-3 min-w-0">
                                             {{-- Price box --}}
-                                            <p class="text-white font-bold text-xl">
+                                            <p class="text-white font-bold text-xl truncate min-w-0">
                                                 Rp {{ number_format($product->price, 0, ',', '.') }}</p>
 
                                             {{-- Arrow button --}}
@@ -197,7 +195,7 @@
             {{-- Products Grid --}}
             <div class="grid grid-cols-3 gap-[22px]">
                 @forelse ($products as $product)
-                    <div class="product-card bg-[#FFF9F2] rounded-xl overflow-visible shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative flex flex-col h-full"
+                    <div class="product-card bg-[#FFF9F2] rounded-xl overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.10)] transition-all duration-300 relative flex flex-col h-full min-w-0"
                         wire:key="product-{{ $product->id }}">
 
                         {{-- Product Image --}}
@@ -209,21 +207,20 @@
                         </div>
 
                         {{-- Card Body --}}
-                        <div class="p-4 pt-3 flex flex-col flex-1">
+                        <div class="p-4 pt-3 flex flex-col flex-1 min-w-0">
                             <p
-                                class="font-gloock text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2">
+                                class="font-gloock text-[#3D2B1F] text-[17px] mb-1 underline underline-offset-2 line-clamp-1 break-words min-h-[1.75rem]">
                                 {{ $product->name }}
                             </p>
-                            <p class="font-glacial text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify"
-                                style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                            <p class="font-glacial text-[14px] text-[#6B4C3B] leading-relaxed mb-4 text-justify line-clamp-3 break-words min-h-[4.5rem]">
                                 {{ $product->description }}
                             </p>
 
                             {{-- Price Row --}}
                             <a href="{{ route('product.show', $product->id) }}" class="mt-auto block">
                                 <div
-                                    class="flex justify-between items-center bg-[#7A8C5C] rounded-full p-2 pl-8 pr-3 cursor-pointer">
-                                    <p class="text-white font-bold text-xl">Rp
+                                    class="flex justify-between items-center gap-2 bg-[#7A8C5C] rounded-full p-2 pl-6 pr-3 cursor-pointer min-w-0">
+                                    <p class="text-white font-bold text-xl truncate min-w-0">Rp
                                         {{ number_format($product->price, 0, ',', '.') }}</p>
                                     <button
                                         class="w-10 h-10 bg-[#FFF9F2] rounded-full flex items-center justify-center shrink-0 hover:scale-110 transition-transform duration-200 shadow-sm">

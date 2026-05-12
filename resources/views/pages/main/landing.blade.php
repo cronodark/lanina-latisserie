@@ -193,7 +193,7 @@
 
                     @foreach ($bestsellers as $item)
                         <div
-                            class="carousel-card flex-shrink-0 basis-[85%] md:basis-[calc((100%-1rem)/2)] lg:basis-[calc((100%-2.5rem)/3)] xl:basis-[calc((100%-3.75rem)/4)] bg-[#F5EFE6] rounded-3xl shadow-xl snap-start flex flex-col">
+                            class="carousel-card flex-shrink-0 basis-[85%] md:basis-[calc((100%-1rem)/2)] lg:basis-[calc((100%-2.5rem)/3)] xl:basis-[calc((100%-3.75rem)/4)] bg-[#F5EFE6] rounded-3xl shadow-xl snap-start flex flex-col min-w-0">
 
                             {{-- IMAGE (INSIDE CARD) --}}
                             <div class="p-3">
@@ -203,27 +203,27 @@
                             </div>
 
                             {{-- CONTENT --}}
-                            <div class="px-4 pb-4 flex-1 flex flex-col">
-                                <h3 class="font-gloock text-lg text-gray-800 mb-1">
+                            <div class="px-4 pb-4 flex-1 flex flex-col min-w-0">
+                                <h3 class="font-gloock text-lg text-gray-800 mb-1 line-clamp-1 break-words min-h-[1.75rem]">
                                     {{ $item->product->name }}
                                 </h3>
 
-                                <p class="font-glacial text-sm text-gray-500 mb-4">
+                                <p class="font-glacial text-sm text-gray-500 mb-4 line-clamp-2 break-words min-h-[2.5rem]">
                                     Terjual {{ number_format($item->total_bought, 0, ',', '.') }} item
                                 </p>
 
                                 <a href="{{ route('product.show', $item->product->id) }}">
                                     <div class="w-full mt-auto">
                                         <div
-                                            class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
+                                            class="flex items-center justify-between gap-2 bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
 
                                             <!-- PRICE -->
-                                            <span class="text-sm font-glacial">
+                                            <span class="text-sm font-glacial truncate min-w-0">
                                                 Rp {{ number_format($item->product->price, 0, ',', '.') }}
                                             </span>
 
                                             <!-- BUTTON -->
-                                            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shrink-0">
                                                 <svg class="w-4 h-4 text-[#6B7D4F]" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
@@ -280,7 +280,7 @@
 
                     @foreach ($products as $item)
                         <div
-                            class="carousel-card flex-shrink-0 basis-[85%] md:basis-[calc((100%-1rem)/2)] lg:basis-[calc((100%-2.5rem)/3)] xl:basis-[calc((100%-3.75rem)/4)] bg-[#FFF9F2] rounded-3xl shadow-xl snap-start my-8 flex flex-col">
+                            class="carousel-card flex-shrink-0 basis-[85%] md:basis-[calc((100%-1rem)/2)] lg:basis-[calc((100%-2.5rem)/3)] xl:basis-[calc((100%-3.75rem)/4)] bg-[#FFF9F2] rounded-3xl shadow-xl snap-start my-8 flex flex-col min-w-0">
 
                             {{-- IMAGE (INSIDE CARD) --}}
                             <div class="p-3">
@@ -290,28 +290,27 @@
                             </div>
 
                             {{-- CONTENT --}}
-                            <div class="px-4 pb-4 flex-1 flex flex-col">
-                                <h3 class="font-gloock text-lg text-gray-800 mb-1">
+                            <div class="px-4 pb-4 flex-1 flex flex-col min-w-0">
+                                <h3 class="font-gloock text-lg text-gray-800 mb-1 line-clamp-1 break-words min-h-[1.75rem]">
                                     {{ $item->name }}
                                 </h3>
 
-                                <p class="font-glacial text-sm text-gray-500 mb-4 min-h-[3rem] overflow-hidden text-ellipsis"
-                                    style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                <p class="font-glacial text-sm text-gray-500 mb-4 line-clamp-2 break-words min-h-[2.5rem]">
                                     {{ $item->description }}
                                 </p>
 
                                 <div class="w-full mt-auto cursor-pointer">
                                     <a href="{{ route('product.show', $item->id) }}">
                                         <div
-                                            class="flex items-center justify-between bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
+                                            class="flex items-center justify-between gap-2 bg-[#6B7D4F] text-white px-6 py-3 rounded-full">
 
                                             <!-- PRICE -->
-                                            <span class="text-sm font-glacial">
+                                            <span class="text-sm font-glacial truncate min-w-0">
                                                 Rp {{ number_format($item->price, 0, ',', '.') }}
                                             </span>
 
                                             <!-- BUTTON -->
-                                            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                                            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center shrink-0">
                                                 <svg class="w-4 h-4 text-[#6B7D4F]" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round"
