@@ -28,9 +28,9 @@ class UpdateExpiredSlotsCommand extends Command
     {
         $this->info('Memulai update slot yang sudah lewat...');
 
-        $yesterday = now()->subDay()->endOfDay();
+        $today = now()->startOfDay();
 
-        $updated = TanggalTersedia::where('tanggal', '<', $yesterday)
+        $updated = TanggalTersedia::where('tanggal', '<', $today)
             ->where('is_aktif', true)
             ->update(['is_aktif' => false]);
 

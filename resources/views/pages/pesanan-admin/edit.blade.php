@@ -218,7 +218,10 @@
 
             <div id="shippingMetaContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 hidden">
                 <div>
-                    <label class="block text-sm text-gray-600 mb-1.5">Ekspedisi</label>
+                    <label class="block text-sm text-gray-600 mb-1.5">
+                        Ekspedisi
+                        <span id="ekspedisiRequiredMark" class="text-red-500 hidden">*</span>
+                    </label>
                     <select name="choosen_expedition" id="expeditionSelect" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition bg-white">
                         <option value="">-- Pilih Ekspedisi --</option>
                         <option value="JNE" {{ old('choosen_expedition', $pesanan->choosen_expedition ?? '') == 'JNE' ? 'selected' : '' }}>JNE</option>
@@ -226,16 +229,24 @@
                         <option value="SiCepat" {{ old('choosen_expedition', $pesanan->choosen_expedition ?? '') == 'SiCepat' ? 'selected' : '' }}>SiCepat</option>
                         <option value="Pos Indonesia" {{ old('choosen_expedition', $pesanan->choosen_expedition ?? '') == 'Pos Indonesia' ? 'selected' : '' }}>Pos Indonesia</option>
                     </select>
+                    @error('choosen_expedition')
+                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <div>
                     <label class="block text-sm text-gray-600 mb-1.5">
                         Nomor Resi
-                        <span class="text-gray-400 font-normal text-xs ml-1">(Opsional, jika ada)</span>
+                        <span id="nomorResiRequiredMark" class="text-red-500 hidden">*</span>
                     </label>
                     <input type="text" name="nomor_resi" id="nomorResiInput" placeholder="Masukan nomor resi"
+                        maxlength="50"
                         value="{{ old('nomor_resi', $pesanan->nomor_resi ?? '') }}"
                         class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-[#BB9457] focus:ring-1 focus:ring-[#BB9457] transition placeholder:text-gray-300">
+                    <p id="nomorResiHint" class="text-xs text-gray-400 mt-1 hidden">Wajib diisi untuk kurir ekspedisi.</p>
+                    @error('nomor_resi')
+                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
@@ -254,19 +265,33 @@
             const sendType = document.getElementById('sendTypeSelect')?.value || '';
             const pickupDateContainer = document.getElementById('pickupDateContainer');
             const shippingMetaContainer = document.getElementById('shippingMetaContainer');
+            const nomorResi = document.getElementById('nomorResiInput');
+            const ekspedisi = document.getElementById('expeditionSelect');
+            const nomorResiMark = document.getElementById('nomorResiRequiredMark');
+            const nomorResiHint = document.getElementById('nomorResiHint');
+            const ekspedisiMark = document.getElementById('ekspedisiRequiredMark');
 
             if (!pickupDateContainer || !shippingMetaContainer) return;
+
+            const isEkspedisi = sendType === 'kurirEkspedisi';
 
             if (sendType === 'pickUp') {
                 pickupDateContainer.classList.remove('hidden');
                 shippingMetaContainer.classList.add('hidden');
-            } else if (sendType === 'kurirEkspedisi') {
+            } else if (isEkspedisi) {
                 pickupDateContainer.classList.add('hidden');
                 shippingMetaContainer.classList.remove('hidden');
             } else {
                 pickupDateContainer.classList.add('hidden');
                 shippingMetaContainer.classList.add('hidden');
             }
+
+            // Toggle required: hanya wajib jika kurir ekspedisi
+            if (nomorResi) nomorResi.required = isEkspedisi;
+            if (ekspedisi) ekspedisi.required = isEkspedisi;
+            nomorResiMark?.classList.toggle('hidden', !isEkspedisi);
+            ekspedisiMark?.classList.toggle('hidden', !isEkspedisi);
+            nomorResiHint?.classList.toggle('hidden', !isEkspedisi);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -274,6 +299,28 @@
             if (sendTypeSelect) {
                 sendTypeSelect.addEventListener('change', toggleShippingFields);
                 toggleShippingFields();
+            }
+
+            // Safety net: cegat submit kalau kurir ekspedisi tapi ekspedisi/resi belum diisi.
+            const pesananForm = document.querySelector('form[action*="pesanan"]');
+            if (pesananForm) {
+                pesananForm.addEventListener('submit', function (e) {
+                    const sendType = document.getElementById('sendTypeSelect')?.value;
+                    const nomorResi = document.getElementById('nomorResiInput')?.value.trim();
+                    const ekspedisi = document.getElementById('expeditionSelect')?.value;
+                    if (sendType === 'kurirEkspedisi') {
+                        if (!ekspedisi) {
+                            e.preventDefault();
+                            alert('Silakan pilih ekspedisi terlebih dahulu.');
+                            return;
+                        }
+                        if (!nomorResi) {
+                            e.preventDefault();
+                            alert('Nomor resi wajib diisi untuk kurir ekspedisi.');
+                            return;
+                        }
+                    }
+                });
             }
         });
     </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PreOrder;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PesananController extends Controller
 {
@@ -208,14 +209,27 @@ class PesananController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Cek dulu apakah metode pengiriman adalah kurir ekspedisi agar
+        // resi dan ekspedisi jadi wajib saat kondisi tersebut.
+        $isEkspedisi = $this->normalizeSendType($request->input('send_type')) === 'kurirEkspedisi';
+
         $validated = $request->validate([
             'status' => ['required', 'string'],
             'send_type' => ['required', 'string'],
             'start_periode' => ['nullable', 'date'],
             'end_periode' => ['nullable', 'date'],
             'metode_pembayaran' => ['nullable', 'string', 'max:30'],
-            'nomor_resi' => ['nullable', 'string', 'max:50'],
-            'choosen_expedition' => ['nullable', 'string', 'max:90'],
+            'nomor_resi' => [
+                Rule::requiredIf($isEkspedisi),
+                'nullable', 'string', 'max:50',
+            ],
+            'choosen_expedition' => [
+                Rule::requiredIf($isEkspedisi),
+                'nullable', 'string', 'max:90',
+            ],
+        ], [
+            'nomor_resi.required'         => 'Nomor resi wajib diisi untuk kurir ekspedisi.',
+            'choosen_expedition.required' => 'Ekspedisi wajib dipilih untuk metode kurir ekspedisi.',
         ]);
 
         $status = $this->normalizeStatus($validated['status']);

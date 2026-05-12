@@ -21,13 +21,15 @@ class UpdateExpiredSlots implements ShouldQueue
 
     /**
      * Execute the job.
-     * Nonaktifkan slot yang tanggalnya sudah lewat.
+     * Nonaktifkan slot yang tanggalnya sudah lewat (sebelum hari ini).
+     * Contoh: dijalankan tanggal 12 Mei -> slot tanggal 11 Mei dan lebih lama
+     * akan dinonaktifkan.
      */
     public function handle(): void
     {
-        $yesterday = now()->subDay()->endOfDay();
+        $today = now()->startOfDay();
 
-        $updated = TanggalTersedia::where('tanggal', '<', $yesterday)
+        $updated = TanggalTersedia::where('tanggal', '<', $today)
             ->where('is_aktif', true)
             ->update(['is_aktif' => false]);
 

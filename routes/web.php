@@ -61,7 +61,7 @@ Route::group(['middleware' => 'auth'], function () {
             Route::patch('/slot/{id}/toggle', [SlotController::class, 'toggle'])->name('slot.toggle');
         });
 
-
+        Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     });
 
     // Customer Routes
@@ -111,11 +111,7 @@ Route::post('/midtrans/notification', [MidtransWebhookController::class, 'handle
 
 Route::prefix('product')->name('product.')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('index');
-    Route::get('/create', [ProductController::class, 'create'])->name('create');
-    Route::post('/', [ProductController::class, 'store'])->name('store');
     Route::get('/{product}', [ProductController::class, 'show'])->name('show');
-    Route::get('/{product}/update', [ProductController::class, 'edit'])->name('edit');
-    Route::put('/{product}', [ProductController::class, 'update'])->name('update');
 });
 
 Route::get('/promo/{promo}', [PromoController::class, 'show'])->name('promo.show');
@@ -134,5 +130,3 @@ Route::prefix('api/wilayah')->name('api.wilayah.')->group(function () {
 
 Route::resource('pesanan', PesananController::class);
 Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('pesanan.updateStatus');
-
-Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
