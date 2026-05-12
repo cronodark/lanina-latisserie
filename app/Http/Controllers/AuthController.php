@@ -57,13 +57,14 @@ class AuthController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'phone' => 'required|string|max:13',
+            'phone' => ['required', 'string', 'regex:/^[0-9]{9,13}$/'],
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required',
         ], [
             'name.required' => 'Nama lengkap wajib diisi.',
             'email.required' => 'Email wajib diisi.',
             'phone.required' => 'Nomor telepon wajib diisi.',
+            'phone.regex' => 'Nomor telepon hanya boleh berisi angka (9-13 digit).',
             'password.required' => 'Password wajib diisi.',
             'password_confirmation.required' => 'Konfirmasi password wajib diisi.',
         ]);
